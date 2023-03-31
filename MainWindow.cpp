@@ -74,7 +74,6 @@ void MainWindow::startRendering(){
                 if ((originalPointData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointData3D.size())) {
                         surface->construction(originalPointData);
-                        // Open3D
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
                         std::string oriPcdPath = curAppPath + "/result.pcd";
