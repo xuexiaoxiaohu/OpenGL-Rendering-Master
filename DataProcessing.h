@@ -32,7 +32,6 @@ public:
 	void getMeshData(pcl::PolygonMesh mesh);
 	void loadPointData(const char* path);
 	void loadMeshData(char* filename);
-	void meshConvert(std::string filename);
 	void writePlyData(pcl::PolygonMesh mesh);
 	std::string getAppPath();
 	void getNormalVector(std::string pcdPath);

@@ -70,42 +70,6 @@ void DataProcessing::ply2pcd(std::string ply, std::string pcd) {
 	pcl::io::loadPLYFile<pcl::PointXYZ>(ply, *ply2pcdCloudPtr);
 	pcl::io::savePCDFile(pcd, *ply2pcdCloudPtr);
 }
-void DataProcessing::meshConvert(std::string filename) {
-	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-	reader->SetFileName(filename.c_str());
-	reader->Update();
-	vtkSmartPointer<vtkTriangleFilter> filter = vtkSmartPointer<vtkTriangleFilter>::New();
-	filter->SetInputData(reader->GetOutput());
-	filter->Update();
-
-	pcl::PolygonMesh mesh;
-	pcl::io::vtk2mesh(filter->GetOutput(), mesh);
-
-	pcl::fromPCLPointCloud2(mesh.cloud, *meshConvertCloud);
-
-	std::vector<pcl::Indices> k_indices;
-	std::vector<std::vector<float>> k_sqr_distances;
-
-	pcl::search::KdTree<pcl::PointXYZ> search;
-	search.setInputCloud(meshConvertCloud);
-	search.nearestKSearch(*meshConvertCloud, pcl::Indices(), NUM_NEIGHBORS, k_indices, k_sqr_distances);
-	pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
-
-	for (size_t i = 0; i < meshConvertCloud->size(); ++i) {
-		pcl::Normal normal;
-		ne.computePointNormal(*meshConvertCloud, k_indices[i], normal.normal_x, normal.normal_y, normal.normal_z, normal.curvature);
-		pcl::flipNormalTowardsViewpoint((*meshConvertCloud)[i], (*meshConvertCloud).sensor_origin_[0], (*meshConvertCloud).sensor_origin_[1], (*meshConvertCloud).sensor_origin_[2],
-			normal.normal_x, normal.normal_y, normal.normal_z);
-		meshConvertNormals->emplace_back(normal);
-	}
-	pcl::NormalRefinement<pcl::Normal> nr(k_indices, k_sqr_distances);
-	nr.setInputCloud(meshConvertNormals);
-	nr.setMaxIterations(ITERATIONS);
-	nr.setConvergenceThreshold(0.1);
-	nr.filter(*normalsRefinedPtr);
-
-	writePlyData(mesh);
-}
 void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh) {
 	outMesh = inMesh;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
