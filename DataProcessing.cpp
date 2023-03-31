@@ -32,26 +32,6 @@ void DataProcessing::getCenterPoint(QVector3D& vec) {
 	vec.setZ((maxCoord.z() + minCoord.z()) / 2);
 }
 
-void DataProcessing::centralizeOriginalPoints(std::vector<QVector3D> data) {
-	/*pointData = data;
-	getXYZMaxMin();
-
-	getCenterPoint(centerPoint);
-	for (int i = 0; i < pointData.size(); i++) {
-		pointData[i].setX(pointData[i].x() - centerPoint.x());
-		pointData[i].setY(pointData[i].y() - centerPoint.y());
-		pointData[i].setZ(pointData[i].z() - centerPoint.z());
-	}
-	getXYZMaxMin();
-
-	float max = 0;
-	if (max <= maxCoord.x()) max = maxCoord.x();
-	if (max <= maxCoord.y()) max = maxCoord.y();
-	if (max <= maxCoord.z()) max = maxCoord.z();
-
-	float factor = 1.0 / max;
-	for (int i = 0; i < pointData.size(); i++)	pointData[i] = { pointData[i].x() * factor ,pointData[i].y() * factor ,pointData[i].z() * factor };*/
-}
 void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
 	QVector3D vecMax, vecMin;
 	vecMax = { data[0].x() ,data[0].y() ,data[0].z() };
@@ -258,7 +238,7 @@ void DataProcessing::loadMeshData(char* filename) {
 			pointData.emplace_back(data);
 			index += 3;
 		}
-		centralizeOriginalPoints(pointData);
+
 		for (int i = 0; i < pointData.size(); i++) {
 			surfaceModelData.vecPoints.emplace_back(pointData[i].x());
 			surfaceModelData.vecPoints.emplace_back(pointData[i].y());
@@ -331,7 +311,7 @@ void DataProcessing::getMeshData(pcl::PolygonMesh mesh) {
 		meshVertex3D[i].setZ(meshVertex1D[index + 2]);
 		index += 3;
 	}
-	centralizeOriginalPoints(meshVertex3D);
+
 
 	for (std::size_t i = 0; i < nr_faces; i++) {
 		if (i == 0) meshData.clear();

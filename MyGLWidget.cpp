@@ -134,14 +134,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     }
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    if (isShiftPressed) {
-        if (event->buttons() & Qt::LeftButton) {
-
-        }
-    }else{
-        setPressPosition(event->pos());
-        modelUse = modelSave;
-    }
+    setPressPosition(event->pos());
+    modelUse = modelSave;
 }
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
@@ -163,12 +157,10 @@ void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
     }
 }
 
-// Set the position where the mouse is pressed
 void MyGLWidget::setPressPosition(QPoint p_ab) {
     translate_point(p_ab);
     pressPosition = p_ab;
 }
-// Move the origin to the center of the screen.
 void MyGLWidget::translate_point(QPoint& p_ab) {
     int x = p_ab.x() - this->width() / 2;
     int y = -(p_ab.y() - this->height() / 2);

@@ -61,7 +61,6 @@ void MainWindow::startRendering(){
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
-                pointDataProc->centralizeOriginalPoints(originalPointData);
                 pointData.resize(3 * originalPointData.size());
                 for (int i = 0, pointLineMarker = 0; i < originalPointData.size(); i++) {
                     pointData[pointLineMarker++] = pointDataProc->pointData[i].x();
@@ -74,8 +73,11 @@ void MainWindow::startRendering(){
                 if ((originalPointData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointData3D.size())) {
                         surface->construction(originalPointData);
+
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
+
+
                         std::string oriPcdPath = curAppPath + "/result.pcd";
                         std::string finalMeshPath = curAppPath + "/finalMesh.ply";
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);

@@ -34,7 +34,6 @@ public:
 	void loadMeshData(char* filename);
 	void meshConvert(std::string filename);
 	void writePlyData(pcl::PolygonMesh mesh);
-	void centralizeOriginalPoints(std::vector<QVector3D> data);
 	std::string getAppPath();
 	void getNormalVector(std::string pcdPath);
 	void ply2ply(std::string src, std::string dst);
