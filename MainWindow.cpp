@@ -59,11 +59,9 @@ void MainWindow::startRendering(){
             QVector3D cameraPos = center + QVector3D(0.0f, 0.0f, size.z() * 2.0f);
             QVector3D cameraTarget = center;
 
-            myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
-
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
+                myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
                 pointDataProc->centralizeOriginalPoints(originalPointData);
-
                 pointData.resize(3 * originalPointData.size());
                 for (int i = 0, pointLineMarker = 0; i < originalPointData.size(); i++) {
                     pointData[pointLineMarker++] = pointDataProc->pointData[i].x();
@@ -81,7 +79,7 @@ void MainWindow::startRendering(){
                         std::string oriPlyPath = curAppPath + "/result.ply";
                         std::string oriPcdPath = curAppPath + "/result.pcd";
                         std::string finalMeshPath = curAppPath + "/finalMesh.ply";
-
+                        myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         meshDataProc->ply2pcd(oriPlyPath, oriPcdPath);
                         meshDataProc->getNormalVector(oriPcdPath);
                         pcl::PolygonMesh mesh;
