@@ -50,24 +50,6 @@ void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
 	minCoord = vecMin;
 }
 
-void DataProcessing::getXYZMaxMin() {
-	//if (0 == pointData.size())	return;
-	//QVector3D vecMax, vecMin;
-	//vecMax = { pointData[0].x() ,pointData[0].y() ,pointData[0].z() };
-	//vecMin = vecMax;
-
-	//for (int i = 0; i < pointData.size(); i++) {
-	//	if (vecMax.x() < pointData[i].x())	vecMax.setX(pointData[i].x());
-	//	if (vecMax.y() < pointData[i].y())	vecMax.setY(pointData[i].y());
-	//	if (vecMax.z() < pointData[i].z())	vecMax.setZ(pointData[i].z());
-
-	//	if (vecMin.x() > pointData[i].x())	vecMin.setX(pointData[i].x());
-	//	if (vecMin.y() > pointData[i].y())	vecMin.setY(pointData[i].y());
-	//	if (vecMin.z() > pointData[i].z())	vecMin.setZ(pointData[i].z());
-	//}
-	//maxCoord = vecMax;
-	//minCoord = vecMin;
-}
 void DataProcessing::ply2ply(std::string src, std::string dst) {
 	vtkSmartPointer<vtkPLYReader> read = vtkSmartPointer<vtkPLYReader>::New();
 	read->SetFileName(src.c_str());

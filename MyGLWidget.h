@@ -4,17 +4,16 @@
 #include <QtMath>
 #include <QKeyEvent>
 #include "ShaderProgram.h"
-#include "camera.h"
+#include "Camera.h"
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLFunctions_4_5_Core>
-#include <gl/GLU.h>
 
-enum DataType {
+enum DataType 
+{
     PointType,
     MeshType,
-    CathType
 };
 
 class MyGLWidget:public QOpenGLWidget{
@@ -44,7 +43,6 @@ private:
     ShaderProgram* pointShader;
 
     QMatrix4x4 model;
-    QMatrix4x4 catheterModel;
     QMatrix4x4 modelUse;
     QMatrix4x4 modelSave;
     Camera* camera;
@@ -56,10 +54,6 @@ private:
     QPoint pressPosition; 
     GLuint pointVAO, pointVBO;
     GLuint meshVAO, meshVBO;
-    GLuint selectVAO, selectVBO;
-    bool isShiftPressed = false;
-    qreal catheterX;
-    qreal catheterY;
 };
 
 #endif 

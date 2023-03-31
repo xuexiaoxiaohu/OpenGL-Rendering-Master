@@ -147,14 +147,10 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     camera->mouseScroll(offset.y() / 20);
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Shift){
-        isShiftPressed = true;
-    }
+
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Shift){
-        isShiftPressed = false;
-    }
+
 }
 
 void MyGLWidget::setPressPosition(QPoint p_ab) {

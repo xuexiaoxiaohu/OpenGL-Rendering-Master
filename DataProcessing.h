@@ -51,7 +51,6 @@ public:
 	QVector3D minCoord;
 private:
 	void clearMeshData();
-	void getXYZMaxMin();
 
 	void getCenterPoint(QVector3D& vec);
 

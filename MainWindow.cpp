@@ -79,7 +79,7 @@ void MainWindow::startRendering(){
                         pcl::PolygonMesh inMesh;
                         pcl::PolygonMesh outMesh;
                         pcl::io::loadPLYFile(oriPlyPath, inMesh);
-                       // meshDataProc->addNormalForMesh(inMesh, outMesh);
+                        meshDataProc->addNormalForMesh(inMesh, outMesh);
 
                         std::string oriPcdPath = curAppPath + "/result.pcd";
                         std::string finalMeshPath = curAppPath + "/finalMesh.ply";
