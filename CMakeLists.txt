@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.4.0)
 
 #set project name
-project(OpenGL-Rendering-Master)
+project(OpenGL-Rendering-Eraser-Master)
 SET(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_INCLUDE_CURRENT_DIR ON) 
 # Enable C++17
@@ -38,21 +38,6 @@ else()
 endif(GLUT_ROOT)
 include_directories(${GLUT_INC_DIR})
 
-# GLM
-if(NOT GLM_ROOT)
-    set(GLM_ROOT "" CACHE PATH "glm root")
-endif()
-if(GLM_ROOT)
-	set(GLM_LIB_DIR ${GLM_ROOT}/lib/)
-    set(GLM_BIN_DIR ${GLM_ROOT}/bin/)
-    file(GLOB GLM_LIB_FILES ${GLM_ROOT}/lib/*.lib)
-    file(GLOB GLM_BIN_FILES ${GLM_ROOT}/bin/*.dll)
-    set(GLM_INC_DIR ${GLM_ROOT}/include/)
-else()
-    message(FATAL_ERROR "can not generate without GLM")
-endif(GLM_ROOT)
-include_directories(${GLM_INC_DIR})
-
 # PCL
 find_package(PCL 1.11 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
@@ -85,12 +70,8 @@ target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenG
 target_link_libraries (${PROJECT_NAME} ${PCL_LIBRARIES})
 target_link_libraries (${PROJECT_NAME} ${SURFACE_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${GLUT_LIB_FILES})
-target_link_libraries (${PROJECT_NAME} ${GLM_LIB_FILES})
 
 #copy file from source dirtory to binaray dirtory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data DESTINATION ${PROJECT_BINARY_DIR}/Release)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Shader DESTINATION ${PROJECT_BINARY_DIR}/Release)
 
-# generate libraies
-#add_library(DataProcessing DataProcessing.cpp)
-#target_link_libraries(DataProcessing Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL)

@@ -76,24 +76,6 @@ void MainWindow::startRendering(){
                 if ((originalPointData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointData3D.size())) {
                         surface->construction(originalPointData);
-
-                        /*
-                        * VTK 
-                        string aaa = meshDataProc->getAppPath();
-                        std::string oriPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
-                        std::string transMeshPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/transMesh.ply";
-                        std::string transMeshPcdPath = "C:/Project/OpenGL-Rendering-Master-Build/transMesh.pcd";
-                        std::string finalMeshPath = "C:/Project/OpenGL-Rendering-Master-Build/finalMesh.ply";
-
-                        meshDataProc->ply2ply(oriPlyPath, transMeshPlyPath);
-                        meshDataProc->ply2pcd(transMeshPlyPath, transMeshPcdPath);
-                        meshDataProc->getNormalVector(transMeshPcdPath);
-                        pcl::PolygonMesh mesh;
-                        pcl::io::loadPLYFile(transMeshPlyPath, mesh);
-                        meshDataProc->getMeshData(mesh);
-                        meshDataProc->writePlyData(mesh);
-                        meshDataProc->loadMeshData(finalMeshPath.data());
-                        */
                         // Open3D
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
