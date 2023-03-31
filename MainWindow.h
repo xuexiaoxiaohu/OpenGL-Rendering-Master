@@ -12,7 +12,7 @@ class MainWindow : public QMainWindow{
 public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
-
+	bool isReConstru = true;
 public slots:
 	void chooseFile();
 	void startRendering();

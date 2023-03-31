@@ -70,16 +70,49 @@ void MainWindow::startRendering(){
                 myPointGLWidget->setImageData(pointData);
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
+               
                 if ((originalPointData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointData3D.size())) {
                         surface->construction(originalPointData);
-
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
                         pcl::PolygonMesh inMesh;
                         pcl::PolygonMesh outMesh;
                         pcl::io::loadPLYFile(oriPlyPath, inMesh);
                         meshDataProc->addNormalForMesh(inMesh, outMesh);
+                        std::string aaa = curAppPath + "/aaa.ply";
+                        pcl::io::savePLYFile(aaa, outMesh);
+               
+            /*            int nr_points = outMesh.cloud.width * outMesh.cloud.height;
+                        int nr_faces = outMesh.polygons.size();
+                        if (nr_points == 0) return;
+                        int point_size = outMesh.cloud.data.size() / nr_points;
+                        meshData.clear();
+
+                        for (std::size_t i = 0; i < nr_faces; i++) {
+                            for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++)
+                                std::cout << outMesh.polygons[i].vertices[j] << " ";
+                        }
+
+
+                        for (std::size_t i = 0; i < nr_points; i++) {
+                            for (std::size_t d = 0; d < outMesh.cloud.fields.size(); ++d) {
+                                if ((outMesh.cloud.fields[d].datatype == pcl::PCLPointField::FLOAT32) && (
+                                    outMesh.cloud.fields[d].name == "x" ||
+                                    outMesh.cloud.fields[d].name == "y" ||
+                                    outMesh.cloud.fields[d].name == "z" ||
+                                    outMesh.cloud.fields[d].name == "normal_x" ||
+                                    outMesh.cloud.fields[d].name == "normal_y" ||
+                                    outMesh.cloud.fields[d].name == "normal_z"
+                                    )) {
+                                    float value;
+                                    memcpy(&value, &outMesh.cloud.data[i * point_size + outMesh.cloud.fields[d].offset], sizeof(float));
+                                    meshData.emplace_back(value);
+                                }
+                            }
+                        }
+                        myMeshGLWidget->setImageData(meshData);
+                        Sleep(1000);*/
 
                         std::string oriPcdPath = curAppPath + "/result.pcd";
                         std::string finalMeshPath = curAppPath + "/finalMesh.ply";
