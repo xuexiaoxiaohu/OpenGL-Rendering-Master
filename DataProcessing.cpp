@@ -125,6 +125,39 @@ void DataProcessing::meshConvert(std::string filename) {
 
 	writePlyData(mesh);
 }
+void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh) {
+	outMesh = inMesh;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::fromPCLPointCloud2(inMesh.cloud, *cloud);
+
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
+	pcl::PointCloud<pcl::Normal>::Ptr normalsRefinedPtr(new pcl::PointCloud<pcl::Normal>);
+	std::vector<pcl::Indices> k_indices;
+	std::vector<std::vector<float>> k_sqr_distances;
+	pcl::search::KdTree<pcl::PointXYZ> search;
+	search.setInputCloud(cloud);
+	search.nearestKSearch(*cloud, pcl::Indices(), NUM_NEIGHBORS, k_indices, k_sqr_distances);
+	pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
+
+	for (size_t i = 0; i < cloud->size(); ++i) {
+		pcl::Normal normal;
+		ne.computePointNormal(*cloud, k_indices[i], normal.normal_x, normal.normal_y, normal.normal_z, normal.curvature);
+		pcl::flipNormalTowardsViewpoint((*cloud)[i], (*cloud).sensor_origin_[0], (*cloud).sensor_origin_[1],
+			(*cloud).sensor_origin_[2], normal.normal_x, normal.normal_y, normal.normal_z);
+		normals->emplace_back(normal);
+	}
+	pcl::NormalRefinement<pcl::Normal> nr(k_indices, k_sqr_distances);
+	nr.setInputCloud(normals);
+	nr.setMaxIterations(ITERATIONS);
+	nr.setConvergenceThreshold(0.1);
+	nr.filter(*normalsRefinedPtr);
+
+	pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
+	pcl::concatenateFields(*cloud, *normalsRefinedPtr, *cloud_with_normals);
+	pcl::PCLPointCloud2 outputCloud;
+	pcl::toPCLPointCloud2(*cloud_with_normals, outputCloud);
+	outMesh.cloud = outputCloud;
+}
 //Data Type Conversion(transfer mesh object to a file)
 void DataProcessing::writePlyData(pcl::PolygonMesh mesh) {
 	std::ofstream fs;

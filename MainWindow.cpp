@@ -76,16 +76,18 @@ void MainWindow::startRendering(){
 
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
-
+                        pcl::PolygonMesh inMesh;
+                        pcl::PolygonMesh outMesh;
+                        pcl::io::loadPLYFile(oriPlyPath, inMesh);
+                       // meshDataProc->addNormalForMesh(inMesh, outMesh);
 
                         std::string oriPcdPath = curAppPath + "/result.pcd";
                         std::string finalMeshPath = curAppPath + "/finalMesh.ply";
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         meshDataProc->ply2pcd(oriPlyPath, oriPcdPath);
                         meshDataProc->getNormalVector(oriPcdPath);
-                        pcl::PolygonMesh mesh;
-                        pcl::io::loadPLYFile(oriPlyPath, mesh);
-                        meshDataProc->writePlyData(mesh);
+      
+                        meshDataProc->writePlyData(inMesh);
                         meshDataProc->loadMeshData(finalMeshPath.data());
 
                         for (int i = 0, meshLineMarker = 0; i < meshDataProc->surfaceModelData.vecFaceTriangles.size() / 3; i++) {

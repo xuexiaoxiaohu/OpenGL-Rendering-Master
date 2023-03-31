@@ -38,7 +38,7 @@ public:
 	void getNormalVector(std::string pcdPath);
 	void ply2ply(std::string src, std::string dst);
 	void ply2pcd(std::string ply, std::string pcd);
-
+	void addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh);
 	// point data
 	std::vector<QVector3D>	pointData;
 	std::vector<float>		meshData;
