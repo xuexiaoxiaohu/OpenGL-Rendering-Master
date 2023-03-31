@@ -26,7 +26,6 @@ std::string DataProcessing::getAppPath() {
 }
 
 void DataProcessing::getCenterPoint(QVector3D& vec) {
-	//if (0 == pointData.size()) return;
 	vec.setX((maxCoord.x() + minCoord.x()) / 2);
 	vec.setY((maxCoord.y() + minCoord.y()) / 2);
 	vec.setZ((maxCoord.z() + minCoord.z()) / 2);
@@ -51,12 +50,12 @@ void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
 }
 
 void DataProcessing::ply2ply(std::string src, std::string dst) {
-	vtkSmartPointer<vtkPLYReader> read = vtkSmartPointer<vtkPLYReader>::New();
-	read->SetFileName(src.c_str());
-	read->Update();
+	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+	reader->SetFileName(src.c_str());
+	reader->Update();
 
 	vtkSmartPointer<vtkTriangleFilter> filter = vtkSmartPointer<vtkTriangleFilter>::New();
-	filter->SetInputData(read->GetOutput());
+	filter->SetInputData(reader->GetOutput());
 
 	vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
 	writer->SetFileName(dst.c_str());
