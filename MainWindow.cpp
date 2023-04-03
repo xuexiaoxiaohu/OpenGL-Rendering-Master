@@ -56,7 +56,7 @@ void MainWindow::startRendering(){
             QVector3D center = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
             QVector3D size = pointDataProc->maxCoord - pointDataProc->minCoord;
 
-            QVector3D cameraPos = center + QVector3D(0.0f, 0.0f, size.z() * 2.0f);
+            QVector3D cameraPos = center + QVector3D(0.0f, 0.0f, size.z() * 3.0f);
             QVector3D cameraTarget = center;
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
@@ -82,6 +82,7 @@ void MainWindow::startRendering(){
                         meshDataProc->addNormalForMesh(inMesh, outMesh);
                         std::string aaa = curAppPath + "/aaa.ply";
                         pcl::io::savePLYFile(aaa, outMesh);
+
                
             /*            int nr_points = outMesh.cloud.width * outMesh.cloud.height;
                         int nr_faces = outMesh.polygons.size();
