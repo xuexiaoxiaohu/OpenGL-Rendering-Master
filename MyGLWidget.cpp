@@ -54,9 +54,6 @@ void MyGLWidget::initializeGL(){
 }
 // PaintGL
 void MyGLWidget::paintGL(){
-    if (vertices.empty()) {
-        return;
-    }
     glFunc->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glFunc->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (DataType::PointType == dataType) {
