@@ -11,12 +11,20 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
     pointDataProc     = new DataProcessing();
     meshDataProc      = new DataProcessing();
     surface           = new SurfaceReconsturction();
-    isOpenGLThreadStart = true;
     addOpengGLWidget();
     connect(ui.openPushBtn, SIGNAL(clicked()), this, SLOT(chooseFile()));
     connect(ui.startPushBtn, SIGNAL(clicked()), this, SLOT(startRendering()));
+    connect(this, SIGNAL(signal_glUpdate()), this, SLOT(startUpdateGL()));
 }
+void MainWindow::startUpdateGL() {
+    if (ui.pointCheckBox->checkState() == Qt::Checked) {
+        myPointGLWidget->repaint();
+    }
+    if (ui.meshCheckBox->checkState() == Qt::Checked) {
+        myMeshGLWidget->repaint();
+    }
 
+}
 MainWindow::~MainWindow(){
     delete surface;
     delete myPointGLWidget;
@@ -67,6 +75,7 @@ void MainWindow::startRendering(){
                     pointData[pointLineMarker++] = pointDataProc->pointData[i].z();
                 }
                 myPointGLWidget->setImageData(pointData);
+                emit signal_glUpdate();
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                
@@ -105,7 +114,7 @@ void MainWindow::startRendering(){
                         }
                         
                         myMeshGLWidget->setImageData(meshData);
-                        Sleep(100);
+                        emit signal_glUpdate();
                     }
                 }
             }

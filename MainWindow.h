@@ -16,7 +16,7 @@ public:
 public slots:
 	void chooseFile();
 	void startRendering();
-
+	void startUpdateGL();
 signals:
 	void signal_glUpdate();
 

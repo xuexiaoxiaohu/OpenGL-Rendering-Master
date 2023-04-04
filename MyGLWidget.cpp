@@ -40,17 +40,6 @@ void MyGLWidget::initializeGL(){
     initializeShader();
     glFunc = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_5_Core>();
     glFunc->glEnable(GL_DEPTH_TEST);
-
-    auto renderFunc = [=]() {
-        while (true) {
-            Sleep(10);
-            m_mutex.lock();
-;           update();
-            m_mutex.unlock();
-        }
-    };
-    std::thread renderThread(renderFunc);
-    renderThread.detach();
 }
 // PaintGL
 void MyGLWidget::paintGL(){
@@ -134,10 +123,12 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         modelSave.translate((float)subPoint.x() / 200, (float)subPoint.y() / 200);
         modelSave = modelSave * modelUse;
     }
+    repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     setPressPosition(event->pos());
     modelUse = modelSave;
+    repaint();
 }
 
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
@@ -147,6 +138,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 void MyGLWidget::wheelEvent(QWheelEvent* event) {
     QPoint offset = event->angleDelta();
     camera->mouseScroll(offset.y() / 20);
+    repaint();
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
