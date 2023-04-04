@@ -36,13 +36,15 @@ void MainWindow::addOpengGLWidget(){
 
 // Choose File
 void MainWindow::chooseFile(){
-    QString fileName = QFileDialog::getOpenFileName(nullptr, "open", ".", "*.txt");
-    if (!fileName.isEmpty()){
-        ui.lineEdit_file->setText(fileName);
-        pointDataProc->loadPointData(fileName.toStdString().c_str());
-        pointData3D.resize(pointDataProc->pointData.size());
-        pointData3D = pointDataProc->pointData;
-    }
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
+    
+    if (fileName.isEmpty()) return;
+
+    ui.lineEdit_file->setText(fileName);
+    pointDataProc->loadPointData(fileName.toStdString().c_str());
+    pointData3D.resize(pointDataProc->pointData.size());
+    pointData3D = pointDataProc->pointData;
+    
 }
 // Begin render
 void MainWindow::startRendering(){
