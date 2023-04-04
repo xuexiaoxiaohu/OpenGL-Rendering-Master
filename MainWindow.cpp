@@ -16,15 +16,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
     connect(ui.startPushBtn, SIGNAL(clicked()), this, SLOT(startRendering()));
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(startUpdateGL()));
 }
-void MainWindow::startUpdateGL() {
-    if (ui.pointCheckBox->checkState() == Qt::Checked) {
-        myPointGLWidget->repaint();
-    }
-    if (ui.meshCheckBox->checkState() == Qt::Checked) {
-        myMeshGLWidget->repaint();
-    }
-
-}
 MainWindow::~MainWindow(){
     delete surface;
     delete myPointGLWidget;
@@ -93,26 +84,22 @@ void MainWindow::startRendering(){
                         int nr_points = outMesh.cloud.width * outMesh.cloud.height;
                         int nr_faces = outMesh.polygons.size();
                         int point_size = outMesh.cloud.data.size() / nr_points;
+                       
                         meshData.clear();
-                        pcl::PointCloud<pcl::PointNormal>::Ptr cloud111(new pcl::PointCloud<pcl::PointNormal>);
-                        pcl::fromPCLPointCloud2(outMesh.cloud, *cloud111);
+                        pcl::PointCloud<pcl::PointNormal>::Ptr pointsWithNormal(new pcl::PointCloud<pcl::PointNormal>);
+                        pcl::fromPCLPointCloud2(outMesh.cloud, *pointsWithNormal);
                         for (std::size_t i = 0; i < nr_faces; i++) {
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
                                 pcl::Vertices& vertices = outMesh.polygons[outMesh.polygons[i].vertices[j]];
-                                for (size_t k = 0; k < vertices.vertices.size(); k++){
-                                    int index = vertices.vertices[k];
-                                    pcl::PointNormal point = cloud111->points[index];
-                                    meshData.emplace_back(point.x);
-                                    meshData.emplace_back(point.y);
-                                    meshData.emplace_back(point.z);
-                                    meshData.emplace_back(point.normal_x);
-                                    meshData.emplace_back(point.normal_y);
-                                    meshData.emplace_back(point.normal_z);
-                                    
-                                }
+                                pcl::PointNormal point = pointsWithNormal->points[outMesh.polygons[i].vertices[j]];
+                                meshData.emplace_back(point.x);
+                                meshData.emplace_back(point.y);
+                                meshData.emplace_back(point.z);
+                                meshData.emplace_back(point.normal_x);
+                                meshData.emplace_back(point.normal_y);
+                                meshData.emplace_back(point.normal_z);
                             }
                         }
-                        
                         myMeshGLWidget->setImageData(meshData);
                         emit signal_glUpdate();
                     }
@@ -122,4 +109,13 @@ void MainWindow::startRendering(){
     };
     std::thread collectDataThread(collectDataFunc);
     collectDataThread.detach();
+}
+void MainWindow::startUpdateGL() {
+    if (ui.pointCheckBox->checkState() == Qt::Checked) {
+        myPointGLWidget->repaint();
+    }
+    if (ui.meshCheckBox->checkState() == Qt::Checked) {
+        myMeshGLWidget->repaint();
+    }
+
 }
