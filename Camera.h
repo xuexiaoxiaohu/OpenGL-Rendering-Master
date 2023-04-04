@@ -4,16 +4,15 @@
 class Camera
 {
 public:
-	QVector3D position;
-	QVector3D front;
+	QVector3D eye;
+	QVector3D center;
 	QVector3D up;
-
 	float scrollSensitivity;
 
-	Camera(QVector3D position = QVector3D(0.0f, 0.0f, 3.0f),QVector3D front = QVector3D(0.0, 0.0, 0.0),QVector3D up = QVector3D(0.0f, 1.0f, 0.0f)){
-		this->position = position;
+	Camera(QVector3D eye = QVector3D(0.0f, 0.0f, 3.0f),QVector3D center = QVector3D(0.0, 0.0, 0.0),QVector3D up = QVector3D(0.0f, 1.0f, 0.0f)){
+		this->eye = eye;
+		this->center = center;
 		this->up = up;
-		this->front = front;
 		this->scrollSensitivity = 0.01f;
 	}
 	// Get 

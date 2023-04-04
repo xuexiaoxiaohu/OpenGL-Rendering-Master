@@ -89,9 +89,9 @@ void MainWindow::startRendering(){
                         pcl::fromPCLPointCloud2(outMesh.cloud, *cloud111);
                         for (std::size_t i = 0; i < nr_faces; i++) {
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
-                                const pcl::Vertices& vertices = outMesh.polygons[outMesh.polygons[i].vertices[j]];
-                                for (size_t j = 0; j < vertices.vertices.size(); j++){
-                                    int index = vertices.vertices[j];
+                                pcl::Vertices& vertices = outMesh.polygons[outMesh.polygons[i].vertices[j]];
+                                for (size_t k = 0; k < vertices.vertices.size(); k++){
+                                    int index = vertices.vertices[k];
                                     pcl::PointNormal point = cloud111->points[index];
                                     meshData.emplace_back(point.x);
                                     meshData.emplace_back(point.y);
@@ -103,7 +103,9 @@ void MainWindow::startRendering(){
                                 }
                             }
                         }
+                        
                         myMeshGLWidget->setImageData(meshData);
+                        Sleep(100);
                     }
                 }
             }

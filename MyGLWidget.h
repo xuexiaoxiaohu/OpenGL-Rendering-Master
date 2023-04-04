@@ -22,7 +22,7 @@ public:
     MyGLWidget(QWidget* parent, int DT);
     ~MyGLWidget();
     void setImageData(std::vector<GLfloat> data);
-    void setCameraPara(QVector3D pos, QVector3D front);
+    void setCameraPara(QVector3D eye, QVector3D center);
 
 protected:
     void initializeGL()         override;

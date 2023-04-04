@@ -2,10 +2,10 @@
 #include <QMatrix4x4>
 QMatrix4x4 Camera::getViewMatrix(){
 	QMatrix4x4 matrix;
-	matrix.lookAt(position, front, up);
+	matrix.lookAt(eye, center, up);
 	return matrix;
 }
 void Camera::mouseScroll(float yoffset){
 	yoffset *= scrollSensitivity;
-	position.setZ(position.z() + yoffset);
+	eye.setZ(eye.z() + yoffset);
 }

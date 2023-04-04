@@ -23,9 +23,9 @@ MyGLWidget::~MyGLWidget(){
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
     vertices = data;
 }
-void MyGLWidget::setCameraPara(QVector3D pos, QVector3D front) {
-    camera->position = pos;
-    camera->front = front;
+void MyGLWidget::setCameraPara(QVector3D eye, QVector3D center) {
+    camera->eye = eye;
+    camera->center = center;
 }
 void MyGLWidget::initializeShader() {
     QString qAppDir = QCoreApplication::applicationDirPath();
@@ -54,6 +54,9 @@ void MyGLWidget::initializeGL(){
 }
 // PaintGL
 void MyGLWidget::paintGL(){
+    if (vertices.empty()) {
+        return;
+    }
     glFunc->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glFunc->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (DataType::PointType == dataType) {
@@ -81,7 +84,9 @@ void MyGLWidget::paintGL(){
         glFunc->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
         glFunc->glEnableVertexAttribArray(1);
         glFunc->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
         glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+        
         meshShader->use();
         meshShader->setUniformVec3("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
         meshShader->setUniformVec3("material.ambient", QVector3D(0.5f, 0.5f, 0.5f));
