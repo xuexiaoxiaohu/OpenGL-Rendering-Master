@@ -58,13 +58,13 @@ void MainWindow::startRendering(){
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
-                pointData.resize(3 * rawData.size());
+                this->glPointData.resize(3 * rawData.size());
                 for (int i = 0, pointLineMarker = 0; i < rawData.size(); i++) {
-                    pointData[pointLineMarker++] = pointDataProc->pointData[i].x();
-                    pointData[pointLineMarker++] = pointDataProc->pointData[i].y();
-                    pointData[pointLineMarker++] = pointDataProc->pointData[i].z();
+                    glPointData[pointLineMarker++] = pointDataProc->pointData[i].x();
+                    glPointData[pointLineMarker++] = pointDataProc->pointData[i].y();
+                    glPointData[pointLineMarker++] = pointDataProc->pointData[i].z();
                 }
-                myPointGLWidget->setImageData(pointData);
+                myPointGLWidget->setImageData(glPointData);
                 emit signal_glUpdate();
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
@@ -75,8 +75,7 @@ void MainWindow::startRendering(){
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
-                        pcl::PolygonMesh inMesh;
-                        pcl::PolygonMesh outMesh;
+                        pcl::PolygonMesh inMesh, outMesh;
                         pcl::io::loadPLYFile(oriPlyPath, inMesh);
                         meshDataProc->addNormalForMesh(inMesh, outMesh);
                
@@ -84,22 +83,22 @@ void MainWindow::startRendering(){
                         int nr_faces = outMesh.polygons.size();
                         int point_size = outMesh.cloud.data.size() / nr_points;
                        
-                        meshData.clear();
-                        pcl::PointCloud<pcl::PointNormal>::Ptr pointsWithNormal(new pcl::PointCloud<pcl::PointNormal>);
-                        pcl::fromPCLPointCloud2(outMesh.cloud, *pointsWithNormal);
+                        glMeshData.clear();
+                        pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
+                        pcl::fromPCLPointCloud2(outMesh.cloud, *pointsPtr);
                         for (std::size_t i = 0; i < nr_faces; i++) {
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
                                 pcl::Vertices& vertices = outMesh.polygons[outMesh.polygons[i].vertices[j]];
-                                pcl::PointNormal point = pointsWithNormal->points[outMesh.polygons[i].vertices[j]];
-                                meshData.emplace_back(point.x);
-                                meshData.emplace_back(point.y);
-                                meshData.emplace_back(point.z);
-                                meshData.emplace_back(point.normal_x);
-                                meshData.emplace_back(point.normal_y);
-                                meshData.emplace_back(point.normal_z);
+                                pcl::PointNormal point = pointsPtr->points[outMesh.polygons[i].vertices[j]];
+                                glMeshData.emplace_back(point.x);
+                                glMeshData.emplace_back(point.y);
+                                glMeshData.emplace_back(point.z);
+                                glMeshData.emplace_back(point.normal_x);
+                                glMeshData.emplace_back(point.normal_y);
+                                glMeshData.emplace_back(point.normal_z);
                             }
                         }
-                        myMeshGLWidget->setImageData(meshData);
+                        myMeshGLWidget->setImageData(glMeshData);
                         emit signal_glUpdate();
                     }
                 }

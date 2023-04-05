@@ -26,12 +26,6 @@ void DataProcessing::loadPointData(const char* path) {
 	readTextData.close();
 }
 
-void DataProcessing::getCenterPoint(QVector3D& vec) {
-	vec.setX((maxCoord.x() + minCoord.x()) / 2);
-	vec.setY((maxCoord.y() + minCoord.y()) / 2);
-	vec.setZ((maxCoord.z() + minCoord.z()) / 2);
-}
-
 void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
 	maxCoord = minCoord = {data[0].x() ,data[0].y() ,data[0].z()};
 	for (int i = 0; i < data.size(); i++) {

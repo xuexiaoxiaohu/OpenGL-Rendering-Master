@@ -29,8 +29,7 @@ private:
 	DataProcessing* pointDataProc;
 	DataProcessing* meshDataProc;
 
-	std::vector<GLfloat> pointData;	
-	std::vector<GLfloat> meshData;
-
 	std::vector<QVector3D> rawData;
+	std::vector<GLfloat> glPointData;
+	std::vector<GLfloat> glMeshData;
 };	
