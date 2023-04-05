@@ -65,10 +65,8 @@ void MainWindow::startRendering(){
                     glPointData[pointLineMarker++] = pointDataProc->pointData[i].z();
                 }
                 myPointGLWidget->setImageData(glPointData);
-                emit signal_glUpdate();
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
-               
                 if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointDataProc->pointData.size())) {
                         surface->construction(rawData);
@@ -78,17 +76,13 @@ void MainWindow::startRendering(){
                         pcl::PolygonMesh inMesh, outMesh;
                         pcl::io::loadPLYFile(oriPlyPath, inMesh);
                         meshDataProc->addNormalForMesh(inMesh, outMesh);
-               
-                        int nr_points = outMesh.cloud.width * outMesh.cloud.height;
-                        int nr_faces = outMesh.polygons.size();
-                        int point_size = outMesh.cloud.data.size() / nr_points;
-                       
-                        glMeshData.clear();
+              
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
                         pcl::fromPCLPointCloud2(outMesh.cloud, *pointsPtr);
-                        for (std::size_t i = 0; i < nr_faces; i++) {
+
+                        for (std::size_t i = 0; i < outMesh.polygons.size(); i++) {
+                            if (i == 0)  glMeshData.clear();
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
-                                pcl::Vertices& vertices = outMesh.polygons[outMesh.polygons[i].vertices[j]];
                                 pcl::PointNormal point = pointsPtr->points[outMesh.polygons[i].vertices[j]];
                                 glMeshData.emplace_back(point.x);
                                 glMeshData.emplace_back(point.y);
@@ -99,10 +93,10 @@ void MainWindow::startRendering(){
                             }
                         }
                         myMeshGLWidget->setImageData(glMeshData);
-                        emit signal_glUpdate();
                     }
                 }
             }
+            emit signal_glUpdate();
         }
     };
     std::thread collectDataThread(collectDataFunc);
