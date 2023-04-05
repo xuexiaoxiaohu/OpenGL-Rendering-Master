@@ -50,27 +50,26 @@ void MainWindow::startRendering(){
             rawData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
             pointDataProc->getMaxMinCoord(rawData);
 
-            QVector3D center = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
-            QVector3D size = pointDataProc->maxCoord - pointDataProc->minCoord;
-
-            QVector3D cameraPos = center + QVector3D(0.0f, 0.0f, size.z() * 3.0f);
-            QVector3D cameraTarget = center;
+            QVector3D cameraTarget = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
+            QVector3D cameraPos = cameraTarget + QVector3D(0.0f, 0.0f, (pointDataProc->maxCoord - pointDataProc->minCoord).z() * 2.0f);
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
-                myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
-                glPointData.resize(3 * rawData.size());
-                for (int i = 0, pointLineMarker = 0; i < rawData.size(); i++) {
-                    glPointData[pointLineMarker++] = pointDataProc->pointData[i].x();
-                    glPointData[pointLineMarker++] = pointDataProc->pointData[i].y();
-                    glPointData[pointLineMarker++] = pointDataProc->pointData[i].z();
+               
+                for (int i = 0; i < rawData.size(); i++) {
+                    if (i == 0) glPointData.clear();
+                    glPointData.emplace_back(pointDataProc->pointData[i].x());
+                    glPointData.emplace_back(pointDataProc->pointData[i].y());
+                    glPointData.emplace_back(pointDataProc->pointData[i].z());
                 }
+                myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
                 myPointGLWidget->setImageData(glPointData);
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointDataProc->pointData.size())) {
+                      
                         surface->construction(rawData);
-                        myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
+
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
                         pcl::PolygonMesh inMesh, outMesh;
@@ -92,6 +91,7 @@ void MainWindow::startRendering(){
                                 glMeshData.emplace_back(point.normal_z);
                             }
                         }
+                        myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         myMeshGLWidget->setImageData(glMeshData);
                     }
                 }
@@ -109,5 +109,4 @@ void MainWindow::startUpdateGL() {
     if (ui.meshCheckBox->checkState() == Qt::Checked) {
         myMeshGLWidget->repaint();
     }
-
 }
