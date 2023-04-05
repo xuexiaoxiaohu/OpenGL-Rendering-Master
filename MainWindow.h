@@ -30,6 +30,7 @@ private:
 	DataProcessing* meshDataProc;
 
 	std::vector<QVector3D> rawData;
+	std::vector<QVector3D> meshVertices;
 	std::vector<GLfloat> glPointData;
 	std::vector<GLfloat> glMeshData;
 };	

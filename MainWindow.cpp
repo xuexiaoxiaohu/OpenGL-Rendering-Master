@@ -67,9 +67,7 @@ void MainWindow::startRendering(){
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointDataProc->pointData.size())) {
-                      
                         surface->construction(rawData);
-
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
                         pcl::PolygonMesh inMesh, outMesh;
@@ -80,7 +78,10 @@ void MainWindow::startRendering(){
                         pcl::fromPCLPointCloud2(outMesh.cloud, *pointsPtr);
 
                         for (std::size_t i = 0; i < outMesh.polygons.size(); i++) {
-                            if (i == 0)  glMeshData.clear();
+                            if (i == 0) {
+                                glMeshData.clear();
+                                meshVertices.clear();
+                            }
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
                                 pcl::PointNormal point = pointsPtr->points[outMesh.polygons[i].vertices[j]];
                                 glMeshData.emplace_back(point.x);
@@ -89,8 +90,12 @@ void MainWindow::startRendering(){
                                 glMeshData.emplace_back(point.normal_x);
                                 glMeshData.emplace_back(point.normal_y);
                                 glMeshData.emplace_back(point.normal_z);
+
+                                meshVertices.emplace_back(QVector3D{ point.y ,point.y,point.z });
                             }
                         }
+                        myMeshGLWidget->setMesh(outMesh);
+                        myMeshGLWidget->setMeshVertices(meshVertices);
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         myMeshGLWidget->setImageData(glMeshData);
                     }

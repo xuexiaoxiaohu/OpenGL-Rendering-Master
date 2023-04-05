@@ -69,3 +69,47 @@ void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh
 	pcl::toPCLPointCloud2(*cloud_with_normals, outputCloud);
 	outMesh.cloud = outputCloud;
 }
+// Find the nearest vertex of the world coordinate point
+int DataProcessing::findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {
+	int nearestVertexIndex = -1;
+	float minDist = std::numeric_limits<float>::max();
+	for (int i = 0; i < glMeshVertices.size(); i++) {
+		float dist = (glMeshVertices[i] - worldPos).length();
+		if (dist < minDist) {
+			nearestVertexIndex = i;
+			minDist = dist;
+		}
+	}
+	return nearestVertexIndex;
+}
+std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point) {
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::fromPCLPointCloud2(mesh.cloud, *cloud);
+
+	pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtree(new pcl::KdTreeFLANN<pcl::PointXYZ>);
+	kdtree->setInputCloud(cloud);
+	std::vector<int> k_indices;
+	std::vector<float> k_distances;
+	kdtree->nearestKSearch(query_point, 10, k_indices, k_distances);
+	return k_indices;
+}
+pcl::PolygonMesh DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
+	std::vector<pcl::Vertices>& polygons = mesh.polygons;
+	for (int i = 0; i < polygons.size(); ++i) {
+		pcl::Vertices& vertices = polygons[i];
+		bool should_remove_polygon = false;
+		for (int j = 0; j < verticesToDelete.size(); ++j) {
+			int index = verticesToDelete[j];
+			if (std::find(vertices.vertices.begin(), vertices.vertices.end(), index) != vertices.vertices.end()) {
+				should_remove_polygon = true;
+				break;
+			}
+		}
+		if (should_remove_polygon) {
+			polygons.erase(polygons.begin() + i);
+			--i;
+		}
+	}
+	mesh.polygons = polygons;
+	return mesh;
+}

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <mutex>
 #include <QMutex>
+#include <Macro.h>
 #include <glut.h>
 QMutex m_mutex;
 MyGLWidget::MyGLWidget(QWidget* parent,int DT){
@@ -11,6 +12,7 @@ MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     proj.setToIdentity();
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
+    dataProc = new DataProcessing();
 }
 
 MyGLWidget::~MyGLWidget(){
@@ -18,6 +20,12 @@ MyGLWidget::~MyGLWidget(){
     delete meshShader;
     glFunc->glDeleteVertexArrays(1, &meshVAO);
     glFunc->glDeleteBuffers(1, &meshVBO);
+}
+void MyGLWidget::setMesh(pcl::PolygonMesh mesh) {
+    this->mesh = mesh;
+}
+void MyGLWidget::setMeshVertices(std::vector<QVector3D> meshVertices) {
+    this->meshVertices = meshVertices;
 }
 
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
@@ -126,8 +134,40 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    setPressPosition(event->pos());
-    modelUse = modelSave;
+    QPoint mousePos = event->pos();
+    if (isShiftPressed && (event->buttons() & Qt::LeftButton)) {
+        QVector3D worldPos = convertScreenToWorld(mousePos);
+        int nearestVertexIndex = dataProc->findNearestVertex(worldPos, meshVertices);
+        if (nearestVertexIndex != -1) {
+            pcl::PointXYZ nearestVertex;
+            nearestVertex.x = meshVertices[nearestVertexIndex].x();
+            nearestVertex.y = meshVertices[nearestVertexIndex].y();
+            nearestVertex.z = meshVertices[nearestVertexIndex].z();
+
+            pcl::Indices toRemove = dataProc->findKNeighbors(mesh, nearestVertex);
+            dataProc->eraseMesh(mesh, toRemove);
+        }
+        pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Select-Master-Build\\aaa.ply", mesh);
+
+        pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
+        pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
+        for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
+            for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
+                pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
+                glMeshData.emplace_back(point.x);
+                glMeshData.emplace_back(point.y);
+                glMeshData.emplace_back(point.z);
+                glMeshData.emplace_back(point.normal_x);
+                glMeshData.emplace_back(point.normal_y);
+                glMeshData.emplace_back(point.normal_z);
+            }
+        }
+        setImageData(glMeshData);
+    }
+    else{
+        setPressPosition(event->pos());
+        modelUse = modelSave;
+    }
     repaint();
 }
 
@@ -141,10 +181,10 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     repaint();
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
-
+    if (event->key() == Qt::Key_Shift)  isShiftPressed = true;
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
-
+    if (event->key() == Qt::Key_Shift)  isShiftPressed = false;
 }
 
 void MyGLWidget::setPressPosition(QPoint p_ab) {
@@ -155,4 +195,26 @@ void MyGLWidget::translate_point(QPoint& p_ab) {
     int x = p_ab.x() - this->width() / 2;
     int y = -(p_ab.y() - this->height() / 2);
     p_ab = {x,y};
+}
+// Convert screen coordinates to world coordinates
+QVector3D MyGLWidget::convertScreenToWorld(QPoint screenPoint) {
+    int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
+    double modelViewMatrix[16];
+    double projectionMatrix[16];
+
+    QMatrix4x4 mVMatrix = (camera->getViewMatrix()) * model;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            modelViewMatrix[i * 4 + j] = mVMatrix(j, i);
+            projectionMatrix[i * 4 + j] = proj(j, i);
+        }
+    }
+    GLfloat depthValue;
+    makeCurrent();
+    glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depthValue);
+    doneCurrent();
+
+    double worldX, worldY, worldZ;
+    gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depthValue, modelViewMatrix, projectionMatrix, viewport, &worldX, &worldY, &worldZ);
+    return QVector3D((double)worldX, (double)worldY, (double)worldZ);
 }

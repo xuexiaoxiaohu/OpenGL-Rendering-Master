@@ -9,6 +9,7 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLFunctions_4_5_Core>
+#include <DataProcessing.h>
 
 enum DataType 
 {
@@ -23,6 +24,12 @@ public:
     ~MyGLWidget();
     void setImageData(std::vector<GLfloat> data);
     void setCameraPara(QVector3D eye, QVector3D center);
+    void setMeshVertices(std::vector<QVector3D> meshVertexs);
+    void setMesh(pcl::PolygonMesh mesh);
+
+    pcl::PolygonMesh mesh;
+    std::vector<QVector3D> meshVertices;
+    std::vector<GLfloat> glMeshData;
 
 protected:
     void initializeGL()         override;
@@ -39,11 +46,13 @@ protected:
     void initializeShader();
     void setPressPosition(QPoint p_ab);
     void translate_point(QPoint& p_ab);
+    QVector3D convertScreenToWorld(QPoint point);
+    DataProcessing* dataProc;
 
 private:
     ShaderProgram* meshShader;
     ShaderProgram* pointShader;
-
+    bool isShiftPressed = false;
     QMatrix4x4 model;
     QMatrix4x4 modelUse;
     QMatrix4x4 modelSave;
