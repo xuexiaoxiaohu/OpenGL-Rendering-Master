@@ -6,13 +6,11 @@
 #include "DataProcessing.h"
 #include "SurfaceReconsturction.h"
 #include <QMutex>
-//#include <QMutexLocker>
 class MainWindow : public QMainWindow{
 	Q_OBJECT
 public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
-	bool isReConstru = true;
 public slots:
 	void chooseFile();
 	void startRendering();
@@ -36,6 +34,4 @@ private:
 
 	std::vector<QVector3D> originalPointData;
 	std::vector<QVector3D>	pointData3D;
-	bool isOpenGLThreadStart;
-	std::ofstream fs;
 };	

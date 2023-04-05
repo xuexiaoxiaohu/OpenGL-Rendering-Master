@@ -22,15 +22,16 @@ class DataProcessing {
 public:
 	DataProcessing();
 	~DataProcessing();
+
 	void loadPointData(const char* path);
 	std::string getAppPath();
 	void addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh);
 	void getMaxMinCoord(std::vector<QVector3D> data);
 	
 	std::vector<QVector3D>	pointData;
-	QVector3D				centerPoint;
-	QVector3D				maxCoord;
-	QVector3D				minCoord;
+	QVector3D centerPoint;
+	QVector3D maxCoord;
+	QVector3D minCoord;
 private:
 	void getCenterPoint(QVector3D& vec);
 };

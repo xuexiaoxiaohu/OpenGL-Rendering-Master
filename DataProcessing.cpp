@@ -10,11 +10,20 @@ DataProcessing::~DataProcessing() {
 
 }
 
-
 std::string DataProcessing::getAppPath() {
 	QString qAppDir = QCoreApplication::applicationDirPath();
 	std::string::size_type iPos = (qAppDir.toStdString().find_last_of('\\') + 1) == 0 ?qAppDir.toStdString().find_last_of('/') + 1 : qAppDir.toStdString().find_last_of('\\') + 1;
 	return qAppDir.toStdString().substr(0, iPos);
+}
+void DataProcessing::loadPointData(const char* path) {
+	std::fstream readTextData(path);
+	if (!readTextData) return;
+	float x, y, z;
+	while (readTextData >> x >> y >> z) {
+		QVector3D data = { x, y, z };
+		pointData.emplace_back(data);
+	}
+	readTextData.close();
 }
 
 void DataProcessing::getCenterPoint(QVector3D& vec) {
@@ -24,9 +33,7 @@ void DataProcessing::getCenterPoint(QVector3D& vec) {
 }
 
 void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
-	maxCoord = { data[0].x() ,data[0].y() ,data[0].z() };
-	minCoord = maxCoord;
-
+	maxCoord = minCoord = {data[0].x() ,data[0].y() ,data[0].z()};
 	for (int i = 0; i < data.size(); i++) {
 		if (maxCoord.x() < data[i].x())	maxCoord.setX(data[i].x());
 		if (maxCoord.y() < data[i].y())	maxCoord.setY(data[i].y());
@@ -70,14 +77,4 @@ void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh
 	pcl::PCLPointCloud2 outputCloud;
 	pcl::toPCLPointCloud2(*cloud_with_normals, outputCloud);
 	outMesh.cloud = outputCloud;
-}
-void DataProcessing::loadPointData(const char* path) {
-	std::fstream readTextData(path);
-	if (!readTextData) return;
-	float x, y, z;
-	while (readTextData >> x >> y >> z) {
-		QVector3D data = { x, y, z };
-		pointData.emplace_back(data);
-	}
-	readTextData.close();
 }
