@@ -38,19 +38,16 @@ void MainWindow::addOpengGLWidget(){
 void MainWindow::chooseFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
     
-if (fileName.isEmpty()) return;
+    if (fileName.isEmpty()) return;
 
     ui.lineEdit_file->setText(fileName);
     pointDataProc->loadPointData(fileName.toStdString().c_str());
-    pointData3D.resize(pointDataProc->pointData.size());
-    pointData3D = pointDataProc->pointData;
-    
 }
 // Begin render
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
-        for (int pointLine = 0; pointLine < pointData3D.size(); pointLine++){
-            originalPointData.emplace_back(QVector3D{pointData3D[pointLine].x(), pointData3D[pointLine].y(), pointData3D[pointLine].z()});
+        for (int pointLine = 0; pointLine < pointDataProc->pointData.size(); pointLine++){
+            originalPointData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
             pointDataProc->getMaxMinCoord(originalPointData);
 
             QVector3D center = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
@@ -73,7 +70,7 @@ void MainWindow::startRendering(){
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                
                 if ((originalPointData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
-                    if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointData3D.size())) {
+                    if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointDataProc->pointData.size())) {
                         surface->construction(originalPointData);
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         std::string curAppPath = meshDataProc->getAppPath();
