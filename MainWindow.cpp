@@ -58,7 +58,7 @@ void MainWindow::startRendering(){
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
-                this->glPointData.resize(3 * rawData.size());
+                glPointData.resize(3 * rawData.size());
                 for (int i = 0, pointLineMarker = 0; i < rawData.size(); i++) {
                     glPointData[pointLineMarker++] = pointDataProc->pointData[i].x();
                     glPointData[pointLineMarker++] = pointDataProc->pointData[i].y();
