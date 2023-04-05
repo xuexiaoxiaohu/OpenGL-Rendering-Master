@@ -28,13 +28,15 @@ protected:
     void initializeGL()         override;
     void paintGL()              override;
     void resizeGL(int w, int h) override; 
+
+    void mousePressEvent(QMouseEvent* event)  override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void wheelEvent(QWheelEvent* event) override;
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+
     void initializeShader();
-    void mousePressEvent(QMouseEvent* event);
-    void mouseReleaseEvent(QMouseEvent* event);
-    void mouseMoveEvent(QMouseEvent* event);
-    void wheelEvent(QWheelEvent* event);
-    void keyPressEvent(QKeyEvent* event);
-    void keyReleaseEvent(QKeyEvent* event);
     void setPressPosition(QPoint p_ab);
     void translate_point(QPoint& p_ab);
 
