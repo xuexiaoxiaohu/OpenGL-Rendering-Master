@@ -24,21 +24,18 @@ void DataProcessing::getCenterPoint(QVector3D& vec) {
 }
 
 void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
-	QVector3D vecMax, vecMin;
-	vecMax = { data[0].x() ,data[0].y() ,data[0].z() };
-	vecMin = vecMax;
+	maxCoord = { data[0].x() ,data[0].y() ,data[0].z() };
+	minCoord = maxCoord;
 
 	for (int i = 0; i < data.size(); i++) {
-		if (vecMax.x() < data[i].x())	vecMax.setX(data[i].x());
-		if (vecMax.y() < data[i].y())	vecMax.setY(data[i].y());
-		if (vecMax.z() < data[i].z())	vecMax.setZ(data[i].z());
+		if (maxCoord.x() < data[i].x())	maxCoord.setX(data[i].x());
+		if (maxCoord.y() < data[i].y())	maxCoord.setY(data[i].y());
+		if (maxCoord.z() < data[i].z())	maxCoord.setZ(data[i].z());
 
-		if (vecMin.x() > data[i].x())	vecMin.setX(data[i].x());
-		if (vecMin.y() > data[i].y())	vecMin.setY(data[i].y());
-		if (vecMin.z() > data[i].z())	vecMin.setZ(data[i].z());
+		if (minCoord.x() > data[i].x())	minCoord.setX(data[i].x());
+		if (minCoord.y() > data[i].y())	minCoord.setY(data[i].y());
+		if (minCoord.z() > data[i].z())	minCoord.setZ(data[i].z());
 	}
-	maxCoord = vecMax;
-	minCoord = vecMin;
 }
 
 void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh) {
