@@ -3,21 +3,13 @@
 #include "Macro.h"
 
 DataProcessing::DataProcessing() {
-	meshConvertCloud.reset(new pcl::PointCloud<pcl::PointXYZ>);
-	meshConvertNormals.reset(new pcl::PointCloud<pcl::Normal>);
-	normalsRefinedPtr.reset(new pcl::PointCloud<pcl::Normal>);
+
 }
 
 DataProcessing::~DataProcessing() {
 
 }
 
-void DataProcessing::clearMeshData() {
-	surfaceModelData.vecFaceTriangles.clear();
-	surfaceModelData.vecVertexNormals.clear();
-	surfaceModelData.vecPoints.clear();
-	surfaceModelData.vecTemPoints.clear();
-}
 
 std::string DataProcessing::getAppPath() {
 	QString qAppDir = QCoreApplication::applicationDirPath();

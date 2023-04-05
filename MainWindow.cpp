@@ -38,7 +38,7 @@ void MainWindow::addOpengGLWidget(){
 void MainWindow::chooseFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
     
-    if (fileName.isEmpty()) return;
+if (fileName.isEmpty()) return;
 
     ui.lineEdit_file->setText(fileName);
     pointDataProc->loadPointData(fileName.toStdString().c_str());

@@ -18,13 +18,6 @@
 #include <vtkPLYWriter.h>
 #include <vtkTriangleFilter.h>
 
-struct SurfaceModelData {
-	std::vector<float> vecTemPoints;
-	std::vector<float> vecPoints;
-	std::vector<float> vecFaceTriangles;
-	std::vector<float> vecVertexNormals;
-};
-
 class DataProcessing {
 public:
 	DataProcessing();
@@ -32,31 +25,12 @@ public:
 	void loadPointData(const char* path);
 	std::string getAppPath();
 	void addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh);
-	// point data
-	std::vector<QVector3D>	pointData;
-	std::vector<float>		meshData;
-	SurfaceModelData		surfaceModelData;
-
 	void getMaxMinCoord(std::vector<QVector3D> data);
-
-	QVector3D centerPoint;
-	QVector3D maxCoord;
-	QVector3D minCoord;
+	
+	std::vector<QVector3D>	pointData;
+	QVector3D				centerPoint;
+	QVector3D				maxCoord;
+	QVector3D				minCoord;
 private:
-	void clearMeshData();
-
 	void getCenterPoint(QVector3D& vec);
-
-	std::vector<QVector3D> meshVertex3D;
-	std::vector<float> lastMeshVertex1D;
-	float* surfaceVertexXYZ; 
-	float* surfaceVertexNorm;
-	int surfaceTotalConnectedPoints;
-	int surfaceTotalFaces;
-	std::vector<float> meshVertex1D;
-	std::vector<QVector3D> normal;
-
-	pcl::PointCloud<pcl::PointXYZ>::Ptr meshConvertCloud;
-	pcl::PointCloud<pcl::Normal>::Ptr meshConvertNormals;
-	pcl::PointCloud<pcl::Normal>::Ptr normalsRefinedPtr;
 };
