@@ -32,5 +32,5 @@ private:
 	std::vector<GLfloat> pointData;	
 	std::vector<GLfloat> meshData;
 
-	std::vector<QVector3D> originalPointData;
+	std::vector<QVector3D> rawData;
 };	

@@ -47,8 +47,8 @@ void MainWindow::chooseFile(){
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
         for (int pointLine = 0; pointLine < pointDataProc->pointData.size(); pointLine++){
-            originalPointData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
-            pointDataProc->getMaxMinCoord(originalPointData);
+            rawData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
+            pointDataProc->getMaxMinCoord(rawData);
 
             QVector3D center = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
             QVector3D size = pointDataProc->maxCoord - pointDataProc->minCoord;
@@ -58,8 +58,8 @@ void MainWindow::startRendering(){
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 myPointGLWidget->setCameraPara(cameraPos, cameraTarget);
-                pointData.resize(3 * originalPointData.size());
-                for (int i = 0, pointLineMarker = 0; i < originalPointData.size(); i++) {
+                pointData.resize(3 * rawData.size());
+                for (int i = 0, pointLineMarker = 0; i < rawData.size(); i++) {
                     pointData[pointLineMarker++] = pointDataProc->pointData[i].x();
                     pointData[pointLineMarker++] = pointDataProc->pointData[i].y();
                     pointData[pointLineMarker++] = pointDataProc->pointData[i].z();
@@ -69,9 +69,9 @@ void MainWindow::startRendering(){
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                
-                if ((originalPointData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
+                if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
                     if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointDataProc->pointData.size())) {
-                        surface->construction(originalPointData);
+                        surface->construction(rawData);
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
