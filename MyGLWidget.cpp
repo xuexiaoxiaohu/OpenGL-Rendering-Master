@@ -6,8 +6,8 @@
 #include <Macro.h>
 #include <glut.h>
 #include <QMessageBox>
+#include <QPainter>
 
-QMutex m_mutex;
 MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     dataType = DT;
     camera = new Camera();
@@ -50,6 +50,8 @@ void MyGLWidget::initializeGL(){
     initializeShader();
     glFunc = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_5_Core>();
     glFunc->glEnable(GL_DEPTH_TEST);
+    glFunc->glEnable(GL_BLEND);
+    glFunc->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 // PaintGL
 void MyGLWidget::paintGL(){
@@ -176,7 +178,6 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
     }
     repaint();
 }
-
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
     setPressPosition(event->pos());
     modelUse = modelSave;
