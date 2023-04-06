@@ -165,7 +165,8 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint mousePos = event->pos();
     if (isShiftPressed && (event->buttons() & Qt::LeftButton)) {
         if (isConstructionFinished == false) {
-            QMessageBox::information(this, "Tips", "Please perform the erase operation after modeling is completed.", QMessageBox::Ok);
+            QMessageBox::information(this, "Tips", "Please perform the erase operation"
+                "after modeling is completed.", QMessageBox::Ok);
             return;
         }
         QVector3D worldPos = convertScreenToWorld(event->pos());
