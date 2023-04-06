@@ -73,29 +73,43 @@ void MyGLWidget::paintGL(){
         pointShader->setUniformMat4("proj", proj);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
-        //if (isShiftPressed)
-        //{
-        //    // 将鼠标位置转换为OpenGL坐标系中的位置
-        //    float x = 2.0f * mMousePos.x() / width() - 1.0f;
-        //    float y = 1.0f - 2.0f * mMousePos.y() / height();
-        //    glTranslatef(x, y, 0.0f);
-        //    // 绘制圆形
-        //    glColor3f(1.0f, 0.0f, 0.0f);
-        //    glBegin(GL_POLYGON);
-        //    const float radius = 50.0f;
-        //    const int numSegments = 32;
-        //    for (int i = 0; i < numSegments; ++i) {
-        //        const float angle = 2.0f * M_PI * i / numSegments;
-        //        const float x = radius * cosf(angle);
-        //        const float y = radius * sinf(angle);
-        //        glVertex3f(x, y, 0.0f);
-        //    }
-        //    glEnd();
-
-        //}
-        //else
+        if (isShiftPressed)
         {
-            glFunc->glGenVertexArrays(1, &meshVAO);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            // 设置圆心位置和半径
+            float cx = 2.0f * mMousePos.x() / width() - 1.0f;
+            float cy = 1.0f - 2.0f * mMousePos.y() / height();
+
+            float radius = 0.05f;
+
+            // 设置分割数
+            int segments = 50;
+
+            // 计算每个三角形的顶点坐标
+            QVector<float> vertices;
+            vertices.append(cx);
+            vertices.append(cy);
+            for (int i = 0; i <= segments; i++) {
+                float angle = i * 2.0f * M_PI / segments;
+                float x = cx + radius * cosf(angle);
+                float y = cy + radius * sinf(angle);
+                vertices.append(x);
+                vertices.append(y);
+            }
+
+            // 将顶点数据传递给OpenGL
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glVertexPointer(2, GL_FLOAT, 0, vertices.constData());
+
+            // 绘制三角形扇形
+            glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size() / 2);
+            // 关闭顶点数据传递
+            glDisableClientState(GL_VERTEX_ARRAY);
+
+        }
+        else
+        {
+           /* glFunc->glGenVertexArrays(1, &meshVAO);
             glFunc->glBindVertexArray(meshVAO);
             glFunc->glGenBuffers(1, &meshVBO);
             glFunc->glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
@@ -128,7 +142,7 @@ void MyGLWidget::paintGL(){
             meshShader->setUniformMat4("view", camera->getViewMatrix());
             meshShader->setUniformMat4("proj", proj);
 
-            glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
+            glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);*/
 
         }
     }
@@ -139,7 +153,7 @@ void MyGLWidget::resizeGL(int width, int height){
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
-    translate_point(mMousePos);
+    //translate_point(mMousePos);
     QPoint subPoint = mMousePos - pressPosition;
 
     model.setToIdentity();
@@ -165,9 +179,9 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint mousePos = event->pos();
     if (isShiftPressed && (event->buttons() & Qt::LeftButton)) {
         if (isConstructionFinished == false) {
-            QMessageBox::information(this, "Tips", "Please perform the erase operation"
-                "after modeling is completed.", QMessageBox::Ok);
-            return;
+            //QMessageBox::information(this, "Tips", "Please perform the erase operation"
+            //    "after modeling is completed.", QMessageBox::Ok);
+            //return;
         }
         QVector3D worldPos = convertScreenToWorld(event->pos());
         int nearestVertexIndex = dataProc->findNearestVertex(worldPos, meshVertices);
