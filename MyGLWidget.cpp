@@ -121,7 +121,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     model.setToIdentity();
     modelSave.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
-        GLfloat angleNow = qSqrt(qPow(subPoint.x(), 2) + qPow(subPoint.y(), 2)) / 5;
+        GLfloat angleNow = qSqrt(qPow(subPoint.x(), 2) + qPow(subPoint.y(), 2));
         model.rotate(angleNow, -subPoint.y(), subPoint.x(), 0.0);
         model = model * modelUse;
 
@@ -129,10 +129,10 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         modelSave = modelSave * modelUse;
     }
     if (event->buttons() & Qt::RightButton) {
-        model.translate((float)subPoint.x() / 200, (float)subPoint.y() / 200);
+        model.translate((float)subPoint.x(), (float)subPoint.y());
         model = model * modelUse;
 
-        modelSave.translate((float)subPoint.x() / 200, (float)subPoint.y() / 200);
+        modelSave.translate((float)subPoint.x(), (float)subPoint.y());
         modelSave = modelSave * modelUse;
     }
     repaint();
@@ -184,7 +184,7 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 void MyGLWidget::wheelEvent(QWheelEvent* event) {
     QPoint offset = event->angleDelta();
-    camera->mouseScroll(offset.y() / 20);
+    camera->mouseScroll(offset.y());
     repaint();
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
