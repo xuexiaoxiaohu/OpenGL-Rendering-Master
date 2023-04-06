@@ -30,6 +30,7 @@ public:
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> meshVertices;
     std::vector<GLfloat> glMeshData;
+    bool isConstructionFinished = false;
 
 protected:
     void initializeGL()         override;

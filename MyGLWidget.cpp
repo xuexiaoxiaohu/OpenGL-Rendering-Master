@@ -5,6 +5,8 @@
 #include <QMutex>
 #include <Macro.h>
 #include <glut.h>
+#include <QMessageBox>
+
 QMutex m_mutex;
 MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     dataType = DT;
@@ -136,6 +138,10 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint mousePos = event->pos();
     if (isShiftPressed && (event->buttons() & Qt::LeftButton)) {
+        if (isConstructionFinished == false) {
+            QMessageBox::information(this, "提示", "请建模完成后再执行性擦除操作", QMessageBox::Ok);
+            return;
+        }
         QVector3D worldPos = convertScreenToWorld(mousePos);
         int nearestVertexIndex = dataProc->findNearestVertex(worldPos, meshVertices);
         if (nearestVertexIndex != -1) {

@@ -1,11 +1,12 @@
 #include "MainWindow.h"
 #include <QFileDialog>
 #include <QElapsedtimer>
+
 #include <qelapsedtimer.h>
 #include <QDebug>
 #include "MyGLWidget.h"
 #include "Macro.h"
-
+#include <stdlib.h>
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
 	ui.setupUi(this);
     pointDataProc     = new DataProcessing();
@@ -54,7 +55,6 @@ void MainWindow::startRendering(){
             QVector3D cameraPos = cameraTarget + QVector3D(0.0f, 0.0f, (pointDataProc->maxCoord - pointDataProc->minCoord).z() * 2.0f);
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
-               
                 for (int i = 0; i < rawData.size(); i++) {
                     if (i == 0) glPointData.clear();
                     glPointData.emplace_back(pointDataProc->pointData[i].x());
@@ -66,8 +66,10 @@ void MainWindow::startRendering(){
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
-                    if (((pointLine % MESH_INCREASE_SIZE) == 0) || (pointLine >= pointDataProc->pointData.size())) {
+                    int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointDataProc->pointData.size());
+                    if ((((rawData.size()) % MESH_INCREASE_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
+                      
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = curAppPath + "/result.ply";
                         pcl::PolygonMesh inMesh, outMesh;
@@ -94,8 +96,12 @@ void MainWindow::startRendering(){
                                 meshVertices.emplace_back(QVector3D{ point.y ,point.y,point.z });
                             }
                         }
-                        myMeshGLWidget->setMesh(outMesh);
-                        myMeshGLWidget->setMeshVertices(meshVertices);
+                        if ((abs(diff) <= 0)){
+                            myMeshGLWidget->isConstructionFinished = true;
+                            myMeshGLWidget->setMesh(outMesh);
+                            myMeshGLWidget->setMeshVertices(meshVertices);
+                        }
+   
                         myMeshGLWidget->setCameraPara(cameraPos, cameraTarget);
                         myMeshGLWidget->setImageData(glMeshData);
                     }
