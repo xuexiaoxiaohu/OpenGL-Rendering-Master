@@ -113,3 +113,19 @@ pcl::PolygonMesh DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<i
 	mesh.polygons = polygons;
 	return mesh;
 }
+void DataProcessing::ply2ply(std::string src, std::string dst) {
+	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+	reader->SetFileName(src.c_str());
+	reader->Update();
+
+	vtkSmartPointer<vtkTriangleFilter> filter = vtkSmartPointer<vtkTriangleFilter>::New();
+	filter->SetInputData(reader->GetOutput());
+
+	vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
+	writer->SetFileName(dst.c_str());
+	writer->SetInputConnection(filter->GetOutputPort());
+	writer->SetFileTypeToASCII();
+	writer->SetColorModeToOff();
+	writer->Update();
+	writer->Write();
+}

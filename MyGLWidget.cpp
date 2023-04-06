@@ -73,40 +73,64 @@ void MyGLWidget::paintGL(){
         pointShader->setUniformMat4("proj", proj);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
-        glFunc->glGenVertexArrays(1, &meshVAO);
-        glFunc->glBindVertexArray(meshVAO);
-        glFunc->glGenBuffers(1, &meshVBO);
-        glFunc->glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
+        //if (isShiftPressed)
+        //{
+        //    // 将鼠标位置转换为OpenGL坐标系中的位置
+        //    float x = 2.0f * mMousePos.x() / width() - 1.0f;
+        //    float y = 1.0f - 2.0f * mMousePos.y() / height();
+        //    glTranslatef(x, y, 0.0f);
+        //    // 绘制圆形
+        //    glColor3f(1.0f, 0.0f, 0.0f);
+        //    glBegin(GL_POLYGON);
+        //    const float radius = 50.0f;
+        //    const int numSegments = 32;
+        //    for (int i = 0; i < numSegments; ++i) {
+        //        const float angle = 2.0f * M_PI * i / numSegments;
+        //        const float x = radius * cosf(angle);
+        //        const float y = radius * sinf(angle);
+        //        glVertex3f(x, y, 0.0f);
+        //    }
+        //    glEnd();
 
-        glFunc->glEnableVertexAttribArray(0);
-        glFunc->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-        glFunc->glEnableVertexAttribArray(1);
-        glFunc->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        //}
+        //else
+        {
+            glFunc->glGenVertexArrays(1, &meshVAO);
+            glFunc->glBindVertexArray(meshVAO);
+            glFunc->glGenBuffers(1, &meshVBO);
+            glFunc->glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
 
-        glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
-        
-        meshShader->use();
-        meshShader->setUniformVec3("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
-        meshShader->setUniformVec3("material.ambient", QVector3D(0.5f, 0.5f, 0.5f));
-        meshShader->setUniformVec3("material.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
-        meshShader->setUniformVec3("material.specular", QVector3D(0.5f, 0.5f, 0.5f));
-        meshShader->setUniformFloat("material.shininess", 16.0f);
+            glFunc->glEnableVertexAttribArray(0);
+            glFunc->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+            glFunc->glEnableVertexAttribArray(1);
+            glFunc->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
-        meshShader->setUniformVec3("dirLight1.ambient", QVector3D(0.2f, 0.2f, 0.2f));
-        meshShader->setUniformVec3("dirLight1.diffuse", QVector3D(0.5f, 0.5f, 0.9f));
-        meshShader->setUniformVec3("dirLight1.specular", QVector3D(0.1f, 0.1f, 0.1f));
-        meshShader->setUniformVec3("dirLight1.direction", QVector3D(1.0f, 1.0f, 3.0f));
+            glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
-        meshShader->setUniformVec3("dirLight2.ambient", QVector3D(0.2f, 0.2f, 0.2f));
-        meshShader->setUniformVec3("dirLight2.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
-        meshShader->setUniformVec3("dirLight2.specular", QVector3D(0.1f, 0.1f, 0.1f));
-        meshShader->setUniformVec3("dirLight2.direction", QVector3D(1.0f, 1.0f, -3.0f));
+            meshShader->use();
+            meshShader->setUniformVec3("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
+            meshShader->setUniformVec3("material.ambient", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformVec3("material.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformVec3("material.specular", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformFloat("material.shininess", 16.0f);
 
-        meshShader->setUniformMat4("model", model);
-        meshShader->setUniformMat4("view", camera->getViewMatrix());
-        meshShader->setUniformMat4("proj", proj);
+            meshShader->setUniformVec3("dirLight1.ambient", QVector3D(0.2f, 0.2f, 0.2f));
+            meshShader->setUniformVec3("dirLight1.diffuse", QVector3D(0.5f, 0.5f, 0.9f));
+            meshShader->setUniformVec3("dirLight1.specular", QVector3D(0.1f, 0.1f, 0.1f));
+            meshShader->setUniformVec3("dirLight1.direction", QVector3D(1.0f, 1.0f, 3.0f));
 
-        glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
+            meshShader->setUniformVec3("dirLight2.ambient", QVector3D(0.2f, 0.2f, 0.2f));
+            meshShader->setUniformVec3("dirLight2.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformVec3("dirLight2.specular", QVector3D(0.1f, 0.1f, 0.1f));
+            meshShader->setUniformVec3("dirLight2.direction", QVector3D(1.0f, 1.0f, -3.0f));
+
+            meshShader->setUniformMat4("model", model);
+            meshShader->setUniformMat4("view", camera->getViewMatrix());
+            meshShader->setUniformMat4("proj", proj);
+
+            glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
+
+        }
     }
 }
 void MyGLWidget::resizeGL(int width, int height){

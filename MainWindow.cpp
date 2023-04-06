@@ -71,9 +71,11 @@ void MainWindow::startRendering(){
                         surface->construction(rawData);
                       
                         std::string curAppPath = meshDataProc->getAppPath();
-                        std::string oriPlyPath = curAppPath + "/result.ply";
+                        std::string oriPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
+                        std::string dstPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
+                        meshDataProc->ply2ply(oriPlyPath, dstPlyPath);
                         pcl::PolygonMesh inMesh, outMesh;
-                        pcl::io::loadPLYFile(oriPlyPath, inMesh);
+                        pcl::io::loadPLYFile(dstPlyPath, inMesh);
                         meshDataProc->addNormalForMesh(inMesh, outMesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
