@@ -114,9 +114,9 @@ void MyGLWidget::resizeGL(int width, int height){
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
-    QPoint p_ab = event->pos();
-    translate_point(p_ab);
-    QPoint subPoint = p_ab - pressPosition;
+    mMousePos = event->pos();
+    translate_point(mMousePos);
+    QPoint subPoint = mMousePos - pressPosition;
 
     model.setToIdentity();
     modelSave.setToIdentity();
@@ -144,7 +144,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             QMessageBox::information(this, "Tips", "Please perform the erase operation after modeling is completed.", QMessageBox::Ok);
             return;
         }
-        QVector3D worldPos = convertScreenToWorld(mousePos);
+        QVector3D worldPos = convertScreenToWorld(event->pos());
         int nearestVertexIndex = dataProc->findNearestVertex(worldPos, meshVertices);
         if (nearestVertexIndex != -1) {
             pcl::PointXYZ nearestVertex;
@@ -155,7 +155,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             pcl::Indices toRemove = dataProc->findKNeighbors(mesh, nearestVertex);
             dataProc->eraseMesh(mesh, toRemove);
         }
-        pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Select-Master-Build\\aaa.ply", mesh);
+        pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Eraser-Master-Build\\aaa.ply", mesh);
 
         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
         pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);

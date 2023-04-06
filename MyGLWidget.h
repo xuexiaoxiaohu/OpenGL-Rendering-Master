@@ -54,6 +54,7 @@ private:
     ShaderProgram* meshShader;
     ShaderProgram* pointShader;
     bool isShiftPressed = false;
+    QPoint mMousePos;
     QMatrix4x4 model;
     QMatrix4x4 modelUse;
     QMatrix4x4 modelSave;
