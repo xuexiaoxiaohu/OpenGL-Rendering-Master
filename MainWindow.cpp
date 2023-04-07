@@ -99,9 +99,9 @@ void MainWindow::startRendering(){
                             }
                         }
                         if ((abs(diff) <= 0)){
-                            myMeshGLWidget->isConstructionFinished = true;
-                            myMeshGLWidget->setMesh(outMesh);
-                            myMeshGLWidget->setMeshVertices(allVertices);
+                            meshDataProc->isConstructionFinished = true;
+                            meshDataProc->setMesh(outMesh);
+                            meshDataProc->setMeshVertices(allVertices);
                         }
    
                         myMeshGLWidget->setCameraPara(cameraEye, meshCenter);

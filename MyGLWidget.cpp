@@ -130,36 +130,14 @@ void MyGLWidget::resizeGL(int width, int height){
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
-    QVector3D diff = QVector3D(mMousePos - m_lastPos);
-    float angle = diff.length() / 2.0f;
-    QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
-    // 更新旋转角度和轴向量
-    rotationAngle += angle;
-    rotationAxis = axis;
-    m_lastPos = mMousePos;
 
-    model.setToIdentity();
-    if (event->buttons() & Qt::LeftButton) {
-      
-        
-        model.rotate(rotationAngle, -axis.y(), axis.x(), 0.0);
- 
-
-    }
-    if (event->buttons() & Qt::RightButton) {
-
-    }
-    repaint();
-}
-void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    QPoint mousePos = event->pos();
-    if (isShiftPressed && (event->buttons() & Qt::LeftButton)) {
+    if (isShiftPressed){
         if (isConstructionFinished == false) {
             QMessageBox::information(this, "Tips", "Please perform the erase operation"
                 "after modeling is completed.", QMessageBox::Ok);
             return;
         }
-        QVector3D worldPos = convertScreenToWorld(mousePos);
+        QVector3D worldPos = convertScreenToWorld(mMousePos);
         int index = dataProc->findNearestVertex(worldPos, allVertices);
         if (index != -1) {
             pcl::PointXYZ targetVertice;
@@ -170,7 +148,6 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             pcl::Indices toRemove = dataProc->findKNeighbors(mesh, targetVertice);
             dataProc->eraseMesh(mesh, toRemove);
         }
-        pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Eraser-Master-Build\\aaa.ply", mesh);
 
         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
         pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
@@ -186,6 +163,32 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             }
         }
         setImageData(glMeshData);
+    }
+    else
+    {
+        QVector3D diff = QVector3D(mMousePos - m_lastPos);
+        float angle = diff.length() / 2.0f;
+        QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
+
+        rotationAngle += angle;
+        rotationAxis = axis;
+        m_lastPos = mMousePos;
+
+        model.setToIdentity();
+        if (event->buttons() & Qt::LeftButton) {
+            model.rotate(rotationAngle, -axis.y(), axis.x(), 0.0);
+        }
+        if (event->buttons() & Qt::RightButton) {
+
+        }
+    }
+   // repaint that both mesh "erase" and mesh "rotate and translate" operations. 
+    repaint();
+}
+void MyGLWidget::mousePressEvent(QMouseEvent* event){
+    QPoint mousePos = event->pos();
+    if (event->buttons() & Qt::LeftButton) {
+   
     }
     else if (event->buttons() & Qt::LeftButton) {
         m_lastPos = event->pos();

@@ -145,3 +145,9 @@ QVector<float> DataProcessing::getCircularVertex(QPoint mousePos, float radius, 
 	}
 	return vertices;
 }
+void DataProcessing::setMesh(pcl::PolygonMesh mesh) {
+	this->mesh = mesh;
+}
+void DataProcessing::setMeshVertices(std::vector<QVector3D> allVertices) {
+	this->allVertices = allVertices;
+}
