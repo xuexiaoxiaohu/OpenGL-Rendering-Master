@@ -159,15 +159,15 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
                 "after modeling is completed.", QMessageBox::Ok);
             return;
         }
-        QVector3D worldPos = convertScreenToWorld(event->pos());
-        int nearestVertexIndex = dataProc->findNearestVertex(worldPos, meshVertices);
-        if (nearestVertexIndex != -1) {
-            pcl::PointXYZ nearestVertex;
-            nearestVertex.x = meshVertices[nearestVertexIndex].x();
-            nearestVertex.y = meshVertices[nearestVertexIndex].y();
-            nearestVertex.z = meshVertices[nearestVertexIndex].z();
+        QVector3D worldPos = convertScreenToWorld(mousePos);
+        int index = dataProc->findNearestVertex(worldPos, meshVertices);
+        if (index != -1) {
+            pcl::PointXYZ targetPoint;
+            targetPoint.x = meshVertices[index].x();
+            targetPoint.y = meshVertices[index].y();
+            targetPoint.z = meshVertices[index].z();
 
-            pcl::Indices toRemove = dataProc->findKNeighbors(mesh, nearestVertex);
+            pcl::Indices toRemove = dataProc->findKNeighbors(mesh, targetPoint);
             dataProc->eraseMesh(mesh, toRemove);
         }
         pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Eraser-Master-Build\\aaa.ply", mesh);
