@@ -33,9 +33,9 @@ void MyGLWidget::setMeshVertices(std::vector<QVector3D> meshVertices) {
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
     vertices = data;
 }
-void MyGLWidget::setCameraPara(QVector3D eye, QVector3D center) {
+void MyGLWidget::setCameraPara(QVector3D eye, QVector3D meshCenter) {
     camera->eye = eye;
-    camera->center = center;
+    camera->meshCenter = meshCenter;
 }
 void MyGLWidget::initializeShader() {
     QString qAppDir = QCoreApplication::applicationDirPath();
@@ -86,7 +86,7 @@ void MyGLWidget::paintGL(){
         }
         else
         {
-           /* glFunc->glGenVertexArrays(1, &meshVAO);
+            glFunc->glGenVertexArrays(1, &meshVAO);
             glFunc->glBindVertexArray(meshVAO);
             glFunc->glGenBuffers(1, &meshVBO);
             glFunc->glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
@@ -119,7 +119,7 @@ void MyGLWidget::paintGL(){
             meshShader->setUniformMat4("view", camera->getViewMatrix());
             meshShader->setUniformMat4("proj", proj);
 
-            glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);*/
+            glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
 
         }
     }
@@ -132,7 +132,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
 
 
-    //translate_point(mMousePos);
+    translate_point(mMousePos);
     QPoint subPoint = mMousePos - pressPosition;
 
     model.setToIdentity();
@@ -158,9 +158,9 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint mousePos = event->pos();
     if (isShiftPressed && (event->buttons() & Qt::LeftButton)) {
         if (isConstructionFinished == false) {
-            //QMessageBox::information(this, "Tips", "Please perform the erase operation"
-            //    "after modeling is completed.", QMessageBox::Ok);
-            //return;
+            QMessageBox::information(this, "Tips", "Please perform the erase operation"
+                "after modeling is completed.", QMessageBox::Ok);
+            return;
         }
         QVector3D worldPos = convertScreenToWorld(event->pos());
         int nearestVertexIndex = dataProc->findNearestVertex(worldPos, meshVertices);
