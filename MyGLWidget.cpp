@@ -130,27 +130,24 @@ void MyGLWidget::resizeGL(int width, int height){
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
-
-
-    translate_point(mMousePos);
-    QPoint subPoint = mMousePos - pressPosition;
+    QVector3D diff = QVector3D(mMousePos - m_lastPos);
+    float angle = diff.length() / 2.0f;
+    QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
+    // 更新旋转角度和轴向量
+    rotationAngle += angle;
+    rotationAxis = axis;
+    m_lastPos = mMousePos;
 
     model.setToIdentity();
-    modelSave.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
-        GLfloat angleNow = qSqrt(qPow(subPoint.x(), 2) + qPow(subPoint.y(), 2));
-        model.rotate(angleNow, -subPoint.y(), subPoint.x(), 0.0);
-        model = model * modelUse;
+      
+        
+        model.rotate(rotationAngle, -axis.y(), axis.x(), 0.0);
+ 
 
-        modelSave.rotate(angleNow, -subPoint.y(), subPoint.x(), 0.0);
-        modelSave = modelSave * modelUse;
     }
     if (event->buttons() & Qt::RightButton) {
-        model.translate((float)subPoint.x(), (float)subPoint.y());
-        model = model * modelUse;
 
-        modelSave.translate((float)subPoint.x(), (float)subPoint.y());
-        modelSave = modelSave * modelUse;
     }
     repaint();
 }
@@ -190,33 +187,17 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         }
         setImageData(glMeshData);
     }
-    else{
-        setPressPosition(event->pos());
-        modelUse = modelSave;
+    else if (event->buttons() & Qt::LeftButton) {
+        m_lastPos = event->pos();
     }
     repaint();
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
-    setPressPosition(event->pos());
-    modelUse = modelSave;
+
+
 }
 void MyGLWidget::wheelEvent(QWheelEvent* event) {
     QPoint offset = event->angleDelta();
-    float a = 0.0f;
-    wheelPara += offset.y() * 0.01;
-    a = wheelPara;
-    if (abs(a) <= 0.0001f) {
-        a = 0.0f;
-    }
-    if (a <= -20.0f){
-        a = 0.0f;
-    }
-    if (a >= 20.0f) {
-        a = 20.0f;
-    }
-
-    std::cout << "a = " << a << std::endl;
-
     camera->mouseScroll(offset.y());
     repaint();
 }
@@ -227,16 +208,6 @@ void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Shift)  isShiftPressed = false;
 }
 
-void MyGLWidget::setPressPosition(QPoint p_ab) {
-    translate_point(p_ab);
-    pressPosition = p_ab;
-}
-void MyGLWidget::translate_point(QPoint& p_ab) {
-    int x = p_ab.x() - this->width() / 2;
-    int y = -(p_ab.y() - this->height() / 2);
-    p_ab = {x,y};
-}
-// Convert screen coordinates to world coordinates
 QVector3D MyGLWidget::convertScreenToWorld(QPoint screenPoint) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
     double modelViewMatrix[16];

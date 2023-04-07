@@ -45,8 +45,7 @@ protected:
     void keyReleaseEvent(QKeyEvent* event) override;
 
     void initializeShader();
-    void setPressPosition(QPoint p_ab);
-    void translate_point(QPoint& p_ab);
+
     QVector3D convertScreenToWorld(QPoint point);
     DataProcessing* dataProc;
 
@@ -54,10 +53,8 @@ private:
     ShaderProgram* meshShader;
     ShaderProgram* pointShader;
     bool isShiftPressed = false;
-    QPoint mMousePos;
+
     QMatrix4x4 model;
-    QMatrix4x4 modelUse;
-    QMatrix4x4 modelSave;
     Camera* camera;
     QMatrix4x4 proj;
 
@@ -67,8 +64,11 @@ private:
     QPoint pressPosition; 
     GLuint pointVAO, pointVBO;
     GLuint meshVAO, meshVBO;
-    float radius = 0.0f;
-    float wheelPara = 0.0f;
+
+    float rotationAngle = 0.0f;
+    QVector3D rotationAxis = QVector3D{ 0.0f, 1.0f, 0.0f };
+    QPoint m_lastPos;
+    QPoint mMousePos;
 };
 
 #endif 
