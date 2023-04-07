@@ -26,8 +26,8 @@ MyGLWidget::~MyGLWidget(){
 void MyGLWidget::setMesh(pcl::PolygonMesh mesh) {
     this->mesh = mesh;
 }
-void MyGLWidget::setMeshVertices(std::vector<QVector3D> meshVertices) {
-    this->meshVertices = meshVertices;
+void MyGLWidget::setMeshVertices(std::vector<QVector3D> allVertices) {
+    this->allVertices = allVertices;
 }
 
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
@@ -160,14 +160,14 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             return;
         }
         QVector3D worldPos = convertScreenToWorld(mousePos);
-        int index = dataProc->findNearestVertex(worldPos, meshVertices);
+        int index = dataProc->findNearestVertex(worldPos, allVertices);
         if (index != -1) {
-            pcl::PointXYZ targetPoint;
-            targetPoint.x = meshVertices[index].x();
-            targetPoint.y = meshVertices[index].y();
-            targetPoint.z = meshVertices[index].z();
+            pcl::PointXYZ targetVertice;
+            targetVertice.x = allVertices[index].x();
+            targetVertice.y = allVertices[index].y();
+            targetVertice.z = allVertices[index].z();
 
-            pcl::Indices toRemove = dataProc->findKNeighbors(mesh, targetPoint);
+            pcl::Indices toRemove = dataProc->findKNeighbors(mesh, targetVertice);
             dataProc->eraseMesh(mesh, toRemove);
         }
         pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Eraser-Master-Build\\aaa.ply", mesh);

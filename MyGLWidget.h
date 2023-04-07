@@ -28,7 +28,7 @@ public:
     void setMesh(pcl::PolygonMesh mesh);
 
     pcl::PolygonMesh mesh;
-    std::vector<QVector3D> meshVertices;
+    std::vector<QVector3D> allVertices;
     std::vector<GLfloat> glMeshData;
     bool isConstructionFinished = false;
 

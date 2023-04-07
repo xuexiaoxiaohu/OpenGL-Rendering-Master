@@ -84,7 +84,7 @@ void MainWindow::startRendering(){
                         for (std::size_t i = 0; i < outMesh.polygons.size(); i++) {
                             if (i == 0) {
                                 glMeshData.clear();
-                                meshVertices.clear();
+                                allVertices.clear();
                             }
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
                                 pcl::PointNormal point = pointsPtr->points[outMesh.polygons[i].vertices[j]];
@@ -95,13 +95,13 @@ void MainWindow::startRendering(){
                                 glMeshData.emplace_back(point.normal_y);
                                 glMeshData.emplace_back(point.normal_z);
 
-                                meshVertices.emplace_back(QVector3D{ point.y ,point.y,point.z });
+                                allVertices.emplace_back(QVector3D{ point.y ,point.y,point.z });
                             }
                         }
                         if ((abs(diff) <= 0)){
                             myMeshGLWidget->isConstructionFinished = true;
                             myMeshGLWidget->setMesh(outMesh);
-                            myMeshGLWidget->setMeshVertices(meshVertices);
+                            myMeshGLWidget->setMeshVertices(allVertices);
                         }
    
                         myMeshGLWidget->setCameraPara(cameraEye, meshCenter);
