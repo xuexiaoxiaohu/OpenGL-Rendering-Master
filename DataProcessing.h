@@ -36,7 +36,8 @@ public:
 	QVector<float> getCircularVertex(QPoint mousePos,float radius, int width, int height);
 	void setMeshVertices(std::vector<QVector3D> meshVertexs);
 	void setMesh(pcl::PolygonMesh mesh);
-	//void getDataAfterErase(QPoint mMousePos,);
+	void getDataAfterErase(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices);
+
 	std::vector<QVector3D>	pointData;
 	QVector3D maxCoord;
 	QVector3D minCoord;
@@ -44,4 +45,5 @@ public:
 	pcl::PolygonMesh mesh;
 	std::vector<QVector3D> allVertices;
 	bool isConstructionFinished = false;
+	std::vector<float> glMeshData;
 };

@@ -29,7 +29,6 @@ public:
 
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
-    std::vector<GLfloat> glMeshData;
     bool isConstructionFinished = false;
 
 protected:

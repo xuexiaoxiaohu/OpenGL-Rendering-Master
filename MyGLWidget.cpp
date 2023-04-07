@@ -138,31 +138,9 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             return;
         }
         QVector3D worldPos = convertScreenToWorld(mMousePos);
-        int index = dataProc->findNearestVertex(worldPos, allVertices);
-        if (index != -1) {
-            pcl::PointXYZ targetVertice;
-            targetVertice.x = allVertices[index].x();
-            targetVertice.y = allVertices[index].y();
-            targetVertice.z = allVertices[index].z();
+        dataProc->getDataAfterErase(worldPos, mesh, allVertices);
 
-            pcl::Indices toRemove = dataProc->findKNeighbors(mesh, targetVertice);
-            dataProc->eraseMesh(mesh, toRemove);
-        }
-
-        pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
-        pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
-        for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
-            for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
-                pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
-                glMeshData.emplace_back(point.x);
-                glMeshData.emplace_back(point.y);
-                glMeshData.emplace_back(point.z);
-                glMeshData.emplace_back(point.normal_x);
-                glMeshData.emplace_back(point.normal_y);
-                glMeshData.emplace_back(point.normal_z);
-            }
-        }
-        setImageData(glMeshData);
+        setImageData(dataProc->glMeshData);
     }
     else
     {
