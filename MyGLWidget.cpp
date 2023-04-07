@@ -82,10 +82,7 @@ void MyGLWidget::paintGL(){
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size() / 2);
             glDisableClientState(GL_VERTEX_ARRAY);
-
-        }
-        else
-        {
+        }else{
             glFunc->glGenVertexArrays(1, &meshVAO);
             glFunc->glBindVertexArray(meshVAO);
             glFunc->glGenBuffers(1, &meshVBO);
@@ -130,7 +127,6 @@ void MyGLWidget::resizeGL(int width, int height){
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
-
     if (isShiftPressed){
         if (isConstructionFinished == false) {
             QMessageBox::information(this, "Tips", "Please perform the erase operation"
@@ -141,9 +137,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         dataProc->getDataAfterErase(worldPos, mesh, allVertices);
 
         setImageData(dataProc->glMeshData);
-    }
-    else
-    {
+
+    }else{
         QVector3D diff = QVector3D(mMousePos - m_lastPos);
         float angle = diff.length() / 2.0f;
         QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
