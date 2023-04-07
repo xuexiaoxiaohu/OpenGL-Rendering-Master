@@ -159,14 +159,9 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    QPoint mousePos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
-   
-    }
-    else if (event->buttons() & Qt::LeftButton) {
         m_lastPos = event->pos();
     }
-    repaint();
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
@@ -178,10 +173,12 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     repaint();
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Shift)  isShiftPressed = true;
+    if (event->key() == Qt::Key_Shift)
+        isShiftPressed = true;
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Shift)  isShiftPressed = false;
+    if (event->key() == Qt::Key_Shift) 
+        isShiftPressed = false;
 }
 
 QVector3D MyGLWidget::convertScreenToWorld(QPoint screenPoint) {
