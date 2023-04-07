@@ -33,7 +33,7 @@ public:
 	int findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices);
 	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point);
 	pcl::PolygonMesh eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
-
+	QVector<float> getCircularVertex(QPoint mousePos,float radius, int width, int height);
 	std::vector<QVector3D>	pointData;
 	QVector3D maxCoord;
 	QVector3D minCoord;

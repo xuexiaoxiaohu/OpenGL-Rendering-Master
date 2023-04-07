@@ -73,37 +73,14 @@ void MyGLWidget::paintGL(){
         pointShader->setUniformMat4("proj", proj);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
-        if (isShiftPressed)
-        {
+        if (isShiftPressed){
             glColor3f(1.0f, 0.0f, 0.0f);
-            // 设置圆心位置和半径
-            float cx = 2.0f * mMousePos.x() / width() - 1.0f;
-            float cy = 1.0f - 2.0f * mMousePos.y() / height();
+            QVector<float> vertices = dataProc->getCircularVertex(mMousePos, 0.05f, width(), height());
 
-            float radius = 0.05f;
-
-            // 设置分割数
-            int segments = 50;
-
-            // 计算每个三角形的顶点坐标
-            QVector<float> vertices;
-            vertices.append(cx);
-            vertices.append(cy);
-            for (int i = 0; i <= segments; i++) {
-                float angle = i * 2.0f * M_PI / segments;
-                float x = cx + radius * cosf(angle);
-                float y = cy + radius * sinf(angle);
-                vertices.append(x);
-                vertices.append(y);
-            }
-
-            // 将顶点数据传递给OpenGL
             glEnableClientState(GL_VERTEX_ARRAY);
             glVertexPointer(2, GL_FLOAT, 0, vertices.constData());
 
-            // 绘制三角形扇形
             glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size() / 2);
-            // 关闭顶点数据传递
             glDisableClientState(GL_VERTEX_ARRAY);
 
         }
@@ -153,6 +130,8 @@ void MyGLWidget::resizeGL(int width, int height){
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
+
+
     //translate_point(mMousePos);
     QPoint subPoint = mMousePos - pressPosition;
 
