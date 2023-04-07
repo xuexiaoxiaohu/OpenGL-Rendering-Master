@@ -67,6 +67,8 @@ private:
     QPoint pressPosition; 
     GLuint pointVAO, pointVBO;
     GLuint meshVAO, meshVBO;
+    float radius = 0.0f;
+    float wheelPara = 0.0f;
 };
 
 #endif 

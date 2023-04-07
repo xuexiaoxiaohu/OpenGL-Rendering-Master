@@ -223,6 +223,21 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 void MyGLWidget::wheelEvent(QWheelEvent* event) {
     QPoint offset = event->angleDelta();
+    float a = 0.0f;
+    wheelPara += offset.y() * 0.01;
+    a = wheelPara;
+    if (abs(a) <= 0.0001f) {
+        a = 0.0f;
+    }
+    if (a <= -20.0f){
+        a = 0.0f;
+    }
+    if (a >= 20.0f) {
+        a = 20.0f;
+    }
+
+    std::cout << "a = " << a << std::endl;
+
     camera->mouseScroll(offset.y());
     repaint();
 }
