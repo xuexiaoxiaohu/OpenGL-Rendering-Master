@@ -34,7 +34,14 @@ void MainWindow::addOpengGLWidget(){
     myMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
     ui.openGLHorizontalLayout->addWidget(myMeshGLWidget);
 }
-
+void MainWindow::startUpdateGL() {
+    if (ui.pointCheckBox->checkState() == Qt::Checked) {
+        myPointGLWidget->repaint();
+    }
+    if (ui.meshCheckBox->checkState() == Qt::Checked) {
+        myMeshGLWidget->repaint();
+    }
+}
 // Choose File
 void MainWindow::chooseFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
@@ -114,12 +121,4 @@ void MainWindow::startRendering(){
     };
     std::thread collectDataThread(collectDataFunc);
     collectDataThread.detach();
-}
-void MainWindow::startUpdateGL() {
-    if (ui.pointCheckBox->checkState() == Qt::Checked) {
-        myPointGLWidget->repaint();
-    }
-    if (ui.meshCheckBox->checkState() == Qt::Checked) {
-        myMeshGLWidget->repaint();
-    }
 }
