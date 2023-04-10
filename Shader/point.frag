@@ -1,8 +1,6 @@
 #version 450 core
-out vec4 FragColor;
+out vec4 fragColor;
  
-void main()
-{
-     //0.2f, 0.8f, 0.8f 高级青
-     FragColor =  vec4(1.0f, 1.0f, 0.0f ,1.0f);
+void main(){
+	fragColor =  vec4(1.0f, 1.0f, 0.0f ,1.0f);
 }
