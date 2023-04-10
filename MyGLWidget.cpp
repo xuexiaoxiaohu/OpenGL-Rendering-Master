@@ -88,20 +88,20 @@ void MyGLWidget::paintGL(){
 
             meshShader->use();
             meshShader->setUniformVec3("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
-            meshShader->setUniformVec3("material.ambient", QVector3D(0.5f, 0.5f, 0.5f));
-            meshShader->setUniformVec3("material.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
-            meshShader->setUniformVec3("material.specular", QVector3D(0.5f, 0.5f, 0.5f));
-            meshShader->setUniformFloat("material.shininess", 16.0f);
+            meshShader->setUniformVec3("mat.ambient", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformVec3("mat.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformVec3("mat.specular", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformFloat("mat.shininess", 16.0f);
 
-            meshShader->setUniformVec3("dirLight1.ambient", QVector3D(0.2f, 0.2f, 0.2f));
-            meshShader->setUniformVec3("dirLight1.diffuse", QVector3D(0.5f, 0.5f, 0.9f));
-            meshShader->setUniformVec3("dirLight1.specular", QVector3D(0.1f, 0.1f, 0.1f));
-            meshShader->setUniformVec3("dirLight1.direction", QVector3D(1.0f, 1.0f, 3.0f));
+            meshShader->setUniformVec3("dl1.ambient", QVector3D(0.2f, 0.2f, 0.2f));
+            meshShader->setUniformVec3("dl1.diffuse", QVector3D(0.5f, 0.5f, 0.9f));
+            meshShader->setUniformVec3("dl1.specular", QVector3D(0.1f, 0.1f, 0.1f));
+            meshShader->setUniformVec3("dl1.direction", QVector3D(1.0f, 1.0f, 3.0f));
 
-            meshShader->setUniformVec3("dirLight2.ambient", QVector3D(0.2f, 0.2f, 0.2f));
-            meshShader->setUniformVec3("dirLight2.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
-            meshShader->setUniformVec3("dirLight2.specular", QVector3D(0.1f, 0.1f, 0.1f));
-            meshShader->setUniformVec3("dirLight2.direction", QVector3D(1.0f, 1.0f, -3.0f));
+            meshShader->setUniformVec3("dl2.ambient", QVector3D(0.2f, 0.2f, 0.2f));
+            meshShader->setUniformVec3("dl2.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
+            meshShader->setUniformVec3("dl2.specular", QVector3D(0.1f, 0.1f, 0.1f));
+            meshShader->setUniformVec3("dl2.direction", QVector3D(1.0f, 1.0f, -3.0f));
 
             meshShader->setUniformMat4("model", model);
             meshShader->setUniformMat4("view", camera->getViewMatrix());
