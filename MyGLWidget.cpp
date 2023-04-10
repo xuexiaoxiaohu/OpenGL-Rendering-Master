@@ -11,7 +11,7 @@
 MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     dataType = DT;
     camera = new Camera();
-    dataProc = new DataProcessing();
+    glDataProc = new DataProcessing();
     projMatrix.setToIdentity();
     projMatrix.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
@@ -137,15 +137,15 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     if (isShiftPressed) {
         if (event->buttons() & Qt::LeftButton) {
-            if (dataProc->isConstructionFinished == false) {
+            if (glDataProc->isConstructionFinished == false) {
                 QMessageBox::information(this, "Tips", "Please perform the erase operation "
                     "after modeling is completed.", QMessageBox::Ok);
                 return;
             }
-            QVector3D worldPos = convertScreenToWorld(mMousePos);
-            dataProc->getDataAfterErase(worldPos, mesh, allVertices);
+            QVector3D worldPos = convertScreenToWorld(event->pos());
+            glDataProc->getDataAfterErase(worldPos, mesh, allVertices);
             pcl::io::savePLYFile("C:/Project/OpenGL-Rendering-Master-Build/result111.ply",mesh);
-            setImageData(dataProc->glMeshData);
+            setImageData(glDataProc->glMeshData);
         }
     }else{
         if (event->buttons() & Qt::LeftButton) {
@@ -164,25 +164,26 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     repaint();
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
-    if (event->key() & Qt::Key_Shift)
+    if (event->key() & Qt::Key_Shift) {
         qDebug() << "keyPressEvent Key_Shift";
         isShiftPressed = true;
+    }
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
-    if (event->key() & Qt::Key_Shift)
+    if (event->key() & Qt::Key_Shift) {
         qDebug() << "keyReleaseEvent Key_Shift";
         isShiftPressed = false;
+    }
 }
 
 QVector3D MyGLWidget::convertScreenToWorld(QPoint sp) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
-    double mvMatrix[16];
-    double pMatrix[16];
+    double mvMatrix[16], pMatrix[16];
 
-    QMatrix4x4 mVMatrix = (camera->getViewMatrix()) * modelMatrix;
+    QMatrix4x4 modelViewMatrix = (camera->getViewMatrix()) * modelMatrix;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mvMatrix[i * 4 + j] = mVMatrix(j, i);
+            mvMatrix[i * 4 + j] = modelViewMatrix(j, i);
             pMatrix[i * 4 + j] = projMatrix(j, i);
         }
     }

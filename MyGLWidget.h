@@ -29,7 +29,7 @@ public:
 
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
-
+    DataProcessing* glDataProc;
 protected:
     void initializeGL()         override;
     void paintGL()              override;
@@ -46,7 +46,7 @@ protected:
 
     QVector3D convertScreenToWorld(QPoint point);
     void rotateMesh(float angle, QVector3D axis);
-    DataProcessing* dataProc;
+
 
 private:
     ShaderProgram* meshShader;

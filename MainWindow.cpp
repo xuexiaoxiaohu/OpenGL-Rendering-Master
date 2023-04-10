@@ -1,7 +1,6 @@
 #include "MainWindow.h"
 #include <QFileDialog>
 #include <QElapsedtimer>
-
 #include <qelapsedtimer.h>
 #include <QDebug>
 #include "MyGLWidget.h"
@@ -106,9 +105,9 @@ void MainWindow::startRendering(){
                             }
                         }
                         if ((abs(diff) <= 0)){
-                            meshDataProc->isConstructionFinished = true;
-                            meshDataProc->setMesh(outMesh);
-                            meshDataProc->setMeshVertices(allVertices);
+                            myMeshGLWidget->glDataProc->isConstructionFinished = true;
+                            myMeshGLWidget->glDataProc->setMesh(outMesh);
+                            myMeshGLWidget->glDataProc->setMeshVertices(allVertices);
                         }
    
                         myMeshGLWidget->setCameraPara(cameraEye, cameraDir);
