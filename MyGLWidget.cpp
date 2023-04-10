@@ -73,16 +73,7 @@ void MyGLWidget::paintGL(){
         pointShader->setUniformMat4("proj", proj);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
-        if (isShiftPressed){
-            glColor3f(1.0f, 0.0f, 0.0f);
-            QVector<float> vertices = dataProc->getCircularVertex(mMousePos, 0.05f, width(), height());
 
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glVertexPointer(2, GL_FLOAT, 0, vertices.constData());
-
-            glDrawArrays(GL_TRIANGLE_FAN, 0, vertices.size() / 2);
-            glDisableClientState(GL_VERTEX_ARRAY);
-        }else{
             glFunc->glGenVertexArrays(1, &meshVAO);
             glFunc->glBindVertexArray(meshVAO);
             glFunc->glGenBuffers(1, &meshVBO);
@@ -117,8 +108,6 @@ void MyGLWidget::paintGL(){
             meshShader->setUniformMat4("proj", proj);
 
             glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
-
-        }
     }
 }
 void MyGLWidget::resizeGL(int width, int height){
@@ -129,7 +118,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
     if (isShiftPressed){
         if (isConstructionFinished == false) {
-            QMessageBox::information(this, "Tips", "Please perform the erase operation"
+            QMessageBox::information(this, "Tips", "Please perform the erase operation "
                 "after modeling is completed.", QMessageBox::Ok);
             return;
         }
@@ -155,7 +144,6 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 
         }
     }
-   // repaint that both mesh "erase" and mesh "rotate and translate" operations. 
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
