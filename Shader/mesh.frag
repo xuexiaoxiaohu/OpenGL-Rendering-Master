@@ -1,5 +1,6 @@
 #version 450 core
-out vec4 FragColor;
+
+#define NR_POINT_LIGHTS 4
 
 struct material{
     vec3 ambient;
@@ -20,7 +21,6 @@ struct pointLight{
     float constant;
     float linear;
     float quadratic;
-	
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -38,10 +38,10 @@ struct spotLight{
     vec3 specular;       
 };
 
-#define NR_POINT_LIGHTS 4
-
 in vec3 fragPos;  
 in vec3 fragNormal;  
+
+out vec4 fragColor;
 
 uniform vec3 viewPos;
 uniform material mat;
@@ -65,7 +65,7 @@ void main(){
     //    result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
 
-    FragColor = vec4(result, 1.0);
+    fragColor = vec4(result, 1.0);
 } 
 
 vec3 calcDirLight(dirLight light, vec3 normal, vec3 viewDir){

@@ -53,9 +53,9 @@ private:
     ShaderProgram* pointShader;
     bool isShiftPressed = false;
 
-    QMatrix4x4 model;
+    QMatrix4x4 modelMatrix;
     Camera* camera;
-    QMatrix4x4 proj;
+    QMatrix4x4 projMatrix;
 
     QOpenGLFunctions_4_5_Core* glFunc;
     std::vector<GLfloat> vertices;

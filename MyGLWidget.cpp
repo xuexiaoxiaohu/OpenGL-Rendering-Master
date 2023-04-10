@@ -11,10 +11,10 @@
 MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     dataType = DT;
     camera = new Camera();
-    proj.setToIdentity();
-    proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
-    this->grabKeyboard();
     dataProc = new DataProcessing();
+    projMatrix.setToIdentity();
+    projMatrix.perspective(45.0f, width() / height(), 0.1f, 200.f);
+    this->grabKeyboard();
 }
 
 MyGLWidget::~MyGLWidget(){
@@ -68,9 +68,9 @@ void MyGLWidget::paintGL(){
         glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
         
         pointShader->use();
-        pointShader->setUniformMat4("model", model);
+        pointShader->setUniformMat4("model", modelMatrix);
         pointShader->setUniformMat4("view", camera->getViewMatrix());
-        pointShader->setUniformMat4("proj", proj);
+        pointShader->setUniformMat4("proj", projMatrix);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
 
@@ -103,9 +103,9 @@ void MyGLWidget::paintGL(){
             meshShader->setUniformVec3("dl2.specular", QVector3D(0.1f, 0.1f, 0.1f));
             meshShader->setUniformVec3("dl2.direction", QVector3D(1.0f, 1.0f, -3.0f));
 
-            meshShader->setUniformMat4("model", model);
+            meshShader->setUniformMat4("model", modelMatrix);
             meshShader->setUniformMat4("view", camera->getViewMatrix());
-            meshShader->setUniformMat4("proj", proj);
+            meshShader->setUniformMat4("proj", projMatrix);
 
             glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
@@ -116,39 +116,41 @@ void MyGLWidget::resizeGL(int width, int height){
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
-    if (isShiftPressed){
-        if (isConstructionFinished == false) {
-            QMessageBox::information(this, "Tips", "Please perform the erase operation "
-                "after modeling is completed.", QMessageBox::Ok);
-            return;
-        }
-        QVector3D worldPos = convertScreenToWorld(mMousePos);
-        dataProc->getDataAfterErase(worldPos, mesh, allVertices);
+    QVector3D diff = QVector3D(mMousePos - m_lastPos);
+    float angle = diff.length() / 2.0f;
+    QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
 
-        setImageData(dataProc->glMeshData);
+    rotationAngle += angle;
+    rotationAxis = axis;
+    m_lastPos = mMousePos;
 
-    }else{
-        QVector3D diff = QVector3D(mMousePos - m_lastPos);
-        float angle = diff.length() / 2.0f;
-        QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
-
-        rotationAngle += angle;
-        rotationAxis = axis;
-        m_lastPos = mMousePos;
-
-        model.setToIdentity();
-        if (event->buttons() & Qt::LeftButton) {
-            model.rotate(rotationAngle, -axis.y(), axis.x(), 0.0);
-        }
-        if (event->buttons() & Qt::RightButton) {
-
-        }
+    modelMatrix.setToIdentity();
+    if (event->buttons() & Qt::LeftButton) {
+        modelMatrix.rotate(rotationAngle, -axis.y(), axis.x(), 0.0);
     }
+    if (event->buttons() & Qt::RightButton) {
+
+    }
+    
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    if (event->buttons() & Qt::LeftButton) {
-        m_lastPos = event->pos();
+    if (isShiftPressed) {
+        if (event->buttons() & Qt::LeftButton) {
+            if (isConstructionFinished == false) {
+                QMessageBox::information(this, "Tips", "Please perform the erase operation "
+                    "after modeling is completed.", QMessageBox::Ok);
+                return;
+            }
+            QVector3D worldPos = convertScreenToWorld(mMousePos);
+            dataProc->getDataAfterErase(worldPos, mesh, allVertices);
+
+            setImageData(dataProc->glMeshData);
+        }
+    }else{
+        if (event->buttons() & Qt::LeftButton) {
+            m_lastPos = event->pos();
+        }
     }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
@@ -174,19 +176,17 @@ QVector3D MyGLWidget::convertScreenToWorld(QPoint screenPoint) {
     double modelViewMatrix[16];
     double projectionMatrix[16];
 
-    QMatrix4x4 mVMatrix = (camera->getViewMatrix()) * model;
+    QMatrix4x4 mVMatrix = (camera->getViewMatrix()) * modelMatrix;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             modelViewMatrix[i * 4 + j] = mVMatrix(j, i);
-            projectionMatrix[i * 4 + j] = proj(j, i);
+            projectionMatrix[i * 4 + j] = projMatrix(j, i);
         }
     }
     GLfloat depthValue;
+    double worldX, worldY, worldZ;
     makeCurrent();
     glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depthValue);
-    doneCurrent();
-
-    double worldX, worldY, worldZ;
     gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depthValue, modelViewMatrix, projectionMatrix, viewport, &worldX, &worldY, &worldZ);
     return QVector3D((double)worldX, (double)worldY, (double)worldZ);
 }
