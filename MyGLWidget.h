@@ -23,13 +23,12 @@ public:
     MyGLWidget(QWidget* parent, int DT);
     ~MyGLWidget();
     void setImageData(std::vector<GLfloat> data);
-    void setCameraPara(QVector3D eye, QVector3D center);
+    void setCameraPara(QVector3D eye, QVector3D dir);
     void setMeshVertices(std::vector<QVector3D> meshVertexs);
     void setMesh(pcl::PolygonMesh mesh);
 
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
-    bool isConstructionFinished = false;
 
 protected:
     void initializeGL()         override;

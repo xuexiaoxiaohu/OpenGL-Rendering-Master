@@ -33,9 +33,9 @@ void MyGLWidget::setMeshVertices(std::vector<QVector3D> allVertices) {
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
     vertices = data;
 }
-void MyGLWidget::setCameraPara(QVector3D eye, QVector3D meshCenter) {
+void MyGLWidget::setCameraPara(QVector3D eye, QVector3D dir) {
     camera->eye = eye;
-    camera->meshCenter = meshCenter;
+    camera->dir = dir;
 }
 void MyGLWidget::initializeShader() {
     QString qAppDir = QCoreApplication::applicationDirPath();
@@ -130,22 +130,21 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         rotateMesh(rotationAngle, rotationAxis);
     }
     if (event->buttons() & Qt::RightButton) {
-
+        modelMatrix.translate(mMousePos.x()/50, mMousePos.y()/50);
     }
-    
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     if (isShiftPressed) {
         if (event->buttons() & Qt::LeftButton) {
-            if (isConstructionFinished == false) {
+            if (dataProc->isConstructionFinished == false) {
                 QMessageBox::information(this, "Tips", "Please perform the erase operation "
                     "after modeling is completed.", QMessageBox::Ok);
                 return;
             }
             QVector3D worldPos = convertScreenToWorld(mMousePos);
             dataProc->getDataAfterErase(worldPos, mesh, allVertices);
-
+            pcl::io::savePLYFile("C:/Project/OpenGL-Rendering-Master-Build/result111.ply",mesh);
             setImageData(dataProc->glMeshData);
         }
     }else{
@@ -153,6 +152,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             m_lastPos = event->pos();
         }
     }
+    repaint();
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
@@ -164,35 +164,37 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     repaint();
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Shift)
+    if (event->key() & Qt::Key_Shift)
+        qDebug() << "keyPressEvent Key_Shift";
         isShiftPressed = true;
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
-    if (event->key() == Qt::Key_Shift) 
+    if (event->key() & Qt::Key_Shift)
+        qDebug() << "keyReleaseEvent Key_Shift";
         isShiftPressed = false;
 }
 
-QVector3D MyGLWidget::convertScreenToWorld(QPoint screenPoint) {
+QVector3D MyGLWidget::convertScreenToWorld(QPoint sp) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
-    double modelViewMatrix[16];
-    double projectionMatrix[16];
+    double mvMatrix[16];
+    double pMatrix[16];
 
     QMatrix4x4 mVMatrix = (camera->getViewMatrix()) * modelMatrix;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            modelViewMatrix[i * 4 + j] = mVMatrix(j, i);
-            projectionMatrix[i * 4 + j] = projMatrix(j, i);
+            mvMatrix[i * 4 + j] = mVMatrix(j, i);
+            pMatrix[i * 4 + j] = projMatrix(j, i);
         }
     }
-    GLfloat depthValue;
+    GLfloat depth;
     double worldX, worldY, worldZ;
     makeCurrent();
-    glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depthValue);
-    gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depthValue, modelViewMatrix, projectionMatrix, viewport, &worldX, &worldY, &worldZ);
+    glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvMatrix, pMatrix, viewport, &worldX, &worldY, &worldZ);
     return QVector3D((double)worldX, (double)worldY, (double)worldZ);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
-    modelMatrix.translate(camera->meshCenter);
+    modelMatrix.translate(camera->dir);
     modelMatrix.rotate(angle, axis);
-    modelMatrix.translate(-camera->meshCenter);
+    modelMatrix.translate(-camera->dir);
 }
