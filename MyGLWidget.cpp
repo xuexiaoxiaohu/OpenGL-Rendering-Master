@@ -69,6 +69,7 @@ void MyGLWidget::paintGL(){
         
         pointShader->use();
         pointShader->setUniformMat4("model", modelMatrix);
+
         pointShader->setUniformMat4("view", camera->getViewMatrix());
         pointShader->setUniformMat4("proj", projMatrix);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
@@ -126,7 +127,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 
     modelMatrix.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
-        modelMatrix.rotate(rotationAngle, -axis.y(), axis.x(), 0.0);
+        rotateMesh(rotationAngle, rotationAxis);
     }
     if (event->buttons() & Qt::RightButton) {
 
@@ -189,4 +190,9 @@ QVector3D MyGLWidget::convertScreenToWorld(QPoint screenPoint) {
     glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depthValue);
     gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depthValue, modelViewMatrix, projectionMatrix, viewport, &worldX, &worldY, &worldZ);
     return QVector3D((double)worldX, (double)worldY, (double)worldZ);
+}
+void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
+    modelMatrix.translate(camera->meshCenter);
+    modelMatrix.rotate(angle, axis);
+    modelMatrix.translate(-camera->meshCenter);
 }

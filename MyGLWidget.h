@@ -46,6 +46,7 @@ protected:
     void initializeShader();
 
     QVector3D convertScreenToWorld(QPoint point);
+    void rotateMesh(float angle, QVector3D axis);
     DataProcessing* dataProc;
 
 private:
