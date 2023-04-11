@@ -143,24 +143,23 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             QVector3D worldPos = convertScreenToWorld(event->pos());
             glDataProc->getErasedMesh(worldPos, mesh, allVertices);
  
-            //vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-            //pcl::io::mesh2vtk(mesh, polydata);
+            vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+            pcl::io::mesh2vtk(mesh, polydata);
    
-            //vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-            //normals->SetInputData(polydata);
-            //normals->ComputePointNormalsOn();
-            //normals->ComputeCellNormalsOff();
-            //normals->Update();
+            vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+            normals->SetInputData(polydata);
+            normals->ComputePointNormalsOn();
+            normals->ComputeCellNormalsOff();
+            normals->Update();
 
-            //vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
-            //fillHolesFilter->SetInputData(normals->GetOutput());
-            //fillHolesFilter->SetHoleSize(100.0);
-            //fillHolesFilter->Update();
-            //pcl::PolygonMesh mesh111;
-            //pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);
+            vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
+            fillHolesFilter->SetInputData(normals->GetOutput());
+            fillHolesFilter->SetHoleSize(100.0);
+            fillHolesFilter->Update();
+            pcl::PolygonMesh mesh111;
+            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);
+            glDataProc->getGLMeshData(mesh111);
 
-            glDataProc->getGLMeshData(mesh);
-            pcl::io::savePLYFile("C:\\Project\\OpenGL-Rendering-Master-Build\\aaa.ply", mesh);
             setImageData(glDataProc->glMeshData);
         }
     }else{
