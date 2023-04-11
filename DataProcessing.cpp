@@ -69,7 +69,7 @@ void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh
 	pcl::toPCLPointCloud2(*cloud_with_normals, outputCloud);
 	outMesh.cloud = outputCloud;
 }
-// Find the nearest vertex of the world coordinate point
+
 int DataProcessing::findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {
 	int nearestVertexIndex = -1;
 	float minDist = std::numeric_limits<float>::max();
@@ -113,32 +113,17 @@ pcl::PolygonMesh DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<i
 	mesh.polygons = polygons;
 	return mesh;
 }
-void DataProcessing::ply2ply(std::string src, std::string dst) {
-	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-	reader->SetFileName(src.c_str());
-	reader->Update();
 
-	vtkSmartPointer<vtkTriangleFilter> filter = vtkSmartPointer<vtkTriangleFilter>::New();
-	filter->SetInputData(reader->GetOutput());
-
-	vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
-	writer->SetFileName(dst.c_str());
-	writer->SetInputConnection(filter->GetOutputPort());
-	writer->SetFileTypeToASCII();
-	writer->SetColorModeToOff();
-	writer->Update();
-	writer->Write();
-}
 
 void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
 	int index = findNearestVertex(worldPos, allVertices);
 	if (index != -1) {
-		pcl::PointXYZ targetVertice;
-		targetVertice.x = allVertices[index].x();
-		targetVertice.y = allVertices[index].y();
-		targetVertice.z = allVertices[index].z();
+		pcl::PointXYZ nearestVertex;
+		nearestVertex.x = allVertices[index].x();
+		nearestVertex.y = allVertices[index].y();
+		nearestVertex.z = allVertices[index].z();
 
-		pcl::Indices toRemove = findKNeighbors(mesh, targetVertice);
+		pcl::Indices toRemove = findKNeighbors(mesh, nearestVertex);
 		eraseMesh(mesh, toRemove);
 	}
 }
@@ -157,4 +142,20 @@ void DataProcessing::getGLMeshData(pcl::PolygonMesh &mesh) {
 			glMeshData.emplace_back(point.normal_z);
 		}
 	}
+}
+void DataProcessing::ply2ply(std::string src, std::string dst) {
+	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+	reader->SetFileName(src.c_str());
+	reader->Update();
+
+	vtkSmartPointer<vtkTriangleFilter> filter = vtkSmartPointer<vtkTriangleFilter>::New();
+	filter->SetInputData(reader->GetOutput());
+
+	vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();
+	writer->SetFileName(dst.c_str());
+	writer->SetInputConnection(filter->GetOutputPort());
+	writer->SetFileTypeToASCII();
+	writer->SetColorModeToOff();
+	writer->Update();
+	writer->Write();
 }

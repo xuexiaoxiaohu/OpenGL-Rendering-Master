@@ -141,9 +141,11 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
                 return;
             }
             QVector3D worldPos = convertScreenToWorld(event->pos());
+
+
             glDataProc->getErasedMesh(worldPos, mesh, allVertices);
  
-            vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+           /* vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
             pcl::io::mesh2vtk(mesh, polydata);
    
             vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -157,8 +159,8 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             fillHolesFilter->SetHoleSize(100.0);
             fillHolesFilter->Update();
             pcl::PolygonMesh mesh111;
-            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);
-            glDataProc->getGLMeshData(mesh111);
+            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);*/
+            glDataProc->getGLMeshData(mesh);
 
             setImageData(glDataProc->glMeshData);
         }
@@ -204,6 +206,7 @@ QVector3D MyGLWidget::convertScreenToWorld(QPoint sp) {
     makeCurrent();
     glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvMatrix, pMatrix, viewport, &wx, &wy, &wz);
+    qDebug() << "wx = " << wx;
     return QVector3D((double)wx, (double)wy, (double)wz);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
