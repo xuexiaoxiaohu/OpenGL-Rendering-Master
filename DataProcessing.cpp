@@ -90,7 +90,7 @@ std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::Poin
 	kdtree->setInputCloud(cloud);
 	std::vector<int> k_indices;
 	std::vector<float> k_distances;
-	kdtree->nearestKSearch(query_point, 10, k_indices, k_distances);
+	kdtree->nearestKSearch(query_point, 20, k_indices, k_distances);
 	return k_indices;
 }
 pcl::PolygonMesh DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
