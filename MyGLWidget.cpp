@@ -206,7 +206,6 @@ QVector3D MyGLWidget::convertScreenToWorld(QPoint sp) {
     makeCurrent();
     glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvMatrix, pMatrix, viewport, &wx, &wy, &wz);
-    qDebug() << "wx = " << wx;
     return QVector3D((double)wx, (double)wy, (double)wz);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
