@@ -69,12 +69,10 @@ void MyGLWidget::paintGL(){
         
         pointShader->use();
         pointShader->setUniformMat4("model", modelMatrix);
-
         pointShader->setUniformMat4("view", camera->getViewMatrix());
         pointShader->setUniformMat4("proj", projMatrix);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
-
             glFunc->glGenVertexArrays(1, &meshVAO);
             glFunc->glBindVertexArray(meshVAO);
             glFunc->glGenBuffers(1, &meshVBO);
@@ -137,14 +135,14 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     if (isShiftPressed) {
         if (event->buttons() & Qt::LeftButton) {
-            if (glDataProc->isConstructionFinished == false) {
+            if (isConstructionFinished == false) {
                 QMessageBox::information(this, "Tips", "Please perform the erase operation "
                     "after modeling is completed.", QMessageBox::Ok);
                 return;
             }
             QVector3D worldPos = convertScreenToWorld(event->pos());
             glDataProc->getDataAfterErase(worldPos, mesh, allVertices);
-            pcl::io::savePLYFile("C:/Project/OpenGL-Rendering-Master-Build/result111.ply",mesh);
+           // pcl::io::savePLYFile("C:/Project/OpenGL-Rendering-Master-Build/result111.ply",mesh);
             setImageData(glDataProc->glMeshData);
         }
     }else{
@@ -158,24 +156,21 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
 
 }
-void MyGLWidget::wheelEvent(QWheelEvent* event) {
-    QPoint offset = event->angleDelta();
-    camera->mouseScroll(offset.y());
-    repaint();
-}
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
     if (event->key() & Qt::Key_Shift) {
-        qDebug() << "keyPressEvent Key_Shift";
         isShiftPressed = true;
     }
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
     if (event->key() & Qt::Key_Shift) {
-        qDebug() << "keyReleaseEvent Key_Shift";
         isShiftPressed = false;
     }
 }
-
+void MyGLWidget::wheelEvent(QWheelEvent* event) {
+    QPoint offset = event->angleDelta();
+    camera->mouseScroll(offset.y());
+    repaint();
+}
 QVector3D MyGLWidget::convertScreenToWorld(QPoint sp) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
     double mvMatrix[16], pMatrix[16];

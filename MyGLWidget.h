@@ -22,6 +22,7 @@ class MyGLWidget:public QOpenGLWidget{
 public:
     MyGLWidget(QWidget* parent, int DT);
     ~MyGLWidget();
+
     void setImageData(std::vector<GLfloat> data);
     void setCameraPara(QVector3D eye, QVector3D dir);
     void setMeshVertices(std::vector<QVector3D> meshVertexs);
@@ -30,6 +31,8 @@ public:
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
     DataProcessing* glDataProc;
+    bool isConstructionFinished = false;
+
 protected:
     void initializeGL()         override;
     void paintGL()              override;

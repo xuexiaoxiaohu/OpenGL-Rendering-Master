@@ -129,28 +129,6 @@ void DataProcessing::ply2ply(std::string src, std::string dst) {
 	writer->Update();
 	writer->Write();
 }
-QVector<float> DataProcessing::getCircularVertex(QPoint mousePos, float radius, int width, int height){
-	float centerX = 2.0f * mousePos.x() / width - 1.0f;
-	float centerY = 1.0f - 2.0f * mousePos.y() / height;
-
-	QVector<float> vertices;
-	vertices.append(centerX);
-	vertices.append(centerY);
-	for (int i = 0; i <= 50; i++) {
-		float angle = i * 2.0f * M_PI / 50;
-		float x = centerX + radius * cosf(angle);
-		float y = centerY + radius * sinf(angle);
-		vertices.append(x);
-		vertices.append(y);
-	}
-	return vertices;
-}
-void DataProcessing::setMesh(pcl::PolygonMesh mesh) {
-	this->mesh = mesh;
-}
-void DataProcessing::setMeshVertices(std::vector<QVector3D> allVertices) {
-	this->allVertices = allVertices;
-}
 
 void DataProcessing::getDataAfterErase(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
 	int index = findNearestVertex(worldPos, allVertices);
