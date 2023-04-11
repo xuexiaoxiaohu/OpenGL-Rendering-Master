@@ -130,7 +130,7 @@ void DataProcessing::ply2ply(std::string src, std::string dst) {
 	writer->Write();
 }
 
-void DataProcessing::getDataAfterErase(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
+void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
 	int index = findNearestVertex(worldPos, allVertices);
 	if (index != -1) {
 		pcl::PointXYZ targetVertice;
