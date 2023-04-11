@@ -7,7 +7,7 @@
 #include <glut.h>
 #include <QMessageBox>
 #include <QPainter>
-
+#include <vtkFillHolesFilter.h>
 MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     dataType = DT;
     camera = new Camera();
@@ -142,7 +142,22 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             }
             QVector3D worldPos = convertScreenToWorld(event->pos());
             glDataProc->getDataAfterErase(worldPos, mesh, allVertices);
-           // pcl::io::savePLYFile("C:/Project/OpenGL-Rendering-Master-Build/result111.ply",mesh);
+
+          /*  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+            pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
+            pcl::io::mesh2vtk(mesh, polydata);
+   
+            vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
+            normals->SetInputData(polydata);
+            normals->ComputePointNormalsOn();
+            normals->ComputeCellNormalsOff();
+            normals->Update();
+            vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
+            fillHolesFilter->SetInputData(normals->GetOutput());
+            fillHolesFilter->SetHoleSize(100.0);
+            fillHolesFilter->Update();
+            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);*/
+
             setImageData(glDataProc->glMeshData);
         }
     }else{
