@@ -34,13 +34,13 @@ public:
 	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point);
 	pcl::PolygonMesh eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
 	void getDataAfterErase(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices);
-
+	void getGLMeshData(pcl::PolygonMesh &mesh);
 	std::vector<QVector3D>	pointData;
 	QVector3D maxCoord;
 	QVector3D minCoord;
 
-	pcl::PolygonMesh mesh;
-	std::vector<QVector3D> allVertices;
+	//pcl::PolygonMesh mesh;
+	//std::vector<QVector3D> allVertices;
 
 	std::vector<float> glMeshData;
 };

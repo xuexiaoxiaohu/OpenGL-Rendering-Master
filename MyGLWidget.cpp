@@ -142,7 +142,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             }
             QVector3D worldPos = convertScreenToWorld(event->pos());
             glDataProc->getDataAfterErase(worldPos, mesh, allVertices);
-
+            glDataProc->getGLMeshData(mesh);
           /*  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
             pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>());
             pcl::io::mesh2vtk(mesh, polydata);

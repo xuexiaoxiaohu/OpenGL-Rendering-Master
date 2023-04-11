@@ -141,7 +141,9 @@ void DataProcessing::getDataAfterErase(QVector3D worldPos, pcl::PolygonMesh &mes
 		pcl::Indices toRemove = findKNeighbors(mesh, targetVertice);
 		eraseMesh(mesh, toRemove);
 	}
-
+}
+void DataProcessing::getGLMeshData(pcl::PolygonMesh &mesh) {
+	glMeshData.clear();
 	pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
 	pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
 	for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
