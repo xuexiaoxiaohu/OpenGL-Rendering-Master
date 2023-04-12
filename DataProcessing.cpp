@@ -143,7 +143,7 @@ void DataProcessing::getGLMeshData(pcl::PolygonMesh &mesh) {
 		}
 	}
 }
-void DataProcessing::ply2ply(std::string src, std::string dst) {
+void DataProcessing::poly2tri(std::string src, std::string dst) {
 	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
 	reader->SetFileName(src.c_str());
 	reader->Update();

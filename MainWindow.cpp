@@ -24,7 +24,6 @@ MainWindow::~MainWindow(){
     delete meshDataProc;
 }
 
-// add opengl widget
 void MainWindow::addOpengGLWidget(){
     myPointGLWidget = new MyGLWidget(this, PointType);
     myPointGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
@@ -41,7 +40,6 @@ void MainWindow::startUpdateGL() {
         myMeshGLWidget->repaint();
     }
 }
-// Choose File
 void MainWindow::chooseFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
     
@@ -50,15 +48,16 @@ void MainWindow::chooseFile(){
     ui.lineEdit_file->setText(fileName);
     pointDataProc->loadPointData(fileName.toStdString().c_str());
 }
-// Begin render
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
         for (int pointLine = 0; pointLine < pointDataProc->pointData.size(); pointLine++){
-            rawData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
+            rawData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), 
+                pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
             pointDataProc->getMaxMinCoord(rawData);
 
             QVector3D cameraDir = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
-            QVector3D cameraEye = cameraDir + QVector3D(0.0f, 0.0f, (pointDataProc->maxCoord - pointDataProc->minCoord).z() * 2.0f);
+            QVector3D cameraEye = cameraDir + QVector3D(0.0f, 0.0f, 
+                (pointDataProc->maxCoord - pointDataProc->minCoord).z() * 2.0f);
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 for (int i = 0; i < rawData.size(); i++) {
@@ -72,14 +71,14 @@ void MainWindow::startRendering(){
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
-                    int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointDataProc->pointData.size());
-                    if ((((rawData.size()) % MESH_INCREASE_SIZE) == 0) || (abs(diff) <= 0)) {
+                    int diff = (int)rawData.size() - (int)pointDataProc->pointData.size();
+                    if (((rawData.size() % MESH_GROWTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
                       
                         std::string curAppPath = meshDataProc->getAppPath();
                         std::string oriPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
                         std::string dstPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
-                        meshDataProc->ply2ply(oriPlyPath, dstPlyPath);
+                        meshDataProc->poly2tri(oriPlyPath, dstPlyPath);
                         pcl::PolygonMesh inMesh, outMesh;
                         pcl::io::loadPLYFile(dstPlyPath, inMesh);
                         meshDataProc->addNormalForMesh(inMesh, outMesh);

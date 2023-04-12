@@ -28,7 +28,7 @@ public:
 	void loadPointData(const char* path);
 	void addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh);
 	void getMaxMinCoord(std::vector<QVector3D> data);
-	void ply2ply(std::string src, std::string dst);
+	void poly2tri(std::string src, std::string dst);
 
 	int findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices);
 	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point);
