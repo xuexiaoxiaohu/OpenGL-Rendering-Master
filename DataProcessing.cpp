@@ -37,9 +37,9 @@ void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
 	}
 }
 
-void DataProcessing::addNormalVector(pcl::PolygonMesh &inMesh) {
+void DataProcessing::addNormalVector(pcl::PolygonMesh &mesh) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::fromPCLPointCloud2(inMesh.cloud, *cloud);
+	pcl::fromPCLPointCloud2(mesh.cloud, *cloud);
 
 	std::vector<pcl::Indices> k_indices;
 	std::vector<std::vector<float>> k_sqr_distances;
@@ -68,7 +68,7 @@ void DataProcessing::addNormalVector(pcl::PolygonMesh &inMesh) {
 	pcl::concatenateFields(*cloud, *normalsRefinedPtr, *cloud_with_normals);
 	pcl::PCLPointCloud2 outputCloud;
 	pcl::toPCLPointCloud2(*cloud_with_normals, outputCloud);
-	inMesh.cloud = outputCloud;
+	mesh.cloud = outputCloud;
 }
 
 int DataProcessing::findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {

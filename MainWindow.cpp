@@ -8,14 +8,14 @@
 #include <stdlib.h>
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
 	ui.setupUi(this);
-    pointProc = new DataProcessing();
-    meshProc  = new DataProcessing();
-    surface   = new SurfaceReconsturction();
     addOpengGLWidget();
-
     connect(ui.openPushBtn, SIGNAL(clicked()), this, SLOT(openFile()));
     connect(ui.startPushBtn, SIGNAL(clicked()), this, SLOT(startRendering()));
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(callbackRepaint()));
+
+    pointProc = new DataProcessing();
+    meshProc = new DataProcessing();
+    surface = new SurfaceReconsturction();
 }
 MainWindow::~MainWindow(){
     delete myPointGLWidget;
