@@ -71,17 +71,17 @@ void DataProcessing::addNormalVector(pcl::PolygonMesh &mesh) {
 	mesh.cloud = outputCloud;
 }
 
-int DataProcessing::findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {
-	int nearestVertexIndex = -1;
+int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {
+	int indexVertex = -1;
 	float minDist = std::numeric_limits<float>::max();
 	for (int i = 0; i < glMeshVertices.size(); i++) {
 		float dist = (glMeshVertices[i] - worldPos).length();
 		if (dist < minDist) {
-			nearestVertexIndex = i;
+			indexVertex = i;
 			minDist = dist;
 		}
 	}
-	return nearestVertexIndex;
+	return indexVertex;
 }
 std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -115,16 +115,16 @@ void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> vertices
 }
 void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 	vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+	vtkSmartPointer<vtkFillHolesFilter> fillHoles = vtkSmartPointer<vtkFillHolesFilter>::New();
 	pcl::io::mesh2vtk(mesh, polydata);
-	vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
-	fillHolesFilter->SetInputData(polydata);
-	fillHolesFilter->SetHoleSize(100.0);
-	fillHolesFilter->Update();
-	pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);
+	fillHoles->SetInputData(polydata);
+	fillHoles->SetHoleSize(100.0);
+	fillHoles->Update();
+	pcl::io::vtk2mesh(fillHoles->GetOutput(), mesh);
 }
 
 void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
-	int index = findNearestVertex(worldPos, allVertices);
+	int index = getNearestVertexIndex(worldPos, allVertices);
 	if (index != -1) {
 		pcl::PointXYZ nearestVertex;
 		nearestVertex.x = allVertices[index].x();
