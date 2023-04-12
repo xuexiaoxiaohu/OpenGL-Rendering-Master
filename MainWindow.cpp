@@ -8,8 +8,8 @@
 #include <stdlib.h>
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
 	ui.setupUi(this);
-    pointDataProc     = new DataProcessing();
-    meshDataProc      = new DataProcessing();
+    pointProc     = new DataProcessing();
+    meshProc      = new DataProcessing();
     surface           = new SurfaceReconsturction();
     addOpengGLWidget();
     connect(ui.openPushBtn, SIGNAL(clicked()), this, SLOT(chooseFile()));
@@ -20,8 +20,8 @@ MainWindow::~MainWindow(){
     delete surface;
     delete myPointGLWidget;
     delete myMeshGLWidget;
-    delete pointDataProc;
-    delete meshDataProc;
+    delete pointProc;
+    delete meshProc;
 }
 
 void MainWindow::addOpengGLWidget(){
@@ -46,71 +46,72 @@ void MainWindow::chooseFile(){
     if (fileName.isEmpty()) return;
 
     ui.lineEdit_file->setText(fileName);
-    pointDataProc->loadPointData(fileName.toStdString().c_str());
+    pointProc->loadPointData(fileName.toStdString().c_str());
 }
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
-        for (int pointLine = 0; pointLine < pointDataProc->pointData.size(); pointLine++){
-            rawData.emplace_back(QVector3D{ pointDataProc->pointData[pointLine].x(), 
-                pointDataProc->pointData[pointLine].y(), pointDataProc->pointData[pointLine].z()});
-            pointDataProc->getMaxMinCoord(rawData);
+        for (int i = 0; i < pointProc->pointData.size(); i++){
+            rawData.emplace_back(QVector3D{ pointProc->pointData[i].x(), 
+                pointProc->pointData[i].y(), pointProc->pointData[i].z()});
 
-            QVector3D cameraDir = (pointDataProc->maxCoord + pointDataProc->minCoord) / 2.0f;
+            pointProc->getMaxMinCoord(rawData);
+            QVector3D cameraDir = (pointProc->maxCoord + pointProc->minCoord) / 2.0f;
             QVector3D cameraEye = cameraDir + QVector3D(0.0f, 0.0f, 
-                (pointDataProc->maxCoord - pointDataProc->minCoord).z() * 2.0f);
+                (pointProc->maxCoord - pointProc->minCoord).z() * 2.0f);
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 for (int i = 0; i < rawData.size(); i++) {
-                    if (i == 0) glPointData.clear();
-                    glPointData.emplace_back(pointDataProc->pointData[i].x());
-                    glPointData.emplace_back(pointDataProc->pointData[i].y());
-                    glPointData.emplace_back(pointDataProc->pointData[i].z());
+                    if (i == 0) glPoint.clear();
+                    glPoint.emplace_back(pointProc->pointData[i].x());
+                    glPoint.emplace_back(pointProc->pointData[i].y());
+                    glPoint.emplace_back(pointProc->pointData[i].z());
                 }
                 myPointGLWidget->setCameraPara(cameraEye, cameraDir);
-                myPointGLWidget->setImageData(glPointData);
+                myPointGLWidget->setImageData(glPoint);
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
-                    int diff = (int)rawData.size() - (int)pointDataProc->pointData.size();
+                    int diff = (int)rawData.size() - (int)pointProc->pointData.size();
                     if (((rawData.size() % MESH_GROWTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
                       
-                        std::string curAppPath = meshDataProc->getAppPath();
+                        std::string curAppPath = meshProc->getAppPath();
                         std::string oriPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
                         std::string dstPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
-                        meshDataProc->poly2tri(oriPlyPath, dstPlyPath);
                         pcl::PolygonMesh inMesh, outMesh;
+
+                        meshProc->poly2tri(oriPlyPath, dstPlyPath);
                         pcl::io::loadPLYFile(dstPlyPath, inMesh);
-                        meshDataProc->addNormalForMesh(inMesh, outMesh);
+                        meshProc->addNormalForMesh(inMesh, outMesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
                         pcl::fromPCLPointCloud2(outMesh.cloud, *pointsPtr);
 
                         for (std::size_t i = 0; i < outMesh.polygons.size(); i++) {
                             if (i == 0) {
-                                glMeshData.clear();
-                                allVertices.clear();
+                                glMesh.clear();
+                                glMeshVertices.clear();
                             }
                             for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
                                 pcl::PointNormal point = pointsPtr->points[outMesh.polygons[i].vertices[j]];
-                                glMeshData.emplace_back(point.x);
-                                glMeshData.emplace_back(point.y);
-                                glMeshData.emplace_back(point.z);
-                                glMeshData.emplace_back(point.normal_x);
-                                glMeshData.emplace_back(point.normal_y);
-                                glMeshData.emplace_back(point.normal_z);
+                                glMesh.emplace_back(point.x);
+                                glMesh.emplace_back(point.y);
+                                glMesh.emplace_back(point.z);
+                                glMesh.emplace_back(point.normal_x);
+                                glMesh.emplace_back(point.normal_y);
+                                glMesh.emplace_back(point.normal_z);
 
-                                allVertices.emplace_back(QVector3D{ point.x, point.y, point.z });
+                                glMeshVertices.emplace_back(QVector3D{ point.x, point.y, point.z });
                             }
                         }
                         if ((abs(diff) <= 0)){
                             myMeshGLWidget->isConstructionFinished = true;
                             myMeshGLWidget->setMesh(outMesh);
-                            myMeshGLWidget->setMeshVertices(allVertices);
+                            myMeshGLWidget->setMeshVertices(glMeshVertices);
                         }
    
                         myMeshGLWidget->setCameraPara(cameraEye, cameraDir);
-                        myMeshGLWidget->setImageData(glMeshData);
+                        myMeshGLWidget->setImageData(glMesh);
                     }
                 }
             }

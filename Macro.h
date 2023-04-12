@@ -6,7 +6,7 @@
 #define SCR_WIDTH					650
 #define SCR_HEIGHT					600
 
-#define MESH_INCREASE_SIZE			4000
+#define MESH_GROWTH_SIZE			4000
 #define MIN_POINTS_SIZE_REQUIRED    400
 
 #define	ITERATIONS					50

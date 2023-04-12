@@ -26,11 +26,11 @@ private:
 	MyGLWidget* myMeshGLWidget;
 
 	SurfaceReconsturction* surface;
-	DataProcessing* pointDataProc;
-	DataProcessing* meshDataProc;
+	DataProcessing* pointProc;
+	DataProcessing* meshProc;
 
 	std::vector<QVector3D> rawData;
-	std::vector<QVector3D> allVertices;
-	std::vector<GLfloat> glPointData;
-	std::vector<GLfloat> glMeshData;
+	std::vector<QVector3D> glMeshVertices;
+	std::vector<GLfloat> glPoint;
+	std::vector<GLfloat> glMesh;
 };	
