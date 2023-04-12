@@ -12,7 +12,8 @@ DataProcessing::~DataProcessing() {
 
 std::string DataProcessing::getAppPath() {
 	QString qAppDir = QCoreApplication::applicationDirPath();
-	std::string::size_type iPos = (qAppDir.toStdString().find_last_of('\\') + 1) == 0 ?qAppDir.toStdString().find_last_of('/') + 1 : qAppDir.toStdString().find_last_of('\\') + 1;
+	std::string::size_type iPos = (qAppDir.toStdString().find_last_of('\\') + 1) == 0 ?
+		qAppDir.toStdString().find_last_of('/') + 1 : qAppDir.toStdString().find_last_of('\\') + 1;
 	return qAppDir.toStdString().substr(0, iPos);
 }
 void DataProcessing::loadPointData(const char* path) {

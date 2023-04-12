@@ -42,9 +42,7 @@ void MainWindow::startUpdateGL() {
 }
 void MainWindow::chooseFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
-    
     if (fileName.isEmpty()) return;
-
     ui.lineEdit_file->setText(fileName);
     pointProc->loadPointData(fileName.toStdString().c_str());
 }
@@ -54,10 +52,15 @@ void MainWindow::startRendering(){
             rawData.emplace_back(QVector3D{ pointProc->pointData[i].x(), 
                 pointProc->pointData[i].y(), pointProc->pointData[i].z()});
 
+
+
             pointProc->getMaxMinCoord(rawData);
-            QVector3D cameraDir = (pointProc->maxCoord + pointProc->minCoord) / 2.0f;
-            QVector3D cameraEye = cameraDir + QVector3D(0.0f, 0.0f, 
-                (pointProc->maxCoord - pointProc->minCoord).z() * 2.0f);
+
+            QVector3D center = pointProc->maxCoord + pointProc->minCoord;
+            QVector3D vec1 = pointProc->maxCoord - pointProc->minCoord;
+
+            QVector3D cameraDir = center / 2.0f;
+            QVector3D cameraEye = QVector3D(0.0f, 0.0f, vec1.z() * 2);
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 for (int i = 0; i < rawData.size(); i++) {
