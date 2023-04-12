@@ -145,7 +145,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
 
             glDataProc->getErasedMesh(worldPos, mesh, allVertices);
  
-           /* vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+            vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
             pcl::io::mesh2vtk(mesh, polydata);
    
             vtkSmartPointer<vtkPolyDataNormals> normals = vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -159,7 +159,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             fillHolesFilter->SetHoleSize(100.0);
             fillHolesFilter->Update();
             pcl::PolygonMesh mesh111;
-            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);*/
+            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);
             glDataProc->getGLMeshData(mesh);
 
             setImageData(glDataProc->glMeshData);

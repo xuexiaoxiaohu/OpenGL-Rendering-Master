@@ -101,7 +101,7 @@ void MainWindow::startRendering(){
                                 glMeshData.emplace_back(point.normal_y);
                                 glMeshData.emplace_back(point.normal_z);
 
-                                allVertices.emplace_back(QVector3D{ point.y ,point.y,point.z });
+                                allVertices.emplace_back(QVector3D{ point.x, point.y, point.z });
                             }
                         }
                         if ((abs(diff) <= 0)){
