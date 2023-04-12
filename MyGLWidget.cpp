@@ -150,9 +150,8 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             fillHolesFilter->SetInputData(polydata);
             fillHolesFilter->SetHoleSize(100.0);
             fillHolesFilter->Update();
-            pcl::PolygonMesh mesh111;
-            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh111);
-            glDataProc->getGLMeshData(mesh111);
+            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);
+            glDataProc->getGLMeshData(mesh);
 
             setImageData(glDataProc->glMeshData);
         }
