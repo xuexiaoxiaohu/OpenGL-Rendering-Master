@@ -33,7 +33,8 @@ public:
 
 	int findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices);
 	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point);
-	pcl::PolygonMesh eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
+	void eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
+	void fillMesh(pcl::PolygonMesh& mesh);
 	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices);
 	void getGLMeshData(pcl::PolygonMesh &mesh);
 	std::vector<QVector3D>	pointData;

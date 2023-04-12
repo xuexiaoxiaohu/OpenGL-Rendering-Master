@@ -94,7 +94,7 @@ std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::Poin
 	kdtree->nearestKSearch(query_point, 200, k_indices, k_distances);
 	return k_indices;
 }
-pcl::PolygonMesh DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
+void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
 	std::vector<pcl::Vertices>& polygons = mesh.polygons;
 	for (int i = 0; i < polygons.size(); ++i) {
 		pcl::Vertices& vertices = polygons[i];
@@ -112,9 +112,16 @@ pcl::PolygonMesh DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<i
 		}
 	}
 	mesh.polygons = polygons;
-	return mesh;
 }
-
+void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
+	vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+	pcl::io::mesh2vtk(mesh, polydata);
+	vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
+	fillHolesFilter->SetInputData(polydata);
+	fillHolesFilter->SetHoleSize(100.0);
+	fillHolesFilter->Update();
+	pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);
+}
 
 void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
 	int index = findNearestVertex(worldPos, allVertices);
@@ -126,17 +133,9 @@ void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, s
 
 		pcl::Indices toRemove = findKNeighbors(mesh, nearestVertex);
 		eraseMesh(mesh, toRemove);
+		fillMesh(mesh);
+		getGLMeshData(mesh);
 	}
-
-	vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-	pcl::io::mesh2vtk(mesh, polydata);
-
-	vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
-	fillHolesFilter->SetInputData(polydata);
-	fillHolesFilter->SetHoleSize(100.0);
-	fillHolesFilter->Update();
-	pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);
-	getGLMeshData(mesh);
 }
 void DataProcessing::getGLMeshData(pcl::PolygonMesh &mesh) {
 	glMeshData.clear();
