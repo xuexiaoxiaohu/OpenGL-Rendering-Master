@@ -81,22 +81,22 @@ void MainWindow::startRendering(){
                         std::string curAppPath = meshProc->getAppPath();
                         std::string oriPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
                         std::string dstPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
-                        pcl::PolygonMesh inMesh, outMesh;
+                        pcl::PolygonMesh inMesh;
 
                         meshProc->poly2tri(oriPlyPath, dstPlyPath);
                         pcl::io::loadPLYFile(dstPlyPath, inMesh);
-                        meshProc->addNormalForMesh(inMesh, outMesh);
+                        meshProc->addNormalVector(inMesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
-                        pcl::fromPCLPointCloud2(outMesh.cloud, *pointsPtr);
+                        pcl::fromPCLPointCloud2(inMesh.cloud, *pointsPtr);
 
-                        for (std::size_t i = 0; i < outMesh.polygons.size(); i++) {
+                        for (std::size_t i = 0; i < inMesh.polygons.size(); i++) {
                             if (i == 0) {
                                 glMesh.clear();
                                 glMeshVertices.clear();
                             }
-                            for (std::size_t j = 0; j < outMesh.polygons[i].vertices.size(); j++) {
-                                pcl::PointNormal point = pointsPtr->points[outMesh.polygons[i].vertices[j]];
+                            for (std::size_t j = 0; j < inMesh.polygons[i].vertices.size(); j++) {
+                                pcl::PointNormal point = pointsPtr->points[inMesh.polygons[i].vertices[j]];
                                 glMesh.emplace_back(point.x);
                                 glMesh.emplace_back(point.y);
                                 glMesh.emplace_back(point.z);
@@ -109,7 +109,7 @@ void MainWindow::startRendering(){
                         }
                         if ((abs(diff) <= 0)){
                             myMeshGLWidget->isConstructionFinished = true;
-                            myMeshGLWidget->setMesh(outMesh);
+                            myMeshGLWidget->setMesh(inMesh);
                             myMeshGLWidget->setMeshVertices(glMeshVertices);
                         }
    

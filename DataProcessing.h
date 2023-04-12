@@ -27,7 +27,7 @@ public:
 	std::string getAppPath();
 
 	void loadPointData(const char* path);
-	void addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh);
+	void addNormalVector(pcl::PolygonMesh &inMesh);
 	void getMaxMinCoord(std::vector<QVector3D> data);
 	void poly2tri(std::string src, std::string dst);
 

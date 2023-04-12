@@ -37,8 +37,7 @@ void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
 	}
 }
 
-void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh &outMesh) {
-	outMesh = inMesh;
+void DataProcessing::addNormalVector(pcl::PolygonMesh &inMesh) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::fromPCLPointCloud2(inMesh.cloud, *cloud);
 
@@ -48,18 +47,19 @@ void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh
 	search.setInputCloud(cloud);
 	search.nearestKSearch(*cloud, pcl::Indices(), NUM_NEIGHBORS, k_indices, k_sqr_distances);
 
-	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
+	pcl::PointCloud<pcl::Normal>::Ptr normalsPtr(new pcl::PointCloud<pcl::Normal>);
 	pcl::PointCloud<pcl::Normal>::Ptr normalsRefinedPtr(new pcl::PointCloud<pcl::Normal>);
 	pcl::NormalEstimationOMP<pcl::PointXYZ, pcl::Normal> ne;
 	for (size_t i = 0; i < cloud->size(); ++i) {
 		pcl::Normal normal;
 		ne.computePointNormal(*cloud, k_indices[i], normal.normal_x, normal.normal_y, normal.normal_z, normal.curvature);
-		pcl::flipNormalTowardsViewpoint((*cloud)[i], (*cloud).sensor_origin_[0], (*cloud).sensor_origin_[1],(*cloud).sensor_origin_[2], normal.normal_x, normal.normal_y, normal.normal_z);
-		normals->emplace_back(normal);
+		pcl::flipNormalTowardsViewpoint((*cloud)[i], (*cloud).sensor_origin_[0], (*cloud).sensor_origin_[1],
+			(*cloud).sensor_origin_[2], normal.normal_x, normal.normal_y, normal.normal_z);
+		normalsPtr->emplace_back(normal);
 	}
 
 	pcl::NormalRefinement<pcl::Normal> nr(k_indices, k_sqr_distances);
-	nr.setInputCloud(normals);
+	nr.setInputCloud(normalsPtr);
 	nr.setMaxIterations(ITERATIONS);
 	nr.setConvergenceThreshold(0.1);
 	nr.filter(*normalsRefinedPtr);
@@ -68,7 +68,7 @@ void DataProcessing::addNormalForMesh(pcl::PolygonMesh &inMesh, pcl::PolygonMesh
 	pcl::concatenateFields(*cloud, *normalsRefinedPtr, *cloud_with_normals);
 	pcl::PCLPointCloud2 outputCloud;
 	pcl::toPCLPointCloud2(*cloud_with_normals, outputCloud);
-	outMesh.cloud = outputCloud;
+	inMesh.cloud = outputCloud;
 }
 
 int DataProcessing::findNearestVertex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {
