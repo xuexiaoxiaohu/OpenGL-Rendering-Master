@@ -12,9 +12,9 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 public slots:
-	void chooseFile();
+	void openFile();
 	void startRendering();
-	void startUpdateGL();
+	void callbackRepaint();
 signals:
 	void signal_glUpdate();
 
