@@ -142,17 +142,6 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
             }
             QVector3D worldPos = convertScreenToWorld(event->pos());
             glDataProc->getErasedMesh(worldPos, mesh, allVertices);
- 
-            vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-            pcl::io::mesh2vtk(mesh, polydata);
-   
-            vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
-            fillHolesFilter->SetInputData(polydata);
-            fillHolesFilter->SetHoleSize(100.0);
-            fillHolesFilter->Update();
-            pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);
-            glDataProc->getGLMeshData(mesh);
-
             setImageData(glDataProc->glMeshData);
         }
     }else{

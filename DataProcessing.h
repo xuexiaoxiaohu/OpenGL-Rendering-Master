@@ -17,6 +17,7 @@
 #include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
 #include <vtkTriangleFilter.h>
+#include <vtkFillHolesFilter.h>
 
 class DataProcessing {
 public:

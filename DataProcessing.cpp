@@ -127,6 +127,16 @@ void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, s
 		pcl::Indices toRemove = findKNeighbors(mesh, nearestVertex);
 		eraseMesh(mesh, toRemove);
 	}
+
+	vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+	pcl::io::mesh2vtk(mesh, polydata);
+
+	vtkSmartPointer<vtkFillHolesFilter> fillHolesFilter = vtkSmartPointer<vtkFillHolesFilter>::New();
+	fillHolesFilter->SetInputData(polydata);
+	fillHolesFilter->SetHoleSize(100.0);
+	fillHolesFilter->Update();
+	pcl::io::vtk2mesh(fillHolesFilter->GetOutput(), mesh);
+	getGLMeshData(mesh);
 }
 void DataProcessing::getGLMeshData(pcl::PolygonMesh &mesh) {
 	glMeshData.clear();
