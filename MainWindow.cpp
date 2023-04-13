@@ -71,9 +71,9 @@ void MainWindow::startRendering(){
                 myPointGLWidget->setImageData(glPoint);
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
-                if ((rawData.size() >= MIN_POINTS_SIZE_REQUIRED)) {
+                if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
                     int diff = (int)rawData.size() - (int)pointProc->pointData.size();
-                    if (((rawData.size() % MESH_GROWTH_SIZE) == 0) || (abs(diff) <= 0)) {
+                    if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
                       
                         std::string curAppPath = meshProc->getAppPath();

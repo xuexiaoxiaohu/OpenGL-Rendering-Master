@@ -12,8 +12,8 @@ MyGLWidget::MyGLWidget(QWidget* parent,int DT){
     dataType = DT;
     camera = new Camera();
     glDataProc = new DataProcessing();
-    projMatrix.setToIdentity();
-    projMatrix.perspective(45.0f, width() / height(), 0.1f, 200.f);
+    proj.setToIdentity();
+    proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
 }
 
@@ -68,9 +68,9 @@ void MyGLWidget::paintGL(){
         glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
         
         pointShader->use();
-        pointShader->setUniformMat4("model", modelMatrix);
+        pointShader->setUniformMat4("model", model);
         pointShader->setUniformMat4("view", camera->getViewMatrix());
-        pointShader->setUniformMat4("proj", projMatrix);
+        pointShader->setUniformMat4("proj", proj);
         glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
             glFunc->glGenVertexArrays(1, &meshVAO);
@@ -102,9 +102,9 @@ void MyGLWidget::paintGL(){
             meshShader->setUniformVec3("dl2.specular", QVector3D(0.1f, 0.1f, 0.1f));
             meshShader->setUniformVec3("dl2.direction", QVector3D(1.0f, 1.0f, -3.0f));
 
-            meshShader->setUniformMat4("model", modelMatrix);
+            meshShader->setUniformMat4("model", model);
             meshShader->setUniformMat4("view", camera->getViewMatrix());
-            meshShader->setUniformMat4("proj", projMatrix);
+            meshShader->setUniformMat4("proj", proj);
 
             glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
@@ -123,12 +123,12 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     rotationAxis = axis;
     m_lastPos = mMousePos;
 
-    modelMatrix.setToIdentity();
+    model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
         rotateMesh(rotationAngle, rotationAxis);
     }
     if (event->buttons() & Qt::RightButton) {
-        modelMatrix.translate(mMousePos.x()/50, mMousePos.y()/50);
+        model.translate(mMousePos.x()/50, mMousePos.y()/50);
     }
     repaint();
 }
@@ -140,7 +140,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
                     "after modeling is completed.", QMessageBox::Ok);
                 return;
             }
-            QVector3D worldPos = convertScreenToWorld(event->pos());
+            QVector3D worldPos = convScreen2World(event->pos());
             glDataProc->getErasedMesh(worldPos, mesh, allVertices);
             setImageData(glDataProc->glMeshData);
         }
@@ -170,26 +170,26 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     camera->mouseScroll(offset.y());
     repaint();
 }
-QVector3D MyGLWidget::convertScreenToWorld(QPoint sp) {
+QVector3D MyGLWidget::convScreen2World(QPoint sp) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
-    double mvMatrix[16], pMatrix[16];
+    double mvArray[16], pArray[16];
 
-    QMatrix4x4 modelViewMatrix = (camera->getViewMatrix()) * modelMatrix;
+    QMatrix4x4 mvMat = (camera->getViewMatrix()) * model;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-            mvMatrix[i * 4 + j] = modelViewMatrix(j, i);
-            pMatrix[i * 4 + j] = projMatrix(j, i);
+            mvArray[i * 4 + j] = mvMat(j, i);
+            pArray[i * 4 + j] = proj(j, i);
         }
     }
     GLfloat depth;
     double wx, wy, wz;
     makeCurrent();
     glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvMatrix, pMatrix, viewport, &wx, &wy, &wz);
+    gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
     return QVector3D((double)wx, (double)wy, (double)wz);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
-    modelMatrix.translate(camera->dir);
-    modelMatrix.rotate(angle, axis);
-    modelMatrix.translate(-camera->dir);
+    model.translate(camera->dir);
+    model.rotate(angle, axis);
+    model.translate(-camera->dir);
 }

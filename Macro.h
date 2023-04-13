@@ -1,13 +1,10 @@
 #pragma once
 
-#define MESH_BUFFER_MAX_SIZE		1000
-#define MESH_BUFFER_SIZE			300
+#define SCR_WIDTH			650
+#define SCR_HEIGHT			600
 
-#define SCR_WIDTH					650
-#define SCR_HEIGHT					600
+#define MESH_GRTH_SIZE		4000
+#define MIN_PTS_SIZE_REQD	400
 
-#define MESH_GROWTH_SIZE			4000
-#define MIN_POINTS_SIZE_REQUIRED    400
-
-#define	ITERATIONS					50
-#define	NUM_NEIGHBORS				50
+#define	ITERATS				50
+#define	NUM_NEIGHS			50

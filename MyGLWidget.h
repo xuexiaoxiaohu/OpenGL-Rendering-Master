@@ -47,7 +47,7 @@ protected:
 
     void initializeShader();
 
-    QVector3D convertScreenToWorld(QPoint point);
+    QVector3D convScreen2World(QPoint point);
     void rotateMesh(float angle, QVector3D axis);
 
 
@@ -56,9 +56,9 @@ private:
     ShaderProgram* pointShader;
     bool isShiftPressed = false;
 
-    QMatrix4x4 modelMatrix;
+    QMatrix4x4 model;
     Camera* camera;
-    QMatrix4x4 projMatrix;
+    QMatrix4x4 proj;
 
     QOpenGLFunctions_4_5_Core* glFunc;
     std::vector<GLfloat> vertices;

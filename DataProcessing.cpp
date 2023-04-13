@@ -45,7 +45,7 @@ void DataProcessing::addNormalVector(pcl::PolygonMesh &mesh) {
 	std::vector<std::vector<float>> k_sqr_distances;
 	pcl::search::KdTree<pcl::PointXYZ> search;
 	search.setInputCloud(cloud);
-	search.nearestKSearch(*cloud, pcl::Indices(), NUM_NEIGHBORS, k_indices, k_sqr_distances);
+	search.nearestKSearch(*cloud, pcl::Indices(), NUM_NEIGHS, k_indices, k_sqr_distances);
 
 	pcl::PointCloud<pcl::Normal>::Ptr normalsPtr(new pcl::PointCloud<pcl::Normal>);
 	pcl::PointCloud<pcl::Normal>::Ptr normalsRefinedPtr(new pcl::PointCloud<pcl::Normal>);
@@ -60,7 +60,7 @@ void DataProcessing::addNormalVector(pcl::PolygonMesh &mesh) {
 
 	pcl::NormalRefinement<pcl::Normal> nr(k_indices, k_sqr_distances);
 	nr.setInputCloud(normalsPtr);
-	nr.setMaxIterations(ITERATIONS);
+	nr.setMaxIterations(ITERATS);
 	nr.setConvergenceThreshold(0.1);
 	nr.filter(*normalsRefinedPtr);
 
