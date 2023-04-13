@@ -1,18 +1,17 @@
 #ifndef MYGLWIDGET_H
 #define MYGLWIDGET_H
+//Qt
 #include <QOpenGLWidget>
-#include <QtMath>
 #include <QKeyEvent>
-#include "ShaderProgram.h"
-#include "Camera.h"
 #include <QOpenGLExtraFunctions>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLFunctions_4_5_Core>
+#include <QOpenGLShaderProgram>
+//Custom
 #include <DataProcessing.h>
-
-enum DataType 
-{
+#include "Camera.h"
+enum DataType {
     PointType,
     MeshType,
 };
@@ -38,22 +37,21 @@ protected:
     void paintGL()              override;
     void resizeGL(int w, int h) override; 
 
-    void mousePressEvent(QMouseEvent* event)  override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void wheelEvent(QWheelEvent* event) override;
-    void keyPressEvent(QKeyEvent* event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
+    void mousePressEvent(QMouseEvent* event)    override;
+    void mouseReleaseEvent(QMouseEvent* event)  override;
+    void mouseMoveEvent(QMouseEvent* event)     override;
+    void wheelEvent(QWheelEvent* event)         override;
+    void keyPressEvent(QKeyEvent* event)        override;
+    void keyReleaseEvent(QKeyEvent* event)      override;
 
     void initializeShader();
 
     QVector3D convScreen2World(QPoint point);
     void rotateMesh(float angle, QVector3D axis);
 
-
 private:
-    ShaderProgram* mShader;
-    ShaderProgram* pShader;
+    QOpenGLShaderProgram* pShaderProgram;
+    QOpenGLShaderProgram* mShaderProgram;
     bool isShiftPressed = false;
 
     QMatrix4x4 model;
