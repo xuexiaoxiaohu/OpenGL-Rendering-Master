@@ -15,7 +15,6 @@ public:
 	void setUniformVec3(const char* name, const QVector3D value) const;
 
 private:
-	const char* vertexPath;
-	const char* fragmentPath;
-	QOpenGLShaderProgram* ID;
+
+	QOpenGLShaderProgram* shaderProgram;
 };

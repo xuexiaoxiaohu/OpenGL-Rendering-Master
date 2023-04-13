@@ -3,82 +3,59 @@
 #include <string>
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
-ShaderProgram::ShaderProgram(const char* vPath, const char* fPath)
-{
-	vertexPath = vPath;
-	fragmentPath = fPath;
+ShaderProgram::ShaderProgram(const char* vPath, const char* fPath){
+	std::fstream vShaderFile(vPath), fShaderFile(fPath);
+	if (vShaderFile.is_open() == NULL || 
+		fShaderFile.is_open() == NULL) return;
 
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	std::stringstream vShaderStream;
-	std::stringstream fShaderStream;
+	std::stringstream vShaderStream, fShaderStream;
+	vShaderStream << vShaderFile.rdbuf();
+	fShaderStream << fShaderFile.rdbuf();
 
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try
-	{
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
+	vShaderFile.close();
+	fShaderFile.close();
 
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
+	QOpenGLShader vertShader(QOpenGLShader::Vertex);
+	QOpenGLShader fragShader(QOpenGLShader::Fragment);
 
-		vShaderFile.close();
-		fShaderFile.close();
+	vertShader.compileSourceCode(vShaderStream.str().c_str());
+	fragShader.compileSourceCode(fShaderStream.str().c_str());
 
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		std::cout << "ERROR::SHADER::FIEL_NOT_SUCCESSFULLY_READ" << std::endl;
-	}
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
-
-	QOpenGLShader verShader(QOpenGLShader::Vertex);
-	QOpenGLShader fraShader(QOpenGLShader::Fragment);
-
-	verShader.compileSourceCode(vShaderCode);
-	fraShader.compileSourceCode(fShaderCode);
-
-	ID = new QOpenGLShaderProgram();
-	ID->addShader(&verShader);
-	ID->addShader(&fraShader);
-	ID->link();
+	shaderProgram = new QOpenGLShaderProgram();
+	shaderProgram->addShader(&vertShader);
+	shaderProgram->addShader(&fragShader);
+	shaderProgram->link();
 }
-void ShaderProgram::use() {
-	ID->bind();
+void ShaderProgram::use()
+{
+	shaderProgram->bind();
 }
 ShaderProgram::~ShaderProgram()
 {
-	delete ID;
+	delete shaderProgram;
 }
 void ShaderProgram::setUniformMat4(const char* name, const QMatrix4x4 trans) const
 {
-	ID->setUniformValue(name, trans);
+	shaderProgram->setUniformValue(name, trans);
 }
 void ShaderProgram::setUniformMat3(const char* name, const QMatrix3x3 trans) const
 {
-	ID->setUniformValue(name, trans);
+	shaderProgram->setUniformValue(name, trans);
 }
 void ShaderProgram::setUniformFloat(const char* name, const GLfloat value) const
 {
-	ID->setUniformValue(name, value);
+	shaderProgram->setUniformValue(name, value);
 }
 void ShaderProgram::setUniformInt(const char* name, const int value) const
 {
-	ID->setUniformValue(name, value);
+	shaderProgram->setUniformValue(name, value);
 }
 void ShaderProgram::setUniformVec4(const char* name, const QVector4D value) const
 {
-	ID->setUniformValue(name, value);
+	shaderProgram->setUniformValue(name, value);
 }
 void ShaderProgram::setUniformVec3(const char* name, const QVector3D value) const
 {
-	ID->setUniformValue(name, value);
+	shaderProgram->setUniformValue(name, value);
 }
