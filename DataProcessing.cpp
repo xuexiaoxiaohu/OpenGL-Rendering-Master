@@ -25,15 +25,15 @@ void DataProcessing::loadPointData(const char* path) {
 }
 
 void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
-	maxCoord = minCoord = {data[0].x() ,data[0].y() ,data[0].z()};
+	maxPoint = minPoint = {data[0].x() ,data[0].y() ,data[0].z()};
 	for (int i = 0; i < data.size(); i++) {
-		if (maxCoord.x() < data[i].x())	maxCoord.setX(data[i].x());
-		if (maxCoord.y() < data[i].y())	maxCoord.setY(data[i].y());
-		if (maxCoord.z() < data[i].z())	maxCoord.setZ(data[i].z());
+		if (maxPoint.x() < data[i].x())	maxPoint.setX(data[i].x());
+		if (maxPoint.y() < data[i].y())	maxPoint.setY(data[i].y());
+		if (maxPoint.z() < data[i].z())	maxPoint.setZ(data[i].z());
 
-		if (minCoord.x() > data[i].x())	minCoord.setX(data[i].x());
-		if (minCoord.y() > data[i].y())	minCoord.setY(data[i].y());
-		if (minCoord.z() > data[i].z())	minCoord.setZ(data[i].z());
+		if (minPoint.x() > data[i].x())	minPoint.setX(data[i].x());
+		if (minPoint.y() > data[i].y())	minPoint.setY(data[i].y());
+		if (minPoint.z() > data[i].z())	minPoint.setZ(data[i].z());
 	}
 }
 

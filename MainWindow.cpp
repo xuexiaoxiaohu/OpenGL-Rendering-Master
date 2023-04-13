@@ -54,11 +54,11 @@ void MainWindow::startRendering(){
             pointProc->pointData[i].y(), pointProc->pointData[i].z()});
             pointProc->getMaxMinCoord(rawData);
 
-            QVector3D center = pointProc->maxCoord + pointProc->minCoord;
-            QVector3D vec = pointProc->maxCoord - pointProc->minCoord;
+            QVector3D center = pointProc->maxPoint + pointProc->minPoint;
+            QVector3D size = pointProc->maxPoint - pointProc->minPoint;
 
             QVector3D cameraDir = center / 2.0f;
-            QVector3D cameraEye = QVector3D(0.0f, 0.0f, vec.z() * 1.5);
+            QVector3D cameraEye = QVector3D(0.0f, 0.0f, size.z() * 1.5);
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 for (int i = 0; i < rawData.size(); i++) {
