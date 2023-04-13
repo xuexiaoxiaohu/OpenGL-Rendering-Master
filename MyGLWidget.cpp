@@ -33,9 +33,10 @@ void MyGLWidget::setMeshVertices(std::vector<QVector3D> allVertices) {
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
     vertices = data;
 }
-void MyGLWidget::setCameraPara(QVector3D eye, QVector3D dir) {
-    camera->eye = eye;
-    camera->dir = dir;
+void MyGLWidget::setCameraPara(QVector3D center, float radius){
+    camera->dir = center;
+    proj.setToIdentity();
+    proj.perspective(45.0f, width() / height(), 0.1f * radius, 10.0f * radius);
 }
 void MyGLWidget::initializeShader() {
     QString qAppDir = QCoreApplication::applicationDirPath();

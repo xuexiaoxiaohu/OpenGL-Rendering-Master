@@ -2,6 +2,7 @@
 #include <QMatrix4x4>
 QMatrix4x4 Camera::getViewMatrix(){
 	QMatrix4x4 matrix;
+	matrix.setToIdentity();
 	matrix.lookAt(eye, dir, up);
 	return matrix;
 }

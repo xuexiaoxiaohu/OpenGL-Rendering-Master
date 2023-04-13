@@ -24,7 +24,7 @@ void DataProcessing::loadPointData(const char* path) {
 	fs.close();
 }
 
-void DataProcessing::getMaxMinCoord(std::vector<QVector3D> data) {
+void DataProcessing::getMaxMinPoint(std::vector<QVector3D> data) {
 	maxPoint = minPoint = {data[0].x() ,data[0].y() ,data[0].z()};
 	for (int i = 0; i < data.size(); i++) {
 		if (maxPoint.x() < data[i].x())	maxPoint.setX(data[i].x());

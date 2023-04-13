@@ -50,15 +50,12 @@ void MainWindow::openFile(){
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
         for (int i = 0; i < pointProc->pointData.size(); i++){
-            rawData.emplace_back(QVector3D{ pointProc->pointData[i].x(), 
-            pointProc->pointData[i].y(), pointProc->pointData[i].z()});
-            pointProc->getMaxMinCoord(rawData);
+            rawData.emplace_back(QVector3D(pointProc->pointData[i].x(), 
+            pointProc->pointData[i].y(), pointProc->pointData[i].z()));
+            pointProc->getMaxMinPoint(rawData);
 
-            QVector3D center = pointProc->maxPoint + pointProc->minPoint;
-            QVector3D size = pointProc->maxPoint - pointProc->minPoint;
-
-            QVector3D cameraDir = center / 2.0f;
-            QVector3D cameraEye = QVector3D(0.0f, 0.0f, size.z() * 1.5);
+            QVector3D center = (pointProc->maxPoint + pointProc->minPoint)/ 2.0f;
+            float radius = (pointProc->maxPoint - center).length();
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
                 for (int i = 0; i < rawData.size(); i++) {
@@ -67,7 +64,7 @@ void MainWindow::startRendering(){
                     glPoint.emplace_back(pointProc->pointData[i].y());
                     glPoint.emplace_back(pointProc->pointData[i].z());
                 }
-                myPointGLWidget->setCameraPara(cameraEye, cameraDir);
+                myPointGLWidget->setCameraPara(center, radius);
                 myPointGLWidget->setImageData(glPoint);
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
@@ -111,7 +108,7 @@ void MainWindow::startRendering(){
                             myMeshGLWidget->setMeshVertices(glMeshVertices);
                         }
    
-                        myMeshGLWidget->setCameraPara(cameraEye, cameraDir);
+                        myMeshGLWidget->setCameraPara(center, radius);
                         myMeshGLWidget->setImageData(glMesh);
                     }
                 }

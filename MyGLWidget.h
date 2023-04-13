@@ -23,7 +23,7 @@ public:
     ~MyGLWidget();
 
     void setImageData(std::vector<GLfloat> data);
-    void setCameraPara(QVector3D eye, QVector3D dir);
+    void setCameraPara(QVector3D center, float radius);
     void setMeshVertices(std::vector<QVector3D> meshVertexs);
     void setMesh(pcl::PolygonMesh mesh);
 
