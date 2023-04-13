@@ -123,21 +123,21 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 	pcl::io::vtk2mesh(fillHoles->GetOutput(), mesh);
 }
 
-void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> allVertices){
-	int index = getNearestVertexIndex(worldPos, allVertices);
+void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices){
+	int index = getNearestVertexIndex(worldPos, vertices);
 	if (index != -1) {
-		pcl::PointXYZ nearestVertex;
-		nearestVertex.x = allVertices[index].x();
-		nearestVertex.y = allVertices[index].y();
-		nearestVertex.z = allVertices[index].z();
+		pcl::PointXYZ nrstVertex;
+		nrstVertex.x = vertices[index].x();
+		nrstVertex.y = vertices[index].y();
+		nrstVertex.z = vertices[index].z();
 
-		pcl::Indices toRemove = findKNeighbors(mesh, nearestVertex);
+		pcl::Indices toRemove = findKNeighbors(mesh, nrstVertex);
 		eraseMesh(mesh, toRemove);
 		fillMesh(mesh);
-		getGLMeshData(mesh);
+		getRenderData(mesh);
 	}
 }
-void DataProcessing::getGLMeshData(pcl::PolygonMesh &mesh) {
+void DataProcessing::getRenderData(pcl::PolygonMesh &mesh) {
 	glMeshData.clear();
 	pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
 	pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);

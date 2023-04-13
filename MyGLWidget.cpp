@@ -183,11 +183,11 @@ QVector3D MyGLWidget::convScreen2World(QPoint sp) {
         }
     }
     GLfloat depth;
-    double wx, wy, wz;
+    GLdouble wx, wy, wz;
     makeCurrent();
     glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
-    return QVector3D((double)wx, (double)wy, (double)wz);
+    return QVector3D(wx, wy, wz);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
     model.translate(camera->dir);
