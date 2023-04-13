@@ -52,8 +52,8 @@ protected:
 
 
 private:
-    ShaderProgram* meshShader;
-    ShaderProgram* pointShader;
+    ShaderProgram* mShader;
+    ShaderProgram* pShader;
     bool isShiftPressed = false;
 
     QMatrix4x4 model;
@@ -63,8 +63,8 @@ private:
     std::vector<GLfloat> vertices;
     int dataType;
     QPoint pressPosition; 
-    GLuint pointVAO, pointVBO;
-    GLuint meshVAO, meshVBO;
+    GLuint pVAO, pVBO;
+    GLuint mVAO, mVBO;
 
     float rotationAngle = 0.0f;
     QVector3D rotationAxis = QVector3D{ 0.0f, 1.0f, 0.0f };
