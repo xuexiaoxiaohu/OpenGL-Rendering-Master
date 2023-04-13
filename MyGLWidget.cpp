@@ -51,12 +51,11 @@ void MyGLWidget::initializeShader() {
     mShaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
     mShaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
     mShaderProgram->link();
-
 }
 
 void MyGLWidget::initializeGL(){
-    initializeShader();
     initializeOpenGLFunctions();
+    initializeShader();
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
