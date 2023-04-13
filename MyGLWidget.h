@@ -17,7 +17,7 @@ enum DataType
     MeshType,
 };
 
-class MyGLWidget:public QOpenGLWidget{
+class MyGLWidget:public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
 public:
     MyGLWidget(QWidget* parent, int DT);
@@ -60,7 +60,6 @@ private:
     Camera* camera;
     QMatrix4x4 proj;
 
-    QOpenGLFunctions_4_5_Core* glFunc;
     std::vector<GLfloat> vertices;
     int dataType;
     QPoint pressPosition; 

@@ -1,6 +1,6 @@
 #version 450 core
 
-#define NR_POINT_LIGHTS 4
+#define NUM 4
 
 struct material{
     vec3 ambient;
@@ -47,7 +47,7 @@ uniform vec3 viewPos;
 uniform material mat;
 uniform dirLight dl1;
 uniform dirLight dl2;
-uniform pointLight pls[NR_POINT_LIGHTS];
+uniform pointLight pls[NUM];
 uniform spotLight sl;
 
 vec3 calcDirLight(dirLight light, vec3 normal, vec3 viewDir);
@@ -61,7 +61,7 @@ void main(){
     vec3 result = calcDirLight(dl1, norm, viewDir);
     result += calcDirLight(dl2, norm, viewDir);
 
-    //for(int i = 0; i < NR_POINT_LIGHTS; i++)
+    //for(int i = 0; i < NUM; i++)
     //    result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
 

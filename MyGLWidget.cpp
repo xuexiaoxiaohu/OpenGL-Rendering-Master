@@ -20,8 +20,8 @@ MyGLWidget::MyGLWidget(QWidget* parent,int DT){
 MyGLWidget::~MyGLWidget(){
     delete pointShader;
     delete meshShader;
-    glFunc->glDeleteVertexArrays(1, &meshVAO);
-    glFunc->glDeleteBuffers(1, &meshVBO);
+    glDeleteVertexArrays(1, &meshVAO);
+    glDeleteBuffers(1, &meshVBO);
 }
 void MyGLWidget::setMesh(pcl::PolygonMesh mesh) {
     this->mesh = mesh;
@@ -48,42 +48,42 @@ void MyGLWidget::initializeShader() {
 
 void MyGLWidget::initializeGL(){
     initializeShader();
-    glFunc = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_4_5_Core>();
-    glFunc->glEnable(GL_DEPTH_TEST);
-    glFunc->glEnable(GL_BLEND);
-    glFunc->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    initializeOpenGLFunctions();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 // PaintGL
 void MyGLWidget::paintGL(){
-    glFunc->glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glFunc->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if (DataType::PointType == dataType) {
-        glFunc->glPointSize(1.0f);
-        glFunc->glGenVertexArrays(1, &pointVAO);
-        glFunc->glBindVertexArray(pointVAO);
-        glFunc->glGenBuffers(1, &pointVBO);
-        glFunc->glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
-        glFunc->glEnableVertexAttribArray(0);
-        glFunc->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+        glPointSize(1.0f);
+        glGenVertexArrays(1, &pointVAO);
+        glBindVertexArray(pointVAO);
+        glGenBuffers(1, &pointVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, pointVBO);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
         
         pointShader->use();
         pointShader->setUniformMat4("model", model);
         pointShader->setUniformMat4("view", camera->getViewMatrix());
         pointShader->setUniformMat4("proj", proj);
-        glFunc->glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
+        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else {
-            glFunc->glGenVertexArrays(1, &meshVAO);
-            glFunc->glBindVertexArray(meshVAO);
-            glFunc->glGenBuffers(1, &meshVBO);
-            glFunc->glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
+            glGenVertexArrays(1, &meshVAO);
+            glBindVertexArray(meshVAO);
+            glGenBuffers(1, &meshVBO);
+            glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
 
-            glFunc->glEnableVertexAttribArray(0);
-            glFunc->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-            glFunc->glEnableVertexAttribArray(1);
-            glFunc->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
-            glFunc->glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
             meshShader->use();
             meshShader->setUniformVec3("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
@@ -106,11 +106,11 @@ void MyGLWidget::paintGL(){
             meshShader->setUniformMat4("view", camera->getViewMatrix());
             meshShader->setUniformMat4("proj", proj);
 
-            glFunc->glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
+            glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
 }
 void MyGLWidget::resizeGL(int width, int height){
-    glFunc->glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
