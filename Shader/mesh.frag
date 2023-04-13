@@ -84,7 +84,8 @@ vec3 calcPointLight(pointLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
     float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance
+    + light.quadratic * (distance * distance));    
     vec3 ambient = light.ambient * mat.diffuse;
     vec3 diffuse = light.diffuse * diff * mat.diffuse;
     vec3 specular = light.specular * spec * mat.specular;
@@ -99,7 +100,8 @@ vec3 calcSpotLight(spotLight light, vec3 normal, vec3 fragPos, vec3 viewDir){
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), mat.shininess);
     float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance 
+    + light.quadratic * (distance * distance));    
     float theta = dot(lightDir, normalize(-light.direction)); 
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
