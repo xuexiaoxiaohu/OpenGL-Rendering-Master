@@ -46,7 +46,7 @@ protected:
 
     void initializeShader();
 
-    QVector3D convScreen2World(QPoint point);
+    void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
     void rotateMesh(float angle, QVector3D axis);
 
 private:

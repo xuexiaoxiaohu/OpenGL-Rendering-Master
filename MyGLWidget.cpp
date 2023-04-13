@@ -149,8 +149,9 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
                     "after modeling is completed.", QMessageBox::Ok);
                 return;
             }
-            QVector3D worldPos = convScreen2World(event->pos());
-            glDataProc->getErasedMesh(worldPos, mesh, allVertices);
+            GLdouble wx, wy, wz;
+            convScreen2World(event->pos(), wx, wy, wz);
+            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
             setImageData(glDataProc->glMeshData);
         }
     }else{
@@ -179,7 +180,7 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
     camera->mouseScroll(offset.y());
     repaint();
 }
-QVector3D MyGLWidget::convScreen2World(QPoint sp) {
+void MyGLWidget::convScreen2World(QPoint sp, GLdouble& wx, GLdouble& wy, GLdouble& wz) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
     double mvArray[16], pArray[16];
 
@@ -190,12 +191,11 @@ QVector3D MyGLWidget::convScreen2World(QPoint sp) {
             pArray[i * 4 + j] = proj(j, i);
         }
     }
+
     GLfloat depth;
-    GLdouble wx, wy, wz;
     makeCurrent();
     glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
-    return QVector3D(wx, wy, wz);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
     model.translate(camera->dir);
