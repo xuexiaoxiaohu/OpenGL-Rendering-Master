@@ -18,27 +18,27 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
     surface = new SurfaceReconsturction();
 }
 MainWindow::~MainWindow(){
-    delete myPointGLWidget;
-    delete myMeshGLWidget;
+    delete mPointGLWidget;
+    delete mMeshGLWidget;
     delete pointProc;
     delete meshProc;
     delete surface;
 }
 
 void MainWindow::addOpengGLWidget(){
-    myPointGLWidget = new MyGLWidget(this, PointType);
-    myPointGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
-    ui.openGLHorizontalLayout->addWidget(myPointGLWidget);
-    myMeshGLWidget = new MyGLWidget(this, MeshType);
-    myMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
-    ui.openGLHorizontalLayout->addWidget(myMeshGLWidget);
+    mPointGLWidget = new MyGLWidget(this, PointType);
+    mPointGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
+    ui.openGLHorizontalLayout->addWidget(mPointGLWidget);
+    mMeshGLWidget = new MyGLWidget(this, MeshType);
+    mMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
+    ui.openGLHorizontalLayout->addWidget(mMeshGLWidget);
 }
 void MainWindow::callbackRepaint() {
     if (ui.pointCheckBox->checkState() == Qt::Checked) {
-        myPointGLWidget->repaint();
+        mPointGLWidget->repaint();
     }
     if (ui.meshCheckBox->checkState() == Qt::Checked) {
-        myMeshGLWidget->repaint();
+        mMeshGLWidget->repaint();
     }
 }
 void MainWindow::openFile(){
@@ -54,7 +54,7 @@ void MainWindow::startRendering(){
             pointProc->pointData[i].y(), pointProc->pointData[i].z()));
             pointProc->getMaxMinPoint(rawData);
 
-            QVector3D center = (pointProc->maxPoint + pointProc->minPoint)/ 2.0f;
+            QVector3D center = (pointProc->maxPoint + pointProc->minPoint) / 2.0f;
             float radius = (pointProc->maxPoint - center).length();
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
@@ -64,8 +64,8 @@ void MainWindow::startRendering(){
                     glPoint.emplace_back(pointProc->pointData[i].y());
                     glPoint.emplace_back(pointProc->pointData[i].z());
                 }
-                myPointGLWidget->setCameraPara(center, radius);
-                myPointGLWidget->setImageData(glPoint);
+                mPointGLWidget->setAdaptivePara(center, radius);
+                mPointGLWidget->setImageData(glPoint);
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
@@ -74,12 +74,12 @@ void MainWindow::startRendering(){
                         surface->construction(rawData);
                       
                         std::string curAppPath = meshProc->getAppPath();
-                        std::string oriPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
-                        std::string dstPlyPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
+                        std::string oriPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
+                        std::string dstPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
                         pcl::PolygonMesh mesh;
 
-                        meshProc->poly2tri(oriPlyPath, dstPlyPath);
-                        pcl::io::loadPLYFile(dstPlyPath, mesh);
+                        meshProc->poly2tri(oriPath, dstPath);
+                        pcl::io::loadPLYFile(dstPath, mesh);
                         meshProc->addNormalVector(mesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
@@ -88,7 +88,7 @@ void MainWindow::startRendering(){
                         for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
                             if (i == 0) {
                                 glMesh.clear();
-                                glMeshVertices.clear();
+                                glVertices.clear();
                             }
                             for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
                                 pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
@@ -99,17 +99,17 @@ void MainWindow::startRendering(){
                                 glMesh.emplace_back(point.normal_y);
                                 glMesh.emplace_back(point.normal_z);
 
-                                glMeshVertices.emplace_back(QVector3D{ point.x, point.y, point.z });
+                                glVertices.emplace_back(QVector3D(point.x, point.y, point.z));
                             }
                         }
                         if ((abs(diff) <= 0)){
-                            myMeshGLWidget->isConstructionFinished = true;
-                            myMeshGLWidget->setMesh(mesh);
-                            myMeshGLWidget->setMeshVertices(glMeshVertices);
+                            mMeshGLWidget->isConstructionFinished = true;
+                            mMeshGLWidget->setMesh(mesh);
+                            mMeshGLWidget->setVertices(glVertices);
                         }
    
-                        myMeshGLWidget->setCameraPara(center, radius);
-                        myMeshGLWidget->setImageData(glMesh);
+                        mMeshGLWidget->setAdaptivePara(center, radius);
+                        mMeshGLWidget->setImageData(glMesh);
                     }
                 }
             }

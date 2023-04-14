@@ -31,15 +31,15 @@ public:
 	void getMaxMinPoint(std::vector<QVector3D> data);
 	void poly2tri(std::string src, std::string dst);
 
-	int getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices);
+	int getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVertices);
 	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point);
 	void eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
 	void fillMesh(pcl::PolygonMesh& mesh);
 	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices);
 	void getRenderData(pcl::PolygonMesh &mesh);
+
 	std::vector<QVector3D>	pointData;
+	std::vector<float> glMeshData;
 	QVector3D maxPoint;
 	QVector3D minPoint;
-
-	std::vector<float> glMeshData;
 };

@@ -71,11 +71,11 @@ void DataProcessing::addNormalVector(pcl::PolygonMesh &mesh) {
 	mesh.cloud = outputCloud;
 }
 
-int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glMeshVertices) {
+int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVertices) {
 	int indexVertex = -1;
 	float minDist = std::numeric_limits<float>::max();
-	for (int i = 0; i < glMeshVertices.size(); i++) {
-		float dist = (glMeshVertices[i] - worldPos).length();
+	for (int i = 0; i < glVertices.size(); i++) {
+		float dist = (glVertices[i] - worldPos).length();
 		if (dist < minDist) {
 			indexVertex = i;
 			minDist = dist;
@@ -165,7 +165,5 @@ void DataProcessing::poly2tri(std::string src, std::string dst) {
 	writer->SetFileName(dst.c_str());
 	writer->SetInputConnection(filter->GetOutputPort());
 	writer->SetFileTypeToASCII();
-	writer->SetColorModeToOff();
 	writer->Update();
-	writer->Write();
 }

@@ -11,6 +11,7 @@ class MainWindow : public QMainWindow{
 public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
+
 public slots:
 	void openFile();
 	void startRendering();
@@ -22,15 +23,15 @@ private:
 	Ui::MainWindowClass ui;
 	void addOpengGLWidget();
 
-	MyGLWidget* myPointGLWidget;
-	MyGLWidget* myMeshGLWidget;
+	MyGLWidget* mPointGLWidget;
+	MyGLWidget* mMeshGLWidget;
 
 	SurfaceReconsturction* surface;
 	DataProcessing* pointProc;
 	DataProcessing* meshProc;
 
 	std::vector<QVector3D> rawData;
-	std::vector<QVector3D> glMeshVertices;
+	std::vector<QVector3D> glVertices;
 	std::vector<GLfloat> glPoint;
 	std::vector<GLfloat> glMesh;
 };	
