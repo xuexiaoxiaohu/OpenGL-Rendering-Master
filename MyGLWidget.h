@@ -24,13 +24,13 @@ public:
 
     void setImageData(std::vector<GLfloat> data);
     void setAdaptivePara(QVector3D center, float radius);
-    void setVertices(std::vector<QVector3D> meshVertexs);
+    void setMeshVtx(std::vector<QVector3D> meshVertexs);
     void setMesh(pcl::PolygonMesh mesh);
 
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
     DataProcessing* glDataProc;
-    bool isConstructionFinished = false;
+    bool isConstrFin = false;
 
 protected:
     void initializeGL()         override;

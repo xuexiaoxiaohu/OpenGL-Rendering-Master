@@ -11,12 +11,7 @@ public:
 
 	Camera(QVector3D eye = QVector3D(0.0f, 0.0f, 3.0f),
 		QVector3D dir = QVector3D(0.0, 0.0, 0.0),
-		QVector3D up = QVector3D(0.0f, 1.0f, 0.0f)){
-		this->eye = eye;
-		this->dir = dir;
-		this->up = up;
-		this->scrollSensitivity = 0.01f;
-	}
+		QVector3D up = QVector3D(0.0f, 1.0f, 0.0f));
 	// Get 
 	QMatrix4x4 getViewMatrix(); 
 	// Mouse Wheel 

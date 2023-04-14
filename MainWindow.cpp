@@ -20,9 +20,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
 MainWindow::~MainWindow(){
     delete mPointGLWidget;
     delete mMeshGLWidget;
+    delete surface;
     delete pointProc;
     delete meshProc;
-    delete surface;
 }
 
 void MainWindow::addOpengGLWidget(){
@@ -70,7 +70,7 @@ void MainWindow::startRendering(){
             }
             if (ui.meshCheckBox->checkState() == Qt::Checked) {
                 if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
-                    int diff = (int)rawData.size() - (int)pointProc->pointData.size();
+                    int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
                     if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
                       
@@ -81,10 +81,11 @@ void MainWindow::startRendering(){
 
                         meshProc->poly2tri(oriPath, dstPath);
                         pcl::io::loadPLYFile(dstPath, mesh);
-                        meshProc->addNormalVector(mesh);
+                        meshProc->addNV(mesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
                         pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
+  
                         std::vector<GLfloat> glMesh;
                         std::vector<QVector3D> glVtx;
                         for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
@@ -101,9 +102,9 @@ void MainWindow::startRendering(){
                             }
                         }
                         if ((abs(diff) <= 0)){
-                            mMeshGLWidget->isConstructionFinished = true;
+                            mMeshGLWidget->isConstrFin = true;
                             mMeshGLWidget->setMesh(mesh);
-                            mMeshGLWidget->setVertices(glVtx);
+                            mMeshGLWidget->setMeshVtx(glVtx);
                         }
    
                         mMeshGLWidget->setAdaptivePara(center, radius);

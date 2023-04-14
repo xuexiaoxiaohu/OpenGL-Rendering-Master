@@ -26,7 +26,7 @@ MyGLWidget::~MyGLWidget(){
 void MyGLWidget::setMesh(pcl::PolygonMesh mesh) {
     this->mesh = mesh;
 }
-void MyGLWidget::setVertices(std::vector<QVector3D> allVertices) {
+void MyGLWidget::setMeshVtx(std::vector<QVector3D> allVertices) {
     this->allVertices = allVertices;
 }
 
@@ -137,14 +137,14 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         rotateMesh(rotationAngle, rotationAxis);
     }
     if (event->buttons() & Qt::RightButton) {
-        model.translate(mMousePos.x()/50, mMousePos.y()/50);
+        model.translate(mMousePos.x() / 50, mMousePos.y() / 50);
     }
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     if (isShiftPressed) {
         if (event->buttons() & Qt::LeftButton) {
-            if (isConstructionFinished == false) {
+            if (isConstrFin == false) {
                 QMessageBox::information(this, "Tips", "Please perform the erase operation "
                     "after modeling is completed.", QMessageBox::Ok);
                 return;
