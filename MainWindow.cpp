@@ -49,6 +49,7 @@ void MainWindow::openFile(){
 }
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
+        std::vector<QVector3D> rawData;
         for (int i = 0; i < pointProc->pointData.size(); i++){
             rawData.emplace_back(QVector3D(pointProc->pointData[i].x(), 
             pointProc->pointData[i].y(), pointProc->pointData[i].z()));
@@ -58,8 +59,8 @@ void MainWindow::startRendering(){
             float radius = (pointProc->maxPoint - center).length();
 
             if (ui.pointCheckBox->checkState() == Qt::Checked) {
+                std::vector<GLfloat> glPoint;
                 for (int i = 0; i < rawData.size(); i++) {
-                    if (i == 0) glPoint.clear();
                     glPoint.emplace_back(pointProc->pointData[i].x());
                     glPoint.emplace_back(pointProc->pointData[i].y());
                     glPoint.emplace_back(pointProc->pointData[i].z());
@@ -84,12 +85,9 @@ void MainWindow::startRendering(){
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
                         pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
-
+                        std::vector<GLfloat> glMesh;
+                        std::vector<QVector3D> glVtx;
                         for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
-                            if (i == 0) {
-                                glMesh.clear();
-                                glVertices.clear();
-                            }
                             for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
                                 pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
                                 glMesh.emplace_back(point.x);
@@ -99,13 +97,13 @@ void MainWindow::startRendering(){
                                 glMesh.emplace_back(point.normal_y);
                                 glMesh.emplace_back(point.normal_z);
 
-                                glVertices.emplace_back(QVector3D(point.x, point.y, point.z));
+                                glVtx.emplace_back(QVector3D(point.x, point.y, point.z));
                             }
                         }
                         if ((abs(diff) <= 0)){
                             mMeshGLWidget->isConstructionFinished = true;
                             mMeshGLWidget->setMesh(mesh);
-                            mMeshGLWidget->setVertices(glVertices);
+                            mMeshGLWidget->setVertices(glVtx);
                         }
    
                         mMeshGLWidget->setAdaptivePara(center, radius);

@@ -16,6 +16,7 @@ public slots:
 	void openFile();
 	void startRendering();
 	void callbackRepaint();
+
 signals:
 	void signal_glUpdate();
 
@@ -29,9 +30,4 @@ private:
 	SurfaceReconsturction* surface;
 	DataProcessing* pointProc;
 	DataProcessing* meshProc;
-
-	std::vector<QVector3D> rawData;
-	std::vector<QVector3D> glVertices;
-	std::vector<GLfloat> glPoint;
-	std::vector<GLfloat> glMesh;
 };	

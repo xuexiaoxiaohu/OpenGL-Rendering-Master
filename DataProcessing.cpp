@@ -71,11 +71,11 @@ void DataProcessing::addNormalVector(pcl::PolygonMesh &mesh) {
 	mesh.cloud = outputCloud;
 }
 
-int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVertices) {
+int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVtx) {
 	int indexVertex = -1;
 	float minDist = std::numeric_limits<float>::max();
-	for (int i = 0; i < glVertices.size(); i++) {
-		float dist = (glVertices[i] - worldPos).length();
+	for (int i = 0; i < glVtx.size(); i++) {
+		float dist = (glVtx[i] - worldPos).length();
 		if (dist < minDist) {
 			indexVertex = i;
 			minDist = dist;
