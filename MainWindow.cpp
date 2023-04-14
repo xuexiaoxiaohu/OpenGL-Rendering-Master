@@ -1,11 +1,7 @@
 #include "MainWindow.h"
 #include <QFileDialog>
-#include <QElapsedtimer>
-#include <qelapsedtimer.h>
-#include <QDebug>
 #include "MyGLWidget.h"
 #include "Macro.h"
-#include <stdlib.h>
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
 	ui.setupUi(this);
     addOpengGLWidget();
@@ -42,8 +38,10 @@ void MainWindow::callbackRepaint() {
     }
 }
 void MainWindow::openFile(){
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", 
+        "./Release/Data", "Scan Data(*.txt)");
     if (fileName.isEmpty()) return;
+
     ui.lineEdit_file->setText(fileName);
     pointProc->loadPointData(fileName.toStdString().c_str());
 }
