@@ -140,6 +140,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
+    QPoint pressPos = event->pos();
     if (isShiftPressed) {
         if (event->buttons() & Qt::LeftButton) {
             if (isConstrFin == false) {
@@ -148,13 +149,13 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
                 return;
             }
             GLdouble wx, wy, wz;
-            convScreen2World(event->pos(), wx, wy, wz);
+            convScreen2World(pressPos, wx, wy, wz);
             glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
             setImageData(glDataProc->glMeshData);
         }
     }else{
         if (event->buttons() & Qt::LeftButton) {
-            m_lastPos = event->pos();
+            m_lastPos = pressPos;
         }
     }
     repaint();
