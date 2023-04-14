@@ -38,7 +38,13 @@ void MyGLWidget::setAdaptivePara(QVector3D center, float radius){
     proj.setToIdentity();
     proj.perspective(45.0f, width() / height(), 0.1f * radius, 10.0f * radius);
 }
-void MyGLWidget::initializeShader() {
+
+void MyGLWidget::initializeGL(){
+    initializeOpenGLFunctions();
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     QString qAppDir = QCoreApplication::applicationDirPath();
 
     QString pointVert = qAppDir + "/Shader/point.vert", pointFrag = qAppDir + "/Shader/point.frag";
@@ -52,14 +58,6 @@ void MyGLWidget::initializeShader() {
     mShaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
     mShaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
     mShaderProgram->link();
-}
-
-void MyGLWidget::initializeGL(){
-    initializeOpenGLFunctions();
-    initializeShader();
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 // PaintGL
 void MyGLWidget::paintGL(){
@@ -201,4 +199,9 @@ void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
     model.translate(camera->dir);
     model.rotate(angle, axis);
     model.translate(-camera->dir);
+}
+void MyGLWidget::translatePoint(QPoint& pressPos) {
+    int x = pressPos.x() - this->width() / 2;
+    int y = -(pressPos.y() - this->height() / 2);
+    pressPos = {x,y};
 }

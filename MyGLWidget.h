@@ -44,11 +44,9 @@ protected:
     void keyPressEvent(QKeyEvent* event)        override;
     void keyReleaseEvent(QKeyEvent* event)      override;
 
-    void initializeShader();
-
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
     void rotateMesh(float angle, QVector3D axis);
-
+    void translatePoint(QPoint& pressPos);
 private:
     QOpenGLShaderProgram* pShaderProgram;
     QOpenGLShaderProgram* mShaderProgram;
