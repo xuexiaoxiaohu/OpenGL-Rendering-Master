@@ -11,9 +11,7 @@ public:
 	QMatrix4x4 getViewMatrix(); 
 	void mouseScroll(float yoffset);
 
-	QVector3D eye;
-	QVector3D dir;
-	QVector3D up;
+	QVector3D eye,dir,up;
 	float scrollSen;
 };
 
