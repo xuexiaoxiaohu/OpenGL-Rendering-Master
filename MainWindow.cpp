@@ -71,7 +71,8 @@ void MainWindow::startRendering(){
                     int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
                     if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
-                      
+                
+
                         std::string curAppPath = meshProc->getAppPath();
                         std::string oriPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
                         std::string dstPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";

@@ -8,8 +8,11 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <vtkFillHolesFilter.h>
-MyGLWidget::MyGLWidget(QWidget* parent,int DT){
-    dataType = DT;
+MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
+    rotationAngle(0.0f),
+    rotationAxis(0.0f, 1.0f, 0.0f),
+    dataType(dataType), 
+    isShiftPressed(false){
     camera = new Camera();
     glDataProc = new DataProcessing();
     proj.setToIdentity();

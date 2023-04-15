@@ -50,7 +50,7 @@ protected:
 private:
     QOpenGLShaderProgram* pShaderProgram;
     QOpenGLShaderProgram* mShaderProgram;
-    bool isShiftPressed = false;
+    bool isShiftPressed;
 
     QMatrix4x4 model;
     Camera* camera;
@@ -62,8 +62,8 @@ private:
     GLuint pVAO, pVBO;
     GLuint mVAO, mVBO;
 
-    float rotationAngle = 0.0f;
-    QVector3D rotationAxis = QVector3D{ 0.0f, 1.0f, 0.0f };
+    float rotationAngle;
+    QVector3D rotationAxis;
     QPoint m_lastPos;
     QPoint mMousePos;
 };
