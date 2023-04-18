@@ -135,7 +135,20 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
-        rotateMesh(rotationAngle, rotationAxis);
+        if (isShiftPressed) {
+            if (isConstrFin == false) {
+                QMessageBox::information(this, "Tips", "Please perform the erase operation "
+                    "after modeling is completed.", QMessageBox::Ok);
+                return;
+            }
+            GLdouble wx, wy, wz;
+            convScreen2World(mMousePos, wx, wy, wz);
+            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
+            setImageData(glDataProc->glMeshData);
+        }
+        else {
+            rotateMesh(rotationAngle, rotationAxis);
+        }
     }
     if (event->buttons() & Qt::RightButton) {
         model.translate(mMousePos.x() / 50, mMousePos.y() / 50);
@@ -144,22 +157,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint pressPos = event->pos();
-    if (isShiftPressed) {
-        if (event->buttons() & Qt::LeftButton) {
-            if (isConstrFin == false) {
-                QMessageBox::information(this, "Tips", "Please perform the erase operation "
-                    "after modeling is completed.", QMessageBox::Ok);
-                return;
-            }
-            GLdouble wx, wy, wz;
-            convScreen2World(pressPos, wx, wy, wz);
-            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
-            setImageData(glDataProc->glMeshData);
-        }
-    }else{
-        if (event->buttons() & Qt::LeftButton) {
-            m_lastPos = pressPos;
-        }
+    if (event->buttons() & Qt::LeftButton) {
+        m_lastPos = pressPos;
     }
     repaint();
 }
