@@ -3,6 +3,8 @@
 // Qt
 #include <QCoreApplication>
 #include <QMessageBox>
+#include <QPixmap>
+#include <QPainter>
 // Custom
 #include "MyGLWidget.h"
 #include <Macro.h>
@@ -17,6 +19,17 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     proj.setToIdentity();
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
+
+    QPixmap pixmap(32, 32);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    painter.setPen(Qt::red);
+    painter.setBrush(Qt::red);
+    painter.drawEllipse(0, 0, 32, 32);
+    QCursor cursor(pixmap);
+
+    // 将鼠标指针设置为圆形和红色
+    setCursor(cursor);
 }
 
 MyGLWidget::~MyGLWidget(){
