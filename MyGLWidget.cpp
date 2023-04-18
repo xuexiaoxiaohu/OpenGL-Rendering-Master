@@ -1,13 +1,12 @@
-#include "MyGLWidget.h"
-#include <QCoreApplication>
-#include <iostream>
-#include <mutex>
-#include <QMutex>
-#include <Macro.h>
+//OpenGL
 #include <glut.h>
+// Qt
+#include <QCoreApplication>
 #include <QMessageBox>
-#include <QPainter>
-#include <vtkFillHolesFilter.h>
+// Custom
+#include "MyGLWidget.h"
+#include <Macro.h>
+
 MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     rotationAngle(0.0f),
     rotationAxis(0.0f, 1.0f, 0.0f),
