@@ -31,8 +31,9 @@ public:
     std::vector<QVector3D> allVertices;
     DataProcessing* glDataProc;
     bool isConstrFin = false;
-
-
+    bool isMouseBrush = false;
+public slots:
+    void updateCursor();
 protected:
     void initializeGL()         override;
     void paintGL()              override;
@@ -68,8 +69,9 @@ private:
     QPoint m_lastPos;
     QPoint mMousePos;
 
-    GLfloat brushSize = 6.0f;
+    GLfloat brushSize = 20.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
+
 };
 
 #endif 

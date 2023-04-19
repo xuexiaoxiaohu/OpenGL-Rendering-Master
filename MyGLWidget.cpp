@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QPainter>
+#include <QTimer>
 // Custom
 #include "MyGLWidget.h"
 #include <Macro.h>
@@ -13,7 +14,8 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     rotationAngle(0.0f),
     rotationAxis(0.0f, 1.0f, 0.0f),
     dataType(dataType), 
-    isShiftPressed(false){
+    isShiftPressed(false)
+{
     camera = new Camera();
     glDataProc = new DataProcessing();
     proj.setToIdentity();
@@ -28,8 +30,25 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     painter.drawEllipse(0, 0, 32, 32);
     QCursor cursor(pixmap);
     setCursor(cursor);
-}
 
+    QTimer* timer = new QTimer(this);
+    timer->start(10);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
+}
+void MyGLWidget::updateCursor() {
+    if (isMouseBrush){
+        QPixmap pixmap(32, 32);
+        pixmap.fill(Qt::transparent);
+        QPainter painter(&pixmap);
+        painter.setPen(Qt::red);
+        painter.setBrush(Qt::red);
+        painter.drawEllipse(0, 0, 32, 32);
+        QCursor cursor(pixmap);
+        setCursor(cursor);
+    }else{
+        setCursor(Qt::ArrowCursor);
+    }
+}
 MyGLWidget::~MyGLWidget(){
     delete pShader;
     delete mShader;
@@ -128,6 +147,8 @@ void MyGLWidget::paintGL(){
 
         mShader->setUniformValue("brushSize", brushSize);
         mShader->setUniformValue("brushPosition", brushPosition);
+
+        GLint posAttrib = glGetAttribLocation(mShader->programId(),"brushSize");
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
