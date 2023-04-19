@@ -19,8 +19,15 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     proj.setToIdentity();
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
-
-
+    
+    QPixmap pixmap(32, 32);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    painter.setPen(Qt::red);
+    painter.setBrush(Qt::red);
+    painter.drawEllipse(0, 0, 32, 32);
+    QCursor cursor(pixmap);
+    setCursor(cursor);
 }
 
 MyGLWidget::~MyGLWidget(){

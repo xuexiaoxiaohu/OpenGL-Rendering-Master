@@ -19,18 +19,18 @@ MainWindow::MainWindow(QWidget *parent):
     surface = new SurfaceReconsturction();
 }
 void MainWindow::updateCursor() {
-    if (mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
-        QPixmap pixmap(32, 32);
-        pixmap.fill(Qt::transparent);
-        QPainter painter(&pixmap);
-        painter.setPen(Qt::red);
-        painter.setBrush(Qt::red);
-        painter.drawEllipse(0, 0, 32, 32);
-        QCursor cursor(pixmap);
-        setCursor(cursor);
-    }else{
-        setCursor(Qt::ArrowCursor);
-    }
+    //if (mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
+    //    QPixmap pixmap(32, 32);
+    //    pixmap.fill(Qt::transparent);
+    //    QPainter painter(&pixmap);
+    //    painter.setPen(Qt::red);
+    //    painter.setBrush(Qt::red);
+    //    painter.drawEllipse(0, 0, 32, 32);
+    //    QCursor cursor(pixmap);
+    //    setCursor(cursor);
+    //}else{
+    //    setCursor(Qt::ArrowCursor);
+    //}
 }
 MainWindow::~MainWindow(){
     delete mPointGLWidget;
