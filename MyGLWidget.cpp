@@ -22,31 +22,20 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
     
-    QPixmap pixmap(32, 32);
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    painter.setPen(Qt::red);
-    painter.setBrush(Qt::red);
-    painter.drawEllipse(0, 0, 32, 32);
-    QCursor cursor(pixmap);
-    setCursor(cursor);
-
     QTimer* timer = new QTimer(this);
     timer->start(10);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
 }
 void MyGLWidget::updateCursor() {
-    if (isShiftPressed){
-        if (isMouseBrush) {
-            QPixmap pixmap(32, 32);
-            pixmap.fill(Qt::transparent);
-            QPainter painter(&pixmap);
-            painter.setPen(Qt::red);
-            painter.setBrush(Qt::red);
-            painter.drawEllipse(0, 0, 32, 32);
-            QCursor cursor(pixmap);
-            setCursor(cursor);
-        }
+    if (isShiftPressed && isMouseBrush){
+        QPixmap pixmap(brushSize, brushSize);
+        pixmap.fill(Qt::transparent);
+        QPainter painter(&pixmap);
+        painter.setPen(Qt::red);
+        painter.setBrush(Qt::red);
+        painter.drawEllipse(0, 0, brushSize, brushSize);
+        QCursor cursor(pixmap);
+        setCursor(cursor);
     }
     else{
         setCursor(Qt::ArrowCursor);
@@ -151,7 +140,7 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("brushSize", brushSize);
         mShader->setUniformValue("brushPosition", brushPosition);
 
-        GLint posAttrib = glGetAttribLocation(mShader->programId(),"brushSize");
+       // GLint posAttrib = glGetAttribLocation(mShader->programId(),"brushSize");
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
@@ -172,19 +161,9 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
         if (isShiftPressed) {
-            //if (isConstrFin == false) {
-            //    QMessageBox::information(this, "Tips", "Please perform the erase operation "
-            //        "after modeling is completed.", QMessageBox::Ok);
-            //    return;
-            //}
             GLdouble wx, wy, wz;
             convScreen2World(mMousePos, wx, wy, wz);
             brushPosition = QVector3D(wx, wy, wz);
-
-            //GLdouble wx, wy, wz;
-            //convScreen2World(mMousePos, wx, wy, wz);
-            //glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
-            //setImageData(glDataProc->glMeshData);
         }
         else {
             rotateMesh(rotationAngle, rotationAxis);
@@ -218,8 +197,16 @@ void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
 }
 void MyGLWidget::wheelEvent(QWheelEvent* event) {
     QPoint offset = event->angleDelta();
-    camera->mouseScroll(offset.y());
-    repaint();
+    if (isShiftPressed){
+        brushParam += (offset.y() * 0.01);
+        if (abs(brushParam)<= 0.0001) brushParam = 0.0f;
+        if (brushParam > 100)  brushParam = 100;
+        if (brushParam < -100) brushParam = -100;
+        brushSize = 0.48 * (brushParam + 200);
+    }else{
+        camera->mouseScroll(offset.y());
+        repaint();
+    }
 }
 void MyGLWidget::convScreen2World(QPoint sp, GLdouble& wx, GLdouble& wy, GLdouble& wz) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };

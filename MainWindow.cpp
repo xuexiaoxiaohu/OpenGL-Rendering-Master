@@ -113,7 +113,6 @@ void MainWindow::startRendering(){
                             }
                         }
                         if ((abs(diff) <= 0)){
-                            mMeshGLWidget->isConstrFin = true;
                             mMeshGLWidget->setMesh(mesh);
                             mMeshGLWidget->setMeshVtx(glVtx);
                         }

@@ -30,7 +30,7 @@ public:
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
     DataProcessing* glDataProc;
-    bool isConstrFin = false;
+    float aaa;
     bool isMouseBrush = false;
 public slots:
     void updateCursor();
