@@ -126,6 +126,9 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("view", camera->getViewMatrix());
         mShader->setUniformValue("proj", proj);
 
+        mShader->setUniformValue("brushSize", brushSize);
+        mShader->setUniformValue("brushPosition", brushPosition);
+
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
 }
@@ -145,15 +148,19 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
         if (isShiftPressed) {
-            if (isConstrFin == false) {
-                QMessageBox::information(this, "Tips", "Please perform the erase operation "
-                    "after modeling is completed.", QMessageBox::Ok);
-                return;
-            }
+            //if (isConstrFin == false) {
+            //    QMessageBox::information(this, "Tips", "Please perform the erase operation "
+            //        "after modeling is completed.", QMessageBox::Ok);
+            //    return;
+            //}
             GLdouble wx, wy, wz;
             convScreen2World(mMousePos, wx, wy, wz);
-            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
-            setImageData(glDataProc->glMeshData);
+            brushPosition = QVector3D(wx, wy, wz);
+
+            //GLdouble wx, wy, wz;
+            //convScreen2World(mMousePos, wx, wy, wz);
+            //glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
+            //setImageData(glDataProc->glMeshData);
         }
         else {
             rotateMesh(rotationAngle, rotationAxis);

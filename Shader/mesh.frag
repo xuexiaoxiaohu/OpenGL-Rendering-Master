@@ -40,6 +40,7 @@ struct spotLight{
 
 in vec3 worldPos;  
 in vec3 normal;  
+in vec3 vPosition;
 
 out vec4 fragColor;
 
@@ -56,7 +57,7 @@ vec3 calcSpotLight(spotLight light, vec3 normal, vec3 worldPos, vec3 viewDir);
 
 void main(){
     vec3 norm = normalize(normal);
-    vec3 viewDir = normalize(viewPos - worldPos);
+    vec3 viewDir = normalize(viewPos - vPosition);
 
     vec3 result = calcDirLight(dl1, norm, viewDir);
     result += calcDirLight(dl2, norm, viewDir);

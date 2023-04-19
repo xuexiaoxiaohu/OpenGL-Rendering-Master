@@ -32,6 +32,7 @@ public:
     DataProcessing* glDataProc;
     bool isConstrFin = false;
 
+
 protected:
     void initializeGL()         override;
     void paintGL()              override;
@@ -66,6 +67,9 @@ private:
     QVector3D rotationAxis;
     QPoint m_lastPos;
     QPoint mMousePos;
+
+    GLfloat brushSize = 6.0f;
+    QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
 };
 
 #endif 
