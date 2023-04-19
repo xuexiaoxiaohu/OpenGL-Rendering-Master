@@ -20,21 +20,12 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
 
-    QPixmap pixmap(32, 32);
-    pixmap.fill(Qt::transparent);
-    QPainter painter(&pixmap);
-    painter.setPen(Qt::red);
-    painter.setBrush(Qt::red);
-    painter.drawEllipse(0, 0, 32, 32);
-    QCursor cursor(pixmap);
 
-    // 将鼠标指针设置为圆形和红色
-    setCursor(cursor);
 }
 
 MyGLWidget::~MyGLWidget(){
-    delete pShaderProgram;
-    delete mShaderProgram;
+    delete pShader;
+    delete mShader;
     glDeleteVertexArrays(1, &mVAO);
     glDeleteBuffers(1, &mVBO);
 }
@@ -63,16 +54,16 @@ void MyGLWidget::initializeGL(){
     QString qAppDir = QCoreApplication::applicationDirPath();
 
     QString pointVert = qAppDir + "/Shader/point.vert", pointFrag = qAppDir + "/Shader/point.frag";
-    pShaderProgram = new QOpenGLShaderProgram();
-    pShaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, pointVert);
-    pShaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, pointFrag);
-    pShaderProgram->link();
+    pShader = new QOpenGLShaderProgram();
+    pShader->addShaderFromSourceFile(QOpenGLShader::Vertex, pointVert);
+    pShader->addShaderFromSourceFile(QOpenGLShader::Fragment, pointFrag);
+    pShader->link();
 
     QString meshVert = qAppDir + "/Shader/mesh.vert", meshFrag = qAppDir + "/Shader/mesh.frag";
-    mShaderProgram = new QOpenGLShaderProgram();
-    mShaderProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
-    mShaderProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
-    mShaderProgram->link();
+    mShader = new QOpenGLShaderProgram();
+    mShader->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
+    mShader->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
+    mShader->link();
 }
 // PaintGL
 void MyGLWidget::paintGL(){
@@ -88,10 +79,10 @@ void MyGLWidget::paintGL(){
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
         
-        pShaderProgram->bind();
-        pShaderProgram->setUniformValue("model", model);
-        pShaderProgram->setUniformValue("view", camera->getViewMatrix());
-        pShaderProgram->setUniformValue("proj", proj);
+        pShader->bind();
+        pShader->setUniformValue("model", model);
+        pShader->setUniformValue("view", camera->getViewMatrix());
+        pShader->setUniformValue("proj", proj);
 
         glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
     }else{
@@ -107,26 +98,26 @@ void MyGLWidget::paintGL(){
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
-        mShaderProgram->bind();
-        mShaderProgram->setUniformValue("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
-        mShaderProgram->setUniformValue("mat.ambient", QVector3D(0.5f, 0.5f, 0.5f));
-        mShaderProgram->setUniformValue("mat.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
-        mShaderProgram->setUniformValue("mat.specular", QVector3D(0.5f, 0.5f, 0.5f));
-        mShaderProgram->setUniformValue("mat.shininess", 16.0f);
+        mShader->bind();
+        mShader->setUniformValue("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
+        mShader->setUniformValue("mat.ambient", QVector3D(0.5f, 0.5f, 0.5f));
+        mShader->setUniformValue("mat.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
+        mShader->setUniformValue("mat.specular", QVector3D(0.5f, 0.5f, 0.5f));
+        mShader->setUniformValue("mat.shininess", 16.0f);
 
-        mShaderProgram->setUniformValue("dl1.ambient", QVector3D(0.2f, 0.2f, 0.2f));
-        mShaderProgram->setUniformValue("dl1.diffuse", QVector3D(0.5f, 0.5f, 0.9f));
-        mShaderProgram->setUniformValue("dl1.specular", QVector3D(0.1f, 0.1f, 0.1f));
-        mShaderProgram->setUniformValue("dl1.direction", QVector3D(1.0f, 1.0f, 3.0f));
+        mShader->setUniformValue("dl1.ambient", QVector3D(0.2f, 0.2f, 0.2f));
+        mShader->setUniformValue("dl1.diffuse", QVector3D(0.5f, 0.5f, 0.9f));
+        mShader->setUniformValue("dl1.specular", QVector3D(0.1f, 0.1f, 0.1f));
+        mShader->setUniformValue("dl1.direction", QVector3D(1.0f, 1.0f, 3.0f));
 
-        mShaderProgram->setUniformValue("dl2.ambient", QVector3D(0.2f, 0.2f, 0.2f));
-        mShaderProgram->setUniformValue("dl2.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
-        mShaderProgram->setUniformValue("dl2.specular", QVector3D(0.1f, 0.1f, 0.1f));
-        mShaderProgram->setUniformValue("dl2.direction", QVector3D(1.0f, 1.0f, -3.0f));
+        mShader->setUniformValue("dl2.ambient", QVector3D(0.2f, 0.2f, 0.2f));
+        mShader->setUniformValue("dl2.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
+        mShader->setUniformValue("dl2.specular", QVector3D(0.1f, 0.1f, 0.1f));
+        mShader->setUniformValue("dl2.direction", QVector3D(1.0f, 1.0f, -3.0f));
 
-        mShaderProgram->setUniformValue("model", model);
-        mShaderProgram->setUniformValue("view", camera->getViewMatrix());
-        mShaderProgram->setUniformValue("proj", proj);
+        mShader->setUniformValue("model", model);
+        mShader->setUniformValue("view", camera->getViewMatrix());
+        mShader->setUniformValue("proj", proj);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
@@ -139,10 +130,9 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     mMousePos = event->pos();
     QVector3D diff = QVector3D(mMousePos - m_lastPos);
     float angle = diff.length() / 2.0f;
-    QVector3D axis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
+    QVector3D rotationAxis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
 
     rotationAngle += angle;
-    rotationAxis = axis;
     m_lastPos = mMousePos;
 
     model.setToIdentity();

@@ -21,13 +21,11 @@
 
 class DataProcessing {
 public:
-	DataProcessing();
-	~DataProcessing();
+	DataProcessing() {};
+	~DataProcessing() {};
 
 	std::string getAppPath();
-
 	void loadPointData(const char* path);
-	// Add normal vector imformation to Mesh
 	void addNV(pcl::PolygonMesh &inMesh);
 	void getMaxMinPoint(std::vector<QVector3D> data);
 	void poly2tri(std::string src, std::string dst);

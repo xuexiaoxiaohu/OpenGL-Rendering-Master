@@ -16,6 +16,7 @@ public slots:
 	void openFile();
 	void startRendering();
 	void callbackRepaint();
+	void updateCursor();
 
 signals:
 	void signal_glUpdate();

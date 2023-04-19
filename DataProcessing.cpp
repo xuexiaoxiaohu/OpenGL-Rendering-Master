@@ -2,14 +2,6 @@
 #include <QApplication>
 #include "Macro.h"
 
-DataProcessing::DataProcessing() {
-
-}
-
-DataProcessing::~DataProcessing() {
-
-}
-
 std::string DataProcessing::getAppPath() {
 	QString qAppDir = QCoreApplication::applicationDirPath();
 	std::string::size_type iPos = (qAppDir.toStdString().find_last_of('\\') + 1) == 0 ?

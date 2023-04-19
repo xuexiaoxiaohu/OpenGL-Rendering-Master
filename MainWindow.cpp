@@ -2,16 +2,35 @@
 #include <QFileDialog>
 #include "MyGLWidget.h"
 #include "Macro.h"
-MainWindow::MainWindow(QWidget *parent): QMainWindow(parent){
+#include <QPixmap>
+#include <QPainter>
+MainWindow::MainWindow(QWidget *parent):
+    QMainWindow(parent){
 	ui.setupUi(this);
     addOpengGLWidget();
     connect(ui.openPushBtn, SIGNAL(clicked()), this, SLOT(openFile()));
     connect(ui.startPushBtn, SIGNAL(clicked()), this, SLOT(startRendering()));
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(callbackRepaint()));
-
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
+    timer->start(10);
     pointProc = new DataProcessing();
     meshProc = new DataProcessing();
     surface = new SurfaceReconsturction();
+}
+void MainWindow::updateCursor() {
+    if (mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
+        QPixmap pixmap(32, 32);
+        pixmap.fill(Qt::transparent);
+        QPainter painter(&pixmap);
+        painter.setPen(Qt::red);
+        painter.setBrush(Qt::red);
+        painter.drawEllipse(0, 0, 32, 32);
+        QCursor cursor(pixmap);
+        setCursor(cursor);
+    }else{
+        setCursor(Qt::ArrowCursor);
+    }
 }
 MainWindow::~MainWindow(){
     delete mPointGLWidget;
@@ -28,6 +47,7 @@ void MainWindow::addOpengGLWidget(){
     mMeshGLWidget = new MyGLWidget(this, MeshType);
     mMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
     ui.openGLHorizontalLayout->addWidget(mMeshGLWidget);
+
 }
 void MainWindow::callbackRepaint() {
     if (ui.pointCheckBox->checkState() == Qt::Checked) {

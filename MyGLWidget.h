@@ -48,8 +48,8 @@ protected:
     void rotateMesh(float angle, QVector3D axis);
     void translatePoint(QPoint& pressPos);
 private:
-    QOpenGLShaderProgram* pShaderProgram;
-    QOpenGLShaderProgram* mShaderProgram;
+    QOpenGLShaderProgram* pShader;
+    QOpenGLShaderProgram* mShader;
     bool isShiftPressed;
 
     QMatrix4x4 model;
