@@ -36,16 +36,19 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
 }
 void MyGLWidget::updateCursor() {
-    if (isMouseBrush){
-        QPixmap pixmap(32, 32);
-        pixmap.fill(Qt::transparent);
-        QPainter painter(&pixmap);
-        painter.setPen(Qt::red);
-        painter.setBrush(Qt::red);
-        painter.drawEllipse(0, 0, 32, 32);
-        QCursor cursor(pixmap);
-        setCursor(cursor);
-    }else{
+    if (isShiftPressed){
+        if (isMouseBrush) {
+            QPixmap pixmap(32, 32);
+            pixmap.fill(Qt::transparent);
+            QPainter painter(&pixmap);
+            painter.setPen(Qt::red);
+            painter.setBrush(Qt::red);
+            painter.drawEllipse(0, 0, 32, 32);
+            QCursor cursor(pixmap);
+            setCursor(cursor);
+        }
+    }
+    else{
         setCursor(Qt::ArrowCursor);
     }
 }

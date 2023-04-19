@@ -21,11 +21,8 @@ MainWindow::MainWindow(QWidget *parent):
 void MainWindow::updateCursor() {
     if (mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
         mMeshGLWidget->isMouseBrush = true;
-
-
     }else{
         mMeshGLWidget->isMouseBrush = false;
-
     }
 }
 MainWindow::~MainWindow(){
@@ -43,7 +40,6 @@ void MainWindow::addOpengGLWidget(){
     mMeshGLWidget = new MyGLWidget(this, MeshType);
     mMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
     ui.openGLHorizontalLayout->addWidget(mMeshGLWidget);
-
 }
 void MainWindow::callbackRepaint() {
     if (ui.pointCheckBox->checkState() == Qt::Checked) {
