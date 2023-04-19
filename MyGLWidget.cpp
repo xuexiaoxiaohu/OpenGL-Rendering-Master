@@ -36,8 +36,7 @@ void MyGLWidget::updateCursor() {
         painter.drawEllipse(0, 0, brushSize, brushSize);
         QCursor cursor(pixmap);
         setCursor(cursor);
-    }
-    else{
+    }else{
         setCursor(Qt::ArrowCursor);
     }
 }
@@ -164,8 +163,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             GLdouble wx, wy, wz;
             convScreen2World(mMousePos, wx, wy, wz);
             brushPosition = QVector3D(wx, wy, wz);
-        }
-        else {
+        }else{
             rotateMesh(rotationAngle, rotationAxis);
         }
     }
