@@ -31,7 +31,7 @@ public:
 	void poly2tri(std::string src, std::string dst);
 
 	int getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVtx);
-	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point);
+	std::vector<int> findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint);
 	void eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
 	void fillMesh(pcl::PolygonMesh& mesh);
 	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices);

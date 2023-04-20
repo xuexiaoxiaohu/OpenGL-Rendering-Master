@@ -75,7 +75,7 @@ int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVecto
 	}
 	return indexVertex;
 }
-std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ query_point) {
+std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::fromPCLPointCloud2(mesh.cloud, *cloud);
 
@@ -83,7 +83,7 @@ std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::Poin
 	kdtree->setInputCloud(cloud);
 	std::vector<int> k_indices;
 	std::vector<float> k_distances;
-	kdtree->nearestKSearch(query_point, 200, k_indices, k_distances);
+	kdtree->nearestKSearch(searchPoint, 200, k_indices, k_distances);
 	return k_indices;
 }
 void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {

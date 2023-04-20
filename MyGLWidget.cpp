@@ -136,9 +136,6 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("view", camera->getViewMatrix());
         mShader->setUniformValue("proj", proj);
 
-        //mShader->setUniformValue("brushSize", brushSize);
-        //mShader->setUniformValue("brushPosition", brushPosition);
-
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
 }
