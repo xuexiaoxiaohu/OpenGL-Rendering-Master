@@ -69,7 +69,7 @@ private:
     QPoint m_lastPos;
     QPoint mMousePos;
 
-    GLfloat brushSize = 20.0f;
+    float brushSize = 4.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
 
 };

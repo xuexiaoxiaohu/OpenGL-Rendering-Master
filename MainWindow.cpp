@@ -83,7 +83,6 @@ void MainWindow::startRendering(){
                     int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
                     if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
-                
 
                         std::string curAppPath = meshProc->getAppPath();
                         std::string oriPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
@@ -108,15 +107,11 @@ void MainWindow::startRendering(){
                                 glMesh.emplace_back(point.normal_x);
                                 glMesh.emplace_back(point.normal_y);
                                 glMesh.emplace_back(point.normal_z);
-
                                 glVtx.emplace_back(point.x, point.y, point.z);
                             }
                         }
-                        if ((abs(diff) <= 0)){
-                            mMeshGLWidget->setMesh(mesh);
-                            mMeshGLWidget->setMeshVtx(glVtx);
-                        }
-   
+                        mMeshGLWidget->setMesh(mesh);
+                        mMeshGLWidget->setMeshVtx(glVtx);
                         mMeshGLWidget->setAdaptivePara(center, radius);
                         mMeshGLWidget->setImageData(glMesh);
                     }

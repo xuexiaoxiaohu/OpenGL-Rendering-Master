@@ -14,8 +14,7 @@ struct dirLight{
     vec3 specular;
 };
 
-in vec3 worldPos;  
-in vec3 normal;  
+in vec3 vNormal;  
 in vec3 vPosition;
 
 out vec4 fragColor;
@@ -28,7 +27,7 @@ uniform dirLight dl2;
 vec3 calcDirLight(dirLight light, vec3 normal, vec3 viewDir);
 
 void main(){
-    vec3 norm = normalize(normal);
+    vec3 norm = normalize(vNormal);
     vec3 viewDir = normalize(viewPos - vPosition);
 
     vec3 result = calcDirLight(dl1, norm, viewDir);

@@ -154,14 +154,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
-        if (isShiftPressed) {
-            GLdouble wx, wy, wz;
-            convScreen2World(mMousePos, wx, wy, wz);
-            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
-            setImageData(glDataProc->glMeshData);
-        }else{
-            rotateMesh(rotationAngle, rotationAxis);
-        }
+        rotateMesh(rotationAngle, rotationAxis);
     }
     if (event->buttons() & Qt::RightButton) {
         model.translate(mMousePos.x() / 50, mMousePos.y() / 50);
@@ -171,9 +164,16 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint pressPos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
-        m_lastPos = pressPos;
+        if (isShiftPressed){
+            GLdouble wx, wy, wz;
+            convScreen2World(pressPos, wx, wy, wz);
+            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
+            setImageData(glDataProc->glMeshData);
+            repaint();
+        }else{
+            m_lastPos = pressPos;
+        }
     }
-    repaint();
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 

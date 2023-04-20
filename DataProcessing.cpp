@@ -75,16 +75,19 @@ int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVecto
 	}
 	return indexVertex;
 }
-std::vector<int> DataProcessing::findKNeighbors(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint) {
+std::vector<int> DataProcessing::radiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::fromPCLPointCloud2(mesh.cloud, *cloud);
 
 	pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtree(new pcl::KdTreeFLANN<pcl::PointXYZ>);
 	kdtree->setInputCloud(cloud);
-	std::vector<int> k_indices;
-	std::vector<float> k_distances;
-	kdtree->nearestKSearch(searchPoint, 200, k_indices, k_distances);
-	return k_indices;
+
+	std::vector<int> pointIdxRadiusSearch;
+	std::vector<float> pointRadiusSquaredDistance;
+
+	kdtree->radiusSearch(searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance);
+
+	return pointIdxRadiusSearch;
 }
 void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
 	std::vector<pcl::Vertices>& polygons = mesh.polygons;
@@ -115,7 +118,8 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 	pcl::io::vtk2mesh(fillHoles->GetOutput(), mesh);
 }
 
-void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices){
+void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh,
+	std::vector<QVector3D> vertices, float radius){
 	int index = getNearestVertexIndex(worldPos, vertices);
 	if (index != -1) {
 		pcl::PointXYZ nrstVertex;
@@ -123,7 +127,7 @@ void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, s
 		nrstVertex.y = vertices[index].y();
 		nrstVertex.z = vertices[index].z();
 
-		pcl::Indices toRemove = findKNeighbors(mesh, nrstVertex);
+		pcl::Indices toRemove = radiusSearch(mesh, nrstVertex, radius);
 		eraseMesh(mesh, toRemove);
 		fillMesh(mesh);
 		getRenderData(mesh);
