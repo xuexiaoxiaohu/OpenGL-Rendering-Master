@@ -12,7 +12,6 @@
 
 MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     rotationAngle(0.0f),
-    rotationAxis(0.0f, 1.0f, 0.0f),
     dataType(dataType), 
     isShiftPressed(false)
 {

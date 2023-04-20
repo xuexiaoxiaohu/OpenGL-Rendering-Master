@@ -30,10 +30,11 @@ public:
     pcl::PolygonMesh mesh;
     std::vector<QVector3D> allVertices;
     DataProcessing* glDataProc;
-    float brushParam;
     bool isMouseBrush = false;
+
 public slots:
     void updateCursor();
+
 protected:
     void initializeGL()         override;
     void paintGL()              override;
@@ -49,10 +50,10 @@ protected:
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
     void rotateMesh(float angle, QVector3D axis);
     void translatePoint(QPoint& pressPos);
+
 private:
     QOpenGLShaderProgram* pShader;
     QOpenGLShaderProgram* mShader;
-    bool isShiftPressed;
 
     QMatrix4x4 model;
     Camera* camera;
@@ -60,13 +61,13 @@ private:
 
     std::vector<GLfloat> vertices;
     int dataType;
-    QPoint pressPosition; 
-    GLuint pVAO, pVBO;
-    GLuint mVAO, mVBO;
+    GLuint pVAO, pVBO, mVAO, mVBO;
 
+    bool isShiftPressed;
+    float brushParam;
     float rotationAngle;
-    QVector3D rotationAxis;
     QPoint m_lastPos;
+    QPoint pressPosition;
 
     float brushSize = 4.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
