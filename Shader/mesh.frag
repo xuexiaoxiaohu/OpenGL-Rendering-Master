@@ -14,8 +14,8 @@ struct dirLight{
     vec3 specular;
 };
 
-in vec3 vNormal;  
 in vec3 vPosition;
+in vec3 vNormal;  
 
 out vec4 fragColor;
 
