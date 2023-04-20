@@ -136,6 +136,9 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("view", camera->getViewMatrix());
         mShader->setUniformValue("proj", proj);
 
+        mShader->setUniformValue("brushPosition", brushPosition);
+        mShader->setUniformValue("brushSize", brushSize);
+
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
 }
@@ -144,13 +147,10 @@ void MyGLWidget::resizeGL(int width, int height){
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
-    mMousePos = event->pos();
+    QPoint mMousePos = event->pos();
     QVector3D diff = QVector3D(mMousePos - m_lastPos);
-    float angle = diff.length() / 2.0f;
+    rotationAngle += (diff.length() / 2.0f);
     QVector3D rotationAxis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
-
-    rotationAngle += angle;
-    m_lastPos = mMousePos;
 
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {

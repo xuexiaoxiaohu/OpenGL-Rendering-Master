@@ -67,7 +67,6 @@ private:
     float rotationAngle;
     QVector3D rotationAxis;
     QPoint m_lastPos;
-    QPoint mMousePos;
 
     float brushSize = 4.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
