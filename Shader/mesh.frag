@@ -1,7 +1,5 @@
 #version 450 core
 
-#define NUM 4
-
 struct material{
     vec3 ambient;
     vec3 diffuse;
