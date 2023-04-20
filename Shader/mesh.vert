@@ -17,10 +17,13 @@ void main(){
 
 	worldPos = vec3(model * vec4(aPos, 1.0));
 	normal = mat3(transpose(inverse(model))) * aNormal;
-
-	float distance111 = length(aPos - brushPosition);
+	
+	vec3 delta = aPos - brushPosition;
+	float distance111 = length(delta);
 	if(distance111 < brushSize){
-		vec3 offset = normalize(aPos - brushPosition) * (brushSize - distance111);
+		float amount = 3 * (1.0 - distance111 / brushSize);
+		vec3 direction = normalize(delta);
+		vec3 offset = direction * amount;
 		vPosition = aPos + offset;
 	}else{
 		vPosition = aPos;
