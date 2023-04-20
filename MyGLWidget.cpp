@@ -136,10 +136,8 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("view", camera->getViewMatrix());
         mShader->setUniformValue("proj", proj);
 
-        mShader->setUniformValue("brushSize", brushSize);
-        mShader->setUniformValue("brushPosition", brushPosition);
-
-       // GLint posAttrib = glGetAttribLocation(mShader->programId(),"brushSize");
+        //mShader->setUniformValue("brushSize", brushSize);
+        //mShader->setUniformValue("brushPosition", brushPosition);
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
@@ -162,7 +160,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         if (isShiftPressed) {
             GLdouble wx, wy, wz;
             convScreen2World(mMousePos, wx, wy, wz);
-            brushPosition = QVector3D(wx, wy, wz);
+            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices);
+            setImageData(glDataProc->glMeshData);
         }else{
             rotateMesh(rotationAngle, rotationAxis);
         }
