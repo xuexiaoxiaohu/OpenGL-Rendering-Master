@@ -53,6 +53,21 @@ else()
 endif(OSG_ROOT)
 include_directories(${OSG_INC_DIR})
 
+# OpenMesh
+if(NOT OpenMesh_ROOT)
+    set(OpenMesh_ROOT "" CACHE PATH "OpenMesh ROOT")
+endif()
+if(OpenMesh_ROOT)
+	set(OpenMesh_LIB_DIR ${OpenMesh_ROOT}/lib/)
+    set(OpenMesh_BIN_DIR ${OpenMesh_ROOT}/bin/)
+    file(GLOB OpenMesh_LIB_FILES ${OpenMesh_ROOT}/lib/*.lib)
+    file(GLOB OpenMesh_BIN_FILES ${OpenMesh_ROOT}/bin/*.dll)
+    set(OpenMesh_INC_DIR ${OpenMesh_ROOT}/include/)
+else()
+    message(FATAL_ERROR "can not generate without OpenMesh")
+endif(OpenMesh_ROOT)
+include_directories(${OpenMesh_INC_DIR})
+
 # PCL
 find_package(PCL 1.11 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
@@ -86,6 +101,7 @@ target_link_libraries (${PROJECT_NAME} ${PCL_LIBRARIES})
 target_link_libraries (${PROJECT_NAME} ${SURFACE_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${GLUT_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${OSG_LIB_FILES})
+target_link_libraries (${PROJECT_NAME} ${OpenMesh_LIB_FILES})
 
 #copy file from source dirtory to binaray dirtory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data DESTINATION ${PROJECT_BINARY_DIR}/Release)
