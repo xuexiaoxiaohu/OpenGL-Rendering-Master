@@ -116,6 +116,7 @@ void MyGLWidget::paintGL(){
 
         mShader->bind();
         mShader->setUniformValue("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
+
         mShader->setUniformValue("mat.ambient", QVector3D(0.5f, 0.5f, 0.5f));
         mShader->setUniformValue("mat.diffuse", QVector3D(0.5f, 0.5f, 0.5f));
         mShader->setUniformValue("mat.specular", QVector3D(0.5f, 0.5f, 0.5f));
