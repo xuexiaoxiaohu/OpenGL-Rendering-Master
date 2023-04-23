@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent):
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(callbackRepaint()));
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
-    timer->start(10);
+    timer->start(100);
     pointProc = new DataProcessing();
     meshProc = new DataProcessing();
     surface = new SurfaceReconsturction();

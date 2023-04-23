@@ -22,7 +22,7 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     this->grabKeyboard();
     
     QTimer* timer = new QTimer(this);
-    timer->start(10);
+    timer->start(100);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
 }
 void MyGLWidget::updateCursor() {
@@ -135,10 +135,11 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("model", model);
         mShader->setUniformValue("view", camera->getViewMatrix());
         mShader->setUniformValue("proj", proj);
-        mShader->setUniformValue("isMouseBrushUsed", isShiftPressed);
+
+    /*    mShader->setUniformValue("isMouseBrushUsed", isShiftPressed);
         
         mShader->setUniformValue("brushPosition", brushPosition);
-        mShader->setUniformValue("brushSize", brushSize);
+        mShader->setUniformValue("brushSize", brushSize);*/
       
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
@@ -156,16 +157,16 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
 
-        if (isShiftPressed)
-        {
-            GLdouble wx, wy, wz;
-            convScreen2World(mMousePos, wx, wy, wz);
-            brushPosition = QVector3D(wx, wy, wz);
-        }
-        else
-        {
+        //if (isShiftPressed)
+        //{
+        //    GLdouble wx, wy, wz;
+        //    convScreen2World(mMousePos, wx, wy, wz);
+        //    brushPosition = QVector3D(wx, wy, wz);
+        //}
+        //else
+        //{
             rotateMesh(rotationAngle, rotationAxis);
-        }
+        //}
     }
     if (event->buttons() & Qt::RightButton) {
         model.translate(mMousePos.x() / 50, mMousePos.y() / 50);
@@ -176,11 +177,11 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint pressPos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
         if (isShiftPressed){
-            //GLdouble wx, wy, wz;
-            //convScreen2World(pressPos, wx, wy, wz);
-            //glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
-            //setImageData(glDataProc->glMeshData);
-            //repaint();
+            GLdouble wx, wy, wz;
+            convScreen2World(pressPos, wx, wy, wz);
+            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
+            setImageData(glDataProc->glMeshData);
+            repaint();
         }else{
             m_lastPos = pressPos;
         }

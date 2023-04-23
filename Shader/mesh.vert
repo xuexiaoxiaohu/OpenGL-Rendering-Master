@@ -18,7 +18,7 @@ void main(){
 	vPosition = vec3(model * vec4(vertexPosition, 1.0));// 点的位置
 	vNormal = mat3(transpose(inverse(model))) * vertexNormal;
 
-	if(isMouseBrushUsed){
+	/*if(isMouseBrushUsed){
 		vec3 delta = vPosition - brushPosition;
 		float dist = length(delta);
 		if (dist < brushSize) {
@@ -27,7 +27,7 @@ void main(){
 			vec3 offset = direction * amount;
 			vPosition += offset;
 		}
-	}
+	}*/
 	gl_Position = proj * view * vec4(vPosition, 1.0f);
 }
  
