@@ -163,3 +163,48 @@ void DataProcessing::poly2tri(std::string src, std::string dst) {
 	writer->SetFileTypeToASCII();
 	writer->Update();
 }
+void polyDataToImageData(vtkSmartPointer<vtkPolyData> polyData, vtkSmartPointer<vtkImageData> imageData) {
+	// 获取 PolyData 中的点和单元格
+	vtkPoints* points = polyData->GetPoints();
+	vtkCellArray* cells = polyData->GetPolys();
+	// 获取输出图像的尺寸
+	int* dimensions = imageData->GetDimensions();
+	int dimX = dimensions[0];
+	int dimY = dimensions[1];
+	int dimZ = dimensions[2];
+
+	// 设置输出图像的坐标范围
+	double* bounds = polyData->GetBounds();
+	double origin[3] = { bounds[0], bounds[2], bounds[4] };
+	double spacing[3] = { (bounds[1] - bounds[0]) / dimX,
+						 (bounds[3] - bounds[2]) / dimY,
+						 (bounds[5] - bounds[4]) / dimZ };
+	imageData->SetOrigin(origin);
+	imageData->SetSpacing(spacing);
+	imageData->SetExtent(0, dimX - 1, 0, dimY - 1, 0, dimZ - 1);
+
+
+	// 创建输出图像的像素数组
+	vtkUnsignedCharArray* pixels = vtkUnsignedCharArray::New();
+	pixels->SetNumberOfComponents(1);
+	pixels->SetNumberOfTuples(dimX * dimY * dimZ);
+
+	// 将 PolyData 转换为图像数据
+	for (vtkIdType i = cells->GetNumberOfCells() - 1; i >= 0; --i) {
+		vtkIdType npts;
+		vtkIdType* ptIds;
+		cells->GetCell(i, npts, ptIds);
+		double p[3];
+		for (vtkIdType j = 0; j < npts; ++j) {
+			points->GetPoint(ptIds[j], p);
+			int x = static_cast<int>((p[0] - origin[0]) / spacing[0] + 0.5);
+			int y = static_cast<int>((p[1] - origin[1]) / spacing[1] + 0.5);
+			int z = static_cast<int>((p[2] - origin[2]) / spacing[2] + 0.5);
+			if (x >= 0 && x < dimX && y >= 0 && y < dimY && z >= 0 && z < dimZ) {
+				int idx = x + y * dimX + z * dimX * dimY;
+				pixels->SetValue(idx, 255);
+			}
+		}
+	}
+}
+	
