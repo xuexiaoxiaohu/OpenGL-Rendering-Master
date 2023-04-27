@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.4.0)
 
 #set project name
-project(OpenGL-Rendering-Eraser-Master)
+project(OpenGL-Rendering-Eraser-Project)
 SET(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_INCLUDE_CURRENT_DIR ON) 
 # Enable C++17
