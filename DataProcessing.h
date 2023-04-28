@@ -35,7 +35,6 @@ public:
 	DataProcessing() {};
 	~DataProcessing() {};
 
-	std::string getAppPath();
 	void loadPointData(const char* path);
 	void addNV(pcl::PolygonMesh &inMesh);
 	void getMaxMinPoint(std::vector<QVector3D> data);
@@ -51,6 +50,5 @@ public:
 	void isoExpRemeshing(const char* srcPath,const char* dstPath);
 	std::vector<QVector3D>	pointData;
 	std::vector<float> glMeshData;
-	QVector3D maxPoint;
-	QVector3D minPoint;
+	QVector3D maxPoint,minPoint;
 };

@@ -83,14 +83,13 @@ void MainWindow::startRendering(){
                     int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
                     if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
-
-                        std::string curAppPath = meshProc->getAppPath();
-                        std::string oriPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
-                        std::string dstPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
+                        const char* oriPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
+                        const char* dstPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
                         pcl::PolygonMesh mesh;
 
                         //meshProc->poly2tri(oriPath, dstPath);
-                        meshProc->isoExpRemeshing(oriPath.c_str(), dstPath.c_str());
+                        meshProc->isoExpRemeshing(oriPath, dstPath);
+                        
                         pcl::io::loadPLYFile(dstPath, mesh);
                         meshProc->addNV(mesh);
               
