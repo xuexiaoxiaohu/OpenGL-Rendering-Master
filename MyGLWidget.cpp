@@ -153,20 +153,27 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     QVector3D diff = QVector3D(mMousePos - m_lastPos);
     rotationAngle += (diff.length() / 2.0f);
     QVector3D rotationAxis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
-
+    QPoint p1(1, 2);
+    QPoint p2(4, 6);
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
+        if (isShiftPressed) {
+            GLdouble wx, wy, wz;
+            convScreen2World(mMousePos, wx, wy, wz);
 
-        //if (isShiftPressed)
-        //{
-        //    GLdouble wx, wy, wz;
-        //    convScreen2World(mMousePos, wx, wy, wz);
-        //    brushPosition = QVector3D(wx, wy, wz);
-        //}
-        //else
-        //{
+            int  distance = sqrt((mMousePos.x() - lastMovePos.x()) * (mMousePos.x() - lastMovePos.x())
+                + (mMousePos.y() - lastMovePos.y()) * (mMousePos.y() - lastMovePos.y()));
+            if (distance >= 5.0) {
+                glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
+                setImageData(glDataProc->glMeshData);
+                repaint();
+            }
+            lastMovePos = mMousePos;
+        }
+        else
+        {
             rotateMesh(rotationAngle, rotationAxis);
-        //}
+        }
     }
     if (event->buttons() & Qt::RightButton) {
         model.translate(mMousePos.x() / 50, mMousePos.y() / 50);
@@ -176,15 +183,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint pressPos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
-        if (isShiftPressed){
-            GLdouble wx, wy, wz;
-            convScreen2World(pressPos, wx, wy, wz);
-            glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
-            setImageData(glDataProc->glMeshData);
-            repaint();
-        }else{
-            m_lastPos = pressPos;
-        }
+        m_lastPos = pressPos;
     }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {

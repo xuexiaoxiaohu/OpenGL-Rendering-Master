@@ -11,6 +11,7 @@
 //Custom
 #include <DataProcessing.h>
 #include "Camera.h"
+
 enum DataType {
     PointType,
     MeshType,
@@ -68,7 +69,8 @@ private:
     float rotationAngle;
     QPoint m_lastPos;
     QPoint pressPosition;
-
+    QPoint lastMovePos;
+    GLdouble lastWx = 0, lastWy = 0, lastWz = 0;
     float brushSize = 4.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
 

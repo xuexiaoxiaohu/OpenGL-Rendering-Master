@@ -89,7 +89,8 @@ void MainWindow::startRendering(){
                         std::string dstPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
                         pcl::PolygonMesh mesh;
 
-                        meshProc->poly2tri(oriPath, dstPath);
+                        //meshProc->poly2tri(oriPath, dstPath);
+                        meshProc->isoExpRemeshing(oriPath.c_str(), dstPath.c_str());
                         pcl::io::loadPLYFile(dstPath, mesh);
                         meshProc->addNV(mesh);
               
