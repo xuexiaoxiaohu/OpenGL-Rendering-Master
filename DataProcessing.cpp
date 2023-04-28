@@ -171,22 +171,18 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	reader->SetFileName(srcPath);
 	reader->Update();
 	auto pd = reader->GetOutput();
+
 	vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
 	double bounds[6];
 	pd->GetBounds(bounds);
-	double spacing[3]; // desired volume spacing
+	double spacing[3];
 	spacing[0] = 0.5;
 	spacing[1] = 0.5;
 	spacing[2] = 0.5;
-	whiteImage->SetSpacing(spacing);
 
-	// compute dimensions
 	int dim[3];
-	for (int i = 0; i < 3; i++)
-	{
-		dim[i] = static_cast<int>(
-			ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
-	}
+	for (int i = 0; i < 3; i++) dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
+	
 	whiteImage->SetDimensions(dim);
 	whiteImage->SetExtent(0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1);
 
@@ -195,17 +191,14 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	origin[1] = bounds[2] + spacing[1] / 2;
 	origin[2] = bounds[4] + spacing[2] / 2;
 	whiteImage->SetOrigin(origin);
+	whiteImage->SetSpacing(spacing);
 	whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
-	// fill the image with foreground voxels:
 	unsigned char inval = 255;
 	unsigned char outval = 0;
 	vtkIdType count = whiteImage->GetNumberOfPoints();
-	for (vtkIdType i = 0; i < count; ++i)
-	{
-		whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);
-	}
-	// polygonal data --> image stencil:
+	for (vtkIdType i = 0; i < count; ++i)	whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);
+	
 	vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
 	pol2stenc->SetInputData(pd);
 	pol2stenc->SetOutputOrigin(origin);
@@ -213,9 +206,7 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
 	pol2stenc->Update();
 
-	// cut the corresponding white image and set the background:
 	vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
-
 	imgstenc->SetInputData(whiteImage);
 	imgstenc->SetStencilConnection(pol2stenc->GetOutputPort());
 	imgstenc->ReverseStencilOff();
@@ -227,12 +218,12 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	gaussianSmoothFilter->SetDimensionality(3);
 	gaussianSmoothFilter->SetRadiusFactor(5);
 	gaussianSmoothFilter->SetStandardDeviation(1);
-	gaussianSmoothFilter->Update();//这是添加的图像平滑处理，高斯平滑
+	gaussianSmoothFilter->Update();
 
 	vtkSmartPointer<vtkMarchingCubes>marchingcube = vtkSmartPointer<vtkMarchingCubes>::New();
 	marchingcube->SetInputData(gaussianSmoothFilter->GetOutput());
 	marchingcube->SetValue(0, 70);
-	marchingcube->ComputeNormalsOn();//计算表面法向量;
+	marchingcube->ComputeNormalsOn();
 	marchingcube->Update();
 
 	vtkSmartPointer<vtkPLYWriter> writer = vtkSmartPointer<vtkPLYWriter>::New();

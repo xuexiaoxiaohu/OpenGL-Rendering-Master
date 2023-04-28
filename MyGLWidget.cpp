@@ -153,8 +153,6 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     QVector3D diff = QVector3D(mMousePos - m_lastPos);
     rotationAngle += (diff.length() / 2.0f);
     QVector3D rotationAxis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
-    QPoint p1(1, 2);
-    QPoint p2(4, 6);
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
         if (isShiftPressed) {
