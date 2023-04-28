@@ -55,14 +55,13 @@ void MainWindow::openFile(){
     if (fileName.isEmpty()) return;
 
     ui.lineEdit_file->setText(fileName);
-    pointProc->loadPointData(fileName.toStdString().c_str());
+    pointProc->loadPointData(fileName);
 }
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
         std::vector<QVector3D> rawData;
         for (int i = 0; i < pointProc->pointData.size(); i++){
-            rawData.emplace_back(QVector3D(pointProc->pointData[i].x(), 
-            pointProc->pointData[i].y(), pointProc->pointData[i].z()));
+            rawData.emplace_back(pointProc->pointData[i]);
             pointProc->getMaxMinPoint(rawData);
 
             QVector3D center = (pointProc->maxPoint + pointProc->minPoint) / 2.0f;

@@ -5,12 +5,17 @@
 #include <QFile>
 #include <QDataStream>
 
-void DataProcessing::loadPointData(const char* path) {
-	std::fstream fs(path);
-	if (fs.is_open() == NULL) return;
-	float x, y, z;
-	while (fs >> x >> y >> z) pointData.emplace_back(QVector3D {x, y, z});
-	fs.close();
+void DataProcessing::loadPointData(QString path) {
+	QFile file(path);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))	return;
+
+	QTextStream in(&file);
+	while (!in.atEnd()) {
+		QString line = in.readLine();
+		QStringList parts = line.split(" ");
+		QVector3D vector(parts[0].toFloat(), parts[1].toFloat(), parts[2].toFloat());
+		pointData.append(vector);
+	}
 }
 
 void DataProcessing::getMaxMinPoint(std::vector<QVector3D> data) {

@@ -1,5 +1,6 @@
 #pragma once
 // QT
+#include <QVector>
 #include <QVector3D>
 // PCL
 #include <pcl/io/pcd_io.h>
@@ -35,7 +36,7 @@ public:
 	DataProcessing() {};
 	~DataProcessing() {};
 
-	void loadPointData(const char* path);
+	void loadPointData(QString path);
 	void addNV(pcl::PolygonMesh &inMesh);
 	void getMaxMinPoint(std::vector<QVector3D> data);
 	void poly2tri(std::string src, std::string dst);
@@ -48,7 +49,7 @@ public:
 	void getRenderData(pcl::PolygonMesh &mesh);
 	//Remeshing: Isotropic Explicit Remeshing
 	void isoExpRemeshing(const char* srcPath,const char* dstPath);
-	std::vector<QVector3D>	pointData;
+	QVector<QVector3D>	pointData;
 	std::vector<float> glMeshData;
 	QVector3D maxPoint,minPoint;
 };
