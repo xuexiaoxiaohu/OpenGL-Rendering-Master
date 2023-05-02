@@ -38,21 +38,6 @@ else()
 endif(GLUT_ROOT)
 include_directories(${GLUT_INC_DIR})
 
-# OSG
-if(NOT OSG_ROOT)
-    set(OSG_ROOT "" CACHE PATH "OSG ROOT")
-endif()
-if(OSG_ROOT)
-	set(OSG_LIB_DIR ${OSG_ROOT}/lib/)
-    set(OSG_BIN_DIR ${OSG_ROOT}/bin/)
-    file(GLOB OSG_LIB_FILES ${OSG_ROOT}/lib/*.lib)
-    file(GLOB OSG_BIN_FILES ${OSG_ROOT}/bin/*.dll)
-    set(OSG_INC_DIR ${OSG_ROOT}/include/)
-else()
-    message(FATAL_ERROR "can not generate without OSG")
-endif(OSG_ROOT)
-include_directories(${OSG_INC_DIR})
-
 # OpenMesh
 if(NOT OPENMESH_ROOT)
     set(OPENMESH_ROOT "" CACHE PATH "OpenMesh root")
@@ -173,7 +158,6 @@ target_link_libraries (${PROJECT_NAME} ${FLANN_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${VTK_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${RECONSTRUCTION_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${GLUT_LIB_FILES})
-target_link_libraries (${PROJECT_NAME} ${OSG_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${OPENMESH_LIB_FILES})
 
 #copy file from source dirtory to binaray dirtory

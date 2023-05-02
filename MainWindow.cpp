@@ -82,14 +82,17 @@ void MainWindow::startRendering(){
                     int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
                     if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                         surface->construction(rawData);
-                        const char* oriPath = "C:/Project/OpenGL-Rendering-Master-Build/result.ply";
-                        const char* dstPath = "C:/Project/OpenGL-Rendering-Master-Build/triangleResult.ply";
-                        pcl::PolygonMesh mesh;
+                        QString appPath = QCoreApplication::applicationDirPath();
+                        QFileInfo fileInfo(appPath);
+                        QString parentPath = fileInfo.dir().path();
 
-                        //meshProc->poly2tri(oriPath, dstPath);
-                        meshProc->isoExpRemeshing(oriPath, dstPath);
+                        QString srcPath = parentPath + "/result.ply";
+                        QString dstPath = parentPath + "/triangleResult.ply";
+                        pcl::PolygonMesh mesh;
+                       // meshProc->poly2tri(srcPath.toStdString().c_str(), dstPath.toStdString().c_str());
+                        meshProc->isoExpRemeshing(srcPath.toStdString().c_str(), dstPath.toStdString().c_str());
                         
-                        pcl::io::loadPLYFile(dstPath, mesh);
+                        pcl::io::loadPLYFile(dstPath.toStdString().c_str(), mesh);
                         meshProc->addNV(mesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
