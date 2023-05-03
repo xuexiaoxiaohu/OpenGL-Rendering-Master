@@ -170,19 +170,21 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
 	reader->SetFileName(srcPath);
 	reader->Update();
-	auto pd = reader->GetOutput();
+	auto polyData = reader->GetOutput();
 
 	vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
 	double bounds[6];
-	pd->GetBounds(bounds);
+	polyData->GetBounds(bounds);
 	double spacing[3];
 	spacing[0] = 0.5;
 	spacing[1] = 0.5;
 	spacing[2] = 0.5;
 
 	int dim[3];
-	for (int i = 0; i < 3; i++) dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
-	
+	for (int i = 0; i < 3; i++) {
+		dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
+	}
+
 	whiteImage->SetDimensions(dim);
 	whiteImage->SetExtent(0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1);
 
@@ -202,7 +204,7 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	}
 	
 	vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
-	pol2stenc->SetInputData(pd);
+	pol2stenc->SetInputData(polyData);
 	pol2stenc->SetOutputOrigin(origin);
 	pol2stenc->SetOutputSpacing(spacing);
 	pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
