@@ -197,7 +197,9 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	unsigned char inval = 255;
 	unsigned char outval = 0;
 	vtkIdType count = whiteImage->GetNumberOfPoints();
-	for (vtkIdType i = 0; i < count; ++i)	whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);
+	for (vtkIdType i = 0; i < count; ++i) {
+		whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);
+	}
 	
 	vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
 	pol2stenc->SetInputData(pd);
@@ -213,15 +215,15 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	imgstenc->SetBackgroundValue(outval);
 	imgstenc->Update();
 
-	vtkSmartPointer<vtkImageGaussianSmooth> gaussianSmoothFilter = vtkSmartPointer<vtkImageGaussianSmooth>::New();
-	gaussianSmoothFilter->SetInputConnection(imgstenc->GetOutputPort());
-	gaussianSmoothFilter->SetDimensionality(3);
-	gaussianSmoothFilter->SetRadiusFactor(5);
-	gaussianSmoothFilter->SetStandardDeviation(1);
-	gaussianSmoothFilter->Update();
+	vtkSmartPointer<vtkImageGaussianSmooth> gaussianSmooth = vtkSmartPointer<vtkImageGaussianSmooth>::New();
+	gaussianSmooth->SetInputConnection(imgstenc->GetOutputPort());
+	gaussianSmooth->SetDimensionality(3);
+	gaussianSmooth->SetRadiusFactor(5);
+	gaussianSmooth->SetStandardDeviation(1);
+	gaussianSmooth->Update();
 
 	vtkSmartPointer<vtkMarchingCubes>marchingcube = vtkSmartPointer<vtkMarchingCubes>::New();
-	marchingcube->SetInputData(gaussianSmoothFilter->GetOutput());
+	marchingcube->SetInputData(gaussianSmooth->GetOutput());
 	marchingcube->SetValue(0, 70);
 	marchingcube->ComputeNormalsOn();
 	marchingcube->Update();

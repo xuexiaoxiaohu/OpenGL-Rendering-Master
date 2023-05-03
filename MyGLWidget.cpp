@@ -134,13 +134,7 @@ void MyGLWidget::paintGL(){
 
         mShader->setUniformValue("model", model);
         mShader->setUniformValue("view", camera->getViewMatrix());
-        mShader->setUniformValue("proj", proj);
-
-    /*    mShader->setUniformValue("isMouseBrushUsed", isShiftPressed);
-        
-        mShader->setUniformValue("brushPosition", brushPosition);
-        mShader->setUniformValue("brushSize", brushSize);*/
-      
+        mShader->setUniformValue("proj", proj);      
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
 }
@@ -211,7 +205,7 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
         repaint();
     }
 }
-void MyGLWidget::convScreen2World(QPoint sp, GLdouble& wx, GLdouble& wy, GLdouble& wz) {
+void MyGLWidget::convScreen2World(QPoint screenPoint, GLdouble& wx, GLdouble& wy, GLdouble& wz) {
     int viewport[4] = { 0, 0, SCR_WIDTH, SCR_HEIGHT };
     double mvArray[16], pArray[16];
 
@@ -225,8 +219,8 @@ void MyGLWidget::convScreen2World(QPoint sp, GLdouble& wx, GLdouble& wy, GLdoubl
 
     GLfloat depth;
     makeCurrent();
-    glReadPixels(sp.x(), viewport[3] - sp.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-    gluUnProject(sp.x(), viewport[3] - sp.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
+    glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+    gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
 }
 void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
     model.translate(camera->dir);
