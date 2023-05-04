@@ -65,17 +65,17 @@ void DataProcessing::addNV(pcl::PolygonMesh &mesh) {
 	mesh.cloud = outputCloud;
 }
 
-int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVtx) {
-	int indexVertex = -1;
+int DataProcessing::getNearestVtxIndex(QVector3D worldPos, std::vector<QVector3D> glVtx) {
+	int vtxIndex = -1;
 	float minDist = std::numeric_limits<float>::max();
 	for (int i = 0; i < glVtx.size(); i++) {
 		float dist = (glVtx[i] - worldPos).length();
 		if (dist < minDist) {
-			indexVertex = i;
+			vtxIndex = i;
 			minDist = dist;
 		}
 	}
-	return indexVertex;
+	return vtxIndex;
 }
 std::vector<int> DataProcessing::radiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -84,12 +84,12 @@ std::vector<int> DataProcessing::radiusSearch(pcl::PolygonMesh mesh, pcl::PointX
 	pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtree(new pcl::KdTreeFLANN<pcl::PointXYZ>);
 	kdtree->setInputCloud(cloud);
 
-	std::vector<int> pointIdxRadiusSearch;
-	std::vector<float> pointRadiusSquaredDistance;
+	std::vector<int> k_indices;
+	std::vector<float> k_sqr_dists;
 
-	kdtree->radiusSearch(searchPoint, radius, pointIdxRadiusSearch, pointRadiusSquaredDistance);
+	kdtree->radiusSearch(searchPoint, radius, k_indices, k_sqr_dists);
 
-	return pointIdxRadiusSearch;
+	return k_indices;
 }
 void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
 	std::vector<pcl::Vertices>& polygons = mesh.polygons;
@@ -122,7 +122,7 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 
 void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh,
 	std::vector<QVector3D> vertices, float radius){
-	int index = getNearestVertexIndex(worldPos, vertices);
+	int index = getNearestVtxIndex(worldPos, vertices);
 	if (index != -1) {
 		pcl::PointXYZ nrstVertex;
 		nrstVertex.x = vertices[index].x();
