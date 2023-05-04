@@ -19,11 +19,8 @@ MainWindow::MainWindow(QWidget *parent):
     surface = new SurfaceReconsturction();
 }
 void MainWindow::updateCursor() {
-    if (mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
-        mMeshGLWidget->isMouseBrush = true;
-    }else{
-        mMeshGLWidget->isMouseBrush = false;
-    }
+    mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? 
+        mMeshGLWidget->isMouseBrush = true : false;
 }
 MainWindow::~MainWindow(){
     delete mPointGLWidget;
