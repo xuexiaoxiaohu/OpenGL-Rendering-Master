@@ -49,7 +49,6 @@ protected:
     void keyReleaseEvent(QKeyEvent* event)      override;
 
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
-    void rotateMesh(float angle, QVector3D axis);
     void translatePoint(QPoint& pressPos);
 
 private:

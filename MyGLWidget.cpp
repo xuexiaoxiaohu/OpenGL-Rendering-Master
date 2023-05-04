@@ -134,7 +134,8 @@ void MyGLWidget::paintGL(){
 
         mShader->setUniformValue("model", model);
         mShader->setUniformValue("view", camera->getViewMatrix());
-        mShader->setUniformValue("proj", proj);      
+        mShader->setUniformValue("proj", proj);  
+
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
     }
 }
@@ -162,9 +163,10 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             }
             lastMovePos = mMousePos;
         }
-        else
-        {
-            rotateMesh(rotationAngle, rotationAxis);
+        else{
+            model.translate(camera->dir);
+            model.rotate(rotationAngle, rotationAxis);
+            model.translate(-camera->dir);
         }
     }
     if (event->buttons() & Qt::RightButton) {
@@ -222,11 +224,7 @@ void MyGLWidget::convScreen2World(QPoint screenPoint, GLdouble& wx, GLdouble& wy
     glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
 }
-void MyGLWidget::rotateMesh(float angle, QVector3D axis) {
-    model.translate(camera->dir);
-    model.rotate(angle, axis);
-    model.translate(-camera->dir);
-}
+
 void MyGLWidget::translatePoint(QPoint& pressPos) {
     int x = pressPos.x() - this->width() / 2;
     int y = -(pressPos.y() - this->height() / 2);

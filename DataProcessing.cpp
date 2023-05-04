@@ -184,7 +184,6 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	for (int i = 0; i < 3; i++) {
 		dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
 	}
-
 	whiteImage->SetDimensions(dim);
 	whiteImage->SetExtent(0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1);
 
