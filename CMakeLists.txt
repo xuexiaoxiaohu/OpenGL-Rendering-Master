@@ -148,6 +148,7 @@ source_group("Source" FILES ${SRC_FILES})
 source_group("Header" FILES ${HEAD_FILES})
 source_group("Shader" FILES ${SHADER_FILES})
 
+add_definitions(-w)
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEAD_FILES} ${QRC_FILES} ${WRAP_FILES} ${SHADER_FILES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::OpenGLExtensions)
@@ -163,4 +164,20 @@ target_link_libraries (${PROJECT_NAME} ${OPENMESH_LIB_FILES})
 #copy file from source dirtory to binaray dirtory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data DESTINATION ${PROJECT_BINARY_DIR}/Release)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Shader DESTINATION ${PROJECT_BINARY_DIR}/Release)
+
+# add debug information
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    add_definitions(-DAF_CLASSARRANGE_EXPORTS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-Bsymbolic")
+    set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+    set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -g -O2 -Wall")
+    add_compile_options(-Wall -Wextra -Wpedantic -fPIC -fvisibility=hidden)
+    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+else()
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DAF_CLASSARRANGE_EXPORTS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Zi")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG:FULL /OPT:REF /OPT:ICF")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG:FULL /OPT:REF /OPT:ICF")
+endif()
 

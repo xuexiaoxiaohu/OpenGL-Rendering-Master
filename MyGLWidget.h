@@ -64,6 +64,7 @@ private:
     GLuint pVAO, pVBO, mVAO, mVBO;
 
     bool isShiftPressed;
+    bool isEraseFinished = false;
     float brushParam;
     float rotationAngle;
     QPoint m_lastPos;

@@ -86,9 +86,7 @@ std::vector<int> DataProcessing::radiusSearch(pcl::PolygonMesh mesh, pcl::PointX
 
 	std::vector<int> k_indices;
 	std::vector<float> k_sqr_dists;
-
 	kdtree->radiusSearch(searchPoint, radius, k_indices, k_sqr_dists);
-
 	return k_indices;
 }
 void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete) {
@@ -120,8 +118,7 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 	pcl::io::vtk2mesh(fillHoles->GetOutput(), mesh);
 }
 
-void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh,
-	std::vector<QVector3D> vertices, float radius){
+void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices, float radius){
 	int index = getNearestVtxIndex(worldPos, vertices);
 	if (index != -1) {
 		pcl::PointXYZ nrstVertex;
@@ -132,22 +129,19 @@ void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh,
 		pcl::Indices toRemove = radiusSearch(mesh, nrstVertex, radius);
 		eraseMesh(mesh, toRemove);
 		fillMesh(mesh);
-		getRenderData(mesh);
-	}
-}
-void DataProcessing::getRenderData(pcl::PolygonMesh &mesh) {
-	glMeshData.clear();
-	pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
-	pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
-	for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
-		for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
-			pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
-			glMeshData.emplace_back(point.x);
-			glMeshData.emplace_back(point.y);
-			glMeshData.emplace_back(point.z);
-			glMeshData.emplace_back(point.normal_x);
-			glMeshData.emplace_back(point.normal_y);
-			glMeshData.emplace_back(point.normal_z);
+		glMeshData.clear();
+		pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
+		pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
+		for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
+			for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
+				pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
+				glMeshData.emplace_back(point.x);
+				glMeshData.emplace_back(point.y);
+				glMeshData.emplace_back(point.z);
+				glMeshData.emplace_back(point.normal_x);
+				glMeshData.emplace_back(point.normal_y);
+				glMeshData.emplace_back(point.normal_z);
+			}
 		}
 	}
 }

@@ -17,6 +17,9 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
 {
     camera = new Camera();
     glDataProc = new DataProcessing();
+    pShader = new QOpenGLShaderProgram();
+    mShader = new QOpenGLShaderProgram();
+
     proj.setToIdentity();
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
     this->grabKeyboard();
@@ -70,13 +73,11 @@ void MyGLWidget::initializeGL(){
     QString qAppDir = QCoreApplication::applicationDirPath();
 
     QString pointVert = qAppDir + "/Shader/point.vert", pointFrag = qAppDir + "/Shader/point.frag";
-    pShader = new QOpenGLShaderProgram();
     pShader->addShaderFromSourceFile(QOpenGLShader::Vertex, pointVert);
     pShader->addShaderFromSourceFile(QOpenGLShader::Fragment, pointFrag);
     pShader->link();
 
     QString meshVert = qAppDir + "/Shader/mesh.vert", meshFrag = qAppDir + "/Shader/mesh.frag";
-    mShader = new QOpenGLShaderProgram();
     mShader->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
     mShader->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
     mShader->link();
@@ -157,9 +158,13 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             int  distance = sqrt((mMousePos.x() - lastMovePos.x()) * (mMousePos.x() - lastMovePos.x())
                 + (mMousePos.y() - lastMovePos.y()) * (mMousePos.y() - lastMovePos.y()));
             if (distance >= 5.0) {
-                glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
-                setImageData(glDataProc->glMeshData);
-                repaint();
+                if (isEraseFinished = true){
+                    isEraseFinished = false;
+                    glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
+                    setImageData(glDataProc->glMeshData);
+                    repaint();
+                    isEraseFinished = true;
+                }
             }
             lastMovePos = mMousePos;
         }

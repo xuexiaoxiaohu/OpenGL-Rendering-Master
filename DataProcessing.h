@@ -46,7 +46,6 @@ public:
 	void eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
 	void fillMesh(pcl::PolygonMesh& mesh);
 	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices, float radius);
-	void getRenderData(pcl::PolygonMesh &mesh);
 	//Remeshing: Isotropic Explicit Remeshing
 	void isoExpRemeshing(const char* srcPath,const char* dstPath);
 	QVector<QVector3D>	pointData;
