@@ -8,6 +8,21 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Enable C++17
 set(CMAKE_CXX_STANDARD 17)
 
+# NDI
+if(NOT NDI_ROOT)
+        set(NDI_ROOT "" CACHE PATH "NDI root path")
+endif()
+if(NDI_ROOT)
+	set(NDI_LIB_DIR ${NDI_ROOT}/lib/)
+    set(NDI_BIN_DIR ${NDI_ROOT}/bin/)
+    file(GLOB NDI_LIB_FILES ${NDI_ROOT}/lib/*.lib)
+    file(GLOB NDI_BIN_FILES ${NDI_ROOT}/bin/*.dll)
+    set(NDI_INC_DIR ${NDI_ROOT}/include/)
+else()
+    message(FATAL_ERROR "can not generate without NDI")
+endif(NDI_ROOT)
+include_directories(${NDI_INC_DIR})
+
 # Reconstrucion
 if(NOT RECONSTRUCTION_ROOT)
         set(RECONSTRUCTION_ROOT "" CACHE PATH "Reconstrucion root path")
@@ -152,6 +167,7 @@ add_definitions(-w)
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEAD_FILES} ${QRC_FILES} ${WRAP_FILES} ${SHADER_FILES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::OpenGLExtensions)
+target_link_libraries (${PROJECT_NAME} ${NDI_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${PCL_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${BOOST_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${EIGEN_LIB_FILES})

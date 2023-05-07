@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent):
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     timer->start(100);
+    driver = new NDIDriver("COM3");
     pointProc = new DataProcessing();
     meshProc = new DataProcessing();
     surface = new SurfaceReconsturction();
@@ -56,6 +57,32 @@ void MainWindow::openFile(){
 }
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
+        if (ui.lineEdit_file->text().contains("txt") == false) {
+            while (!driver->set_tracking_status(true)) {
+                Sleep(10);
+            }
+            static float lastTx = 0, lastTy = 0, lastTz = 0;
+            if (auto data = driver->get_data(); data.has_value()) {
+                auto& items = data.value();
+                for (auto& item : items) {
+                    if (!item.transform.isMissing()) {
+                        auto point = item.transform;
+                        if (point.toolHandle == 11) {
+                            if ((abs(lastTx - point.tx) > DELTA) && (abs(lastTy - point.ty) > DELTA)
+                                && (abs(lastTz - point.tz) > DELTA)) {
+                                if ((abs(point.tx) < VOLUME_MAX) && (abs(point.tz) < VOLUME_MAX)) {
+                                    pointProc->pointData.push_back(QVector3D{ (float)point.tx ,(float)point.ty ,(float)point.tz });
+                                    lastTx = point.tx; lastTy = point.ty; lastTz = point.tz;
+                                }
+                            }
+                        }
+                        std::cout << item.timespec_s << " ," << item.frameNumber << " , " << point.toolHandle << ",  "
+                            << point.status << " , " << point.q0 << " , " << point.qx << " , " << point.qy << " , "
+                            << point.qz << ",  " << point.tx << ",  " << point.ty << ",  " << point.tz << std::endl;
+                    }
+                }
+            }
+        }
         std::vector<QVector3D> rawData;
         for (int i = 0; i < pointProc->pointData.size(); i++){
             rawData.emplace_back(pointProc->pointData[i]);
@@ -86,7 +113,6 @@ void MainWindow::startRendering(){
                         QString srcPath = parentPath + "/result.ply";
                         QString dstPath = parentPath + "/triangleResult.ply";
                         pcl::PolygonMesh mesh;
-                       // meshProc->poly2tri(srcPath.toStdString().c_str(), dstPath.toStdString().c_str());
                         meshProc->isoExpRemeshing(srcPath.toStdString().c_str(), dstPath.toStdString().c_str());
                         
                         pcl::io::loadPLYFile(dstPath.toStdString().c_str(), mesh);

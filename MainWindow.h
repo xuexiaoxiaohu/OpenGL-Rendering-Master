@@ -3,6 +3,7 @@
 #include "ui_MainWindow.h"
 #include <QTimer>
 #include "MyGLWidget.h"
+#include "NDIDriver.h"
 #include "DataProcessing.h"
 #include "SurfaceReconsturction.h"
 #include <QMutex>
@@ -25,6 +26,7 @@ private:
 	Ui::MainWindowClass ui;
 	void addOpengGLWidget();
 
+	NDIDriver* driver;
 	MyGLWidget* mPointGLWidget;
 	MyGLWidget* mMeshGLWidget;
 
