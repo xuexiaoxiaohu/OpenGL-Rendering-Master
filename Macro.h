@@ -8,6 +8,7 @@
 
 #define	ITERATS				50
 #define	NUM_NEIGHS			50
+#define MAX_HOLE_SIZE		10000
 
-#define  VOLUME_MAX				1000
-#define  DELTA					0.5
+#define  VOLUME_MAX			1000
+#define  DELTA				0.5

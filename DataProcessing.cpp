@@ -93,15 +93,15 @@ void DataProcessing::eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> vertices
 	std::vector<pcl::Vertices>& polygons = mesh.polygons;
 	for (int i = 0; i < polygons.size(); ++i) {
 		pcl::Vertices& vertices = polygons[i];
-		bool should_remove_polygon = false;
+		bool isRemove = false;
 		for (int j = 0; j < verticesToDelete.size(); ++j) {
 			int index = verticesToDelete[j];
 			if (std::find(vertices.vertices.begin(), vertices.vertices.end(), index) != vertices.vertices.end()) {
-				should_remove_polygon = true;
+				isRemove = true;
 				break;
 			}
 		}
-		if (should_remove_polygon) {
+		if (isRemove) {
 			polygons.erase(polygons.begin() + i);
 			--i;
 		}
@@ -113,7 +113,7 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 	vtkSmartPointer<vtkFillHolesFilter> fillHoles = vtkSmartPointer<vtkFillHolesFilter>::New();
 	pcl::io::mesh2vtk(mesh, polydata);
 	fillHoles->SetInputData(polydata);
-	fillHoles->SetHoleSize(100.0);
+	fillHoles->SetHoleSize(MAX_HOLE_SIZE);
 	fillHoles->Update();
 	pcl::io::vtk2mesh(fillHoles->GetOutput(), mesh);
 }
