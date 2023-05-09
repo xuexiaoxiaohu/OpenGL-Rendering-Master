@@ -11,10 +11,7 @@
 #include <Macro.h>
 
 MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
-    rotationAngle(0.0f),
-    dataType(dataType), 
-    isShiftPressed(false)
-{
+    rotationAngle(0.0f),dataType(dataType), isShiftPressed(false){
     camera = new Camera();
     glDataProc = new DataProcessing();
     pShader = new QOpenGLShaderProgram();
@@ -202,11 +199,11 @@ void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
 void MyGLWidget::wheelEvent(QWheelEvent* event) {
     QPoint offset = event->angleDelta();
     if (isShiftPressed){
-        brushParam += (offset.y() * 0.01);
-        if (abs(brushParam)<= 0.0001) brushParam = 0.0f;
-        if (brushParam > 100)  brushParam = 100;
-        if (brushParam < -100) brushParam = -100;
-        brushSize = 0.48 * (brushParam + 200);
+        brushParam += (offset.y() * SCROLL_SEN);
+        if (abs(brushParam) <= 0.0001) brushParam = 0.0f;
+        if (brushParam > BRUSH_PARAM_MAX)  brushParam = BRUSH_PARAM_MAX;
+        if (brushParam < BRUSH_PARAM_MIN) brushParam = BRUSH_PARAM_MIN;
+        brushSize = PARAM_A * brushParam  + PARAM_B;
     }else{
         camera->mouseScroll(offset.y());
         repaint();

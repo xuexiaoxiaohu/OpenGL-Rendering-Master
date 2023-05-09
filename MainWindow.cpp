@@ -1,34 +1,37 @@
 #include "MainWindow.h"
+#include <filesystem>
 #include <QFileDialog>
 #include "MyGLWidget.h"
 #include "Macro.h"
 #include <QPixmap>
 #include <QPainter>
-MainWindow::MainWindow(QWidget *parent):
-    QMainWindow(parent),
-    isRenderRunning(true){
+MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true){
 	ui.setupUi(this);
     addOpengGLWidget();
+
     connect(ui.openPushBtn, SIGNAL(clicked()), this, SLOT(openFile()));
     connect(ui.startPushBtn, SIGNAL(clicked()), this, SLOT(startRendering()));
     connect(ui.stopPushBtn, SIGNAL(clicked()), this, SLOT(stopRendering()));
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(RepaintUI()));
+
+    driver = new NDIDriver("COM3");
+    surface = new SurfaceReconsturction();
+    pointProc = new DataProcessing();
+    meshProc = new DataProcessing();
+
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     timer->start(100);
-    driver = new NDIDriver("COM3");
-    pointProc = new DataProcessing();
-    meshProc = new DataProcessing();
-    surface = new SurfaceReconsturction();
 }
 void MainWindow::updateCursor() {
     mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? 
-        mMeshGLWidget->isMouseBrush = true : false;
+        mMeshGLWidget->isMouseBrush = true:false;
 }
 MainWindow::~MainWindow(){
+    delete driver;
+    delete surface;
     delete mPointGLWidget;
     delete mMeshGLWidget;
-    delete surface;
     delete pointProc;
     delete meshProc;
 }
@@ -37,6 +40,7 @@ void MainWindow::addOpengGLWidget(){
     mPointGLWidget = new MyGLWidget(this, PointType);
     mPointGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
     ui.openGLHorizontalLayout->addWidget(mPointGLWidget);
+
     mMeshGLWidget = new MyGLWidget(this, MeshType);
     mMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
     ui.openGLHorizontalLayout->addWidget(mMeshGLWidget);
@@ -120,16 +124,14 @@ void MainWindow::enclosureDataProcessing(){
             int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
             if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
                 surface->construction(rawData);
-                QString appPath = QCoreApplication::applicationDirPath();
-                QFileInfo fileInfo(appPath);
-                QString parentPath = fileInfo.dir().path();
 
-                QString srcPath = parentPath + "/result.ply";
-                QString dstPath = parentPath + "/triangleResult.ply";
+                std::filesystem::path parentPath = std::filesystem::current_path();
+                std::string srcPath = parentPath.string() + "/result.ply";
+                std::string dstPath = parentPath.string() + "/triangleResult.ply";
                 pcl::PolygonMesh mesh;
-                meshProc->isoExpRemeshing(srcPath.toStdString().c_str(), dstPath.toStdString().c_str());
+                meshProc->isoExpRemeshing(srcPath.c_str(), dstPath.c_str());
 
-                pcl::io::loadPLYFile(dstPath.toStdString().c_str(), mesh);
+                pcl::io::loadPLYFile(dstPath.c_str(), mesh);
                 meshProc->addNormal(mesh);
 
                 pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);

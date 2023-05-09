@@ -1,5 +1,6 @@
 #include "camera.h"
 #include <QMatrix4x4>
+#include <Macro.h>
 Camera::Camera(QVector3D eye,QVector3D dir,QVector3D up):
 	eye(eye),
 	dir(dir),
@@ -13,6 +14,6 @@ QMatrix4x4 Camera::getViewMatrix(){
 	return matrix;
 }
 void Camera::mouseScroll(float yoffset){
-	yoffset *= scrollSen;
+	yoffset *= SCROLL_SEN;
 	eye.setZ(eye.z() + yoffset);
 }
