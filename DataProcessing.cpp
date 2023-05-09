@@ -65,17 +65,17 @@ void DataProcessing::addNormal(pcl::PolygonMesh &mesh) {
 	mesh.cloud = outputCloud;
 }
 
-int DataProcessing::getNearestVtxIndex(QVector3D worldPos, std::vector<QVector3D> glVtx) {
-	int vtxIndex = -1;
+int DataProcessing::getNearestVextexIndex(QVector3D worldPos, std::vector<QVector3D> glVextex) {
+	int index = -1;
 	float minDist = std::numeric_limits<float>::max();
-	for (int i = 0; i < glVtx.size(); i++) {
-		float dist = (glVtx[i] - worldPos).length();
+	for (int i = 0; i < glVextex.size(); i++) {
+		float dist = (glVextex[i] - worldPos).length();
 		if (dist < minDist) {
-			vtxIndex = i;
+			index = i;
 			minDist = dist;
 		}
 	}
-	return vtxIndex;
+	return index;
 }
 std::vector<int> DataProcessing::radiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
@@ -119,7 +119,7 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 }
 
 void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices, float radius){
-	int index = getNearestVtxIndex(worldPos, vertices);
+	int index = getNearestVextexIndex(worldPos, vertices);
 	if (index != -1) {
 		pcl::PointXYZ nrstVertex;
 		nrstVertex.x = vertices[index].x();
@@ -169,11 +169,7 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
 	double bounds[6];
 	polyData->GetBounds(bounds);
-	double spacing[3];
-	spacing[0] = 0.5;
-	spacing[1] = 0.5;
-	spacing[2] = 0.5;
-
+	double spacing[3] = {0.5,0.5,0.5};
 	int dim[3];
 	for (int i = 0; i < 3; i++) {
 		dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
