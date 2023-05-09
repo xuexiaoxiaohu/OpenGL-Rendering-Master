@@ -24,8 +24,7 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true
     timer->start(100);
 }
 void MainWindow::updateCursor() {
-    mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? 
-        mMeshGLWidget->isMouseBrush = true:false;
+    mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? mMeshGLWidget->isMouseBrush = true:false;
 }
 MainWindow::~MainWindow(){
     delete driver;
@@ -57,6 +56,7 @@ void MainWindow::openFile(){
     pointProc->loadPointData(fileName);
 }
 void MainWindow::startRendering(){
+    isRenderRunning = true;
     auto collectDataFunc = [=]() {
         // Get data From NDI device.
         if (ui.fileLineEdit->text().contains("txt") == false) {
@@ -103,60 +103,63 @@ void MainWindow::stopRendering() {
 void MainWindow::enclosureDataProcessing(){
     std::vector<QVector3D> rawData;
     for (int i = 0; i < pointProc->pointData.size(); i++) {
-        rawData.emplace_back(pointProc->pointData[i]);
-        pointProc->getMaxMinPoint(rawData);
+        if (isRenderRunning){
+            rawData.emplace_back(pointProc->pointData[i]);
+            pointProc->getMaxMinPoint(rawData);
 
-        QVector3D center = (pointProc->maxPoint + pointProc->minPoint) / 2.0f;
-        float radius = (pointProc->maxPoint - center).length();
+            QVector3D center = (pointProc->maxPoint + pointProc->minPoint) / 2.0f;
+            float radius = (pointProc->maxPoint - center).length();
 
-        // Point
-        std::vector<GLfloat> glPoint;
-        for (int i = 0; i < rawData.size(); i++) {
-            glPoint.emplace_back(pointProc->pointData[i].x());
-            glPoint.emplace_back(pointProc->pointData[i].y());
-            glPoint.emplace_back(pointProc->pointData[i].z());
-        }
-        mPointGLWidget->setAdaptivePara(center, radius);
-        mPointGLWidget->setImageData(glPoint);
-
-        // Mesh 
-        if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
-            int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
-            if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
-                surface->construction(rawData);
-
-                std::filesystem::path parentPath = std::filesystem::current_path();
-                std::string srcPath = parentPath.string() + "/result.ply";
-                std::string dstPath = parentPath.string() + "/triangleResult.ply";
-                pcl::PolygonMesh mesh;
-                meshProc->isoExpRemeshing(srcPath.c_str(), dstPath.c_str());
-
-                pcl::io::loadPLYFile(dstPath.c_str(), mesh);
-                meshProc->addNormal(mesh);
-
-                pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
-                pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
-
-                std::vector<GLfloat> glMesh;
-                std::vector<QVector3D> glVtx;
-                for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
-                    for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
-                        pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
-                        glMesh.emplace_back(point.x);
-                        glMesh.emplace_back(point.y);
-                        glMesh.emplace_back(point.z);
-                        glMesh.emplace_back(point.normal_x);
-                        glMesh.emplace_back(point.normal_y);
-                        glMesh.emplace_back(point.normal_z);
-                        glVtx.emplace_back(point.x, point.y, point.z);
-                    }
-                }
-                mMeshGLWidget->setMesh(mesh);
-                mMeshGLWidget->setMeshVtx(glVtx);
-                mMeshGLWidget->setAdaptivePara(center, radius);
-                mMeshGLWidget->setImageData(glMesh);
+            // Point
+            std::vector<GLfloat> glPoint;
+            for (int i = 0; i < rawData.size(); i++) {
+                glPoint.emplace_back(pointProc->pointData[i].x());
+                glPoint.emplace_back(pointProc->pointData[i].y());
+                glPoint.emplace_back(pointProc->pointData[i].z());
             }
+            mPointGLWidget->setAdaptivePara(center, radius);
+            mPointGLWidget->setImageData(glPoint);
+
+            // Mesh 
+            if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
+                int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
+                if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
+                    surface->construction(rawData);
+
+                    std::filesystem::path parentPath = std::filesystem::current_path();
+                    std::string srcPath = parentPath.string() + "/result.ply";
+                    std::string dstPath = parentPath.string() + "/triangleResult.ply";
+                    pcl::PolygonMesh mesh;
+                    meshProc->isoExpRemeshing(srcPath.c_str(), dstPath.c_str());
+
+                    pcl::io::loadPLYFile(dstPath.c_str(), mesh);
+                    meshProc->addNormal(mesh);
+
+                    pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
+                    pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
+
+                    std::vector<GLfloat> glMesh;
+                    std::vector<QVector3D> glVtx;
+                    for (int i = 0; i < mesh.polygons.size(); i++) {
+                        for (int j = 0; j < mesh.polygons[i].vertices.size(); j++) {
+                            pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
+                            glMesh.emplace_back(point.x);
+                            glMesh.emplace_back(point.y);
+                            glMesh.emplace_back(point.z);
+                            glMesh.emplace_back(point.normal_x);
+                            glMesh.emplace_back(point.normal_y);
+                            glMesh.emplace_back(point.normal_z);
+                            glVtx.emplace_back(point.x, point.y, point.z);
+                        }
+                    }
+                    mMeshGLWidget->setMesh(mesh);
+                    mMeshGLWidget->setMeshVtx(glVtx);
+                    mMeshGLWidget->setAdaptivePara(center, radius);
+                    mMeshGLWidget->setImageData(glMesh);
+                }
+            }
+            emit signal_glUpdate();
         }
-        emit signal_glUpdate();
-    }
+        }
+      
 }

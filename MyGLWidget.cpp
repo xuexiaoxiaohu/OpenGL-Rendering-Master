@@ -22,8 +22,8 @@ MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
     this->grabKeyboard();
     
     QTimer* timer = new QTimer(this);
-    timer->start(100);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
+    timer->start(100);
 }
 void MyGLWidget::updateCursor() {
     if (isShiftPressed && isMouseBrush){
