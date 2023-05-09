@@ -48,23 +48,22 @@ void MainWindow::callbackRepaint() {
     }
 }
 void MainWindow::openFile(){
-    QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", 
-        "./Release/Data", "Scan Data(*.txt)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
     if (fileName.isEmpty()) return;
 
-    ui.lineEdit_file->setText(fileName);
+    ui.fileLineEdit->setText(fileName);
     pointProc->loadPointData(fileName);
 }
 void MainWindow::startRendering(){
     auto collectDataFunc = [=]() {
-        if (ui.lineEdit_file->text().contains("txt") == false) {
+        if (ui.fileLineEdit->text().contains("txt") == false) {
             while (!driver->set_tracking_status(true)) {
                 Sleep(10);
             }
             static float lastTx = 0, lastTy = 0, lastTz = 0;
             if (auto data = driver->get_data(); data.has_value()) {
                 auto& items = data.value();
-                for (auto& item : items) {
+                for (auto& item:items) {
                     if (!item.transform.isMissing()) {
                         auto point = item.transform;
                         if (point.toolHandle == 11) {

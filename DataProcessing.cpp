@@ -79,6 +79,7 @@ int DataProcessing::getNearestVextexIndex(QVector3D worldPos, std::vector<QVecto
 }
 std::vector<int> DataProcessing::radiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
+	pcl::PCLPointCloud2 aaa = mesh.cloud;
 	pcl::fromPCLPointCloud2(mesh.cloud, *cloud);
 
 	pcl::KdTreeFLANN<pcl::PointXYZ>::Ptr kdtree(new pcl::KdTreeFLANN<pcl::PointXYZ>);

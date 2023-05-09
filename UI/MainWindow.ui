@@ -68,7 +68,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLineEdit" name="lineEdit_file">
+           <widget class="QLineEdit" name="fileLineEdit">
             <property name="text">
              <string/>
             </property>
