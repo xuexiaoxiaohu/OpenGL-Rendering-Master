@@ -116,7 +116,7 @@ void MainWindow::startRendering(){
                         meshProc->isoExpRemeshing(srcPath.toStdString().c_str(), dstPath.toStdString().c_str());
                         
                         pcl::io::loadPLYFile(dstPath.toStdString().c_str(), mesh);
-                        meshProc->addNV(mesh);
+                        meshProc->addNormal(mesh);
               
                         pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
                         pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);

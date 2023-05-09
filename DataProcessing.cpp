@@ -31,7 +31,7 @@ void DataProcessing::getMaxMinPoint(std::vector<QVector3D> data) {
 	}
 }
 
-void DataProcessing::addNV(pcl::PolygonMesh &mesh) {
+void DataProcessing::addNormal(pcl::PolygonMesh &mesh) {
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 	pcl::fromPCLPointCloud2(mesh.cloud, *cloud);
 

@@ -37,7 +37,7 @@ public:
 	~DataProcessing() {};
 
 	void loadPointData(QString path);
-	void addNV(pcl::PolygonMesh &inMesh);
+	void addNormal(pcl::PolygonMesh &inMesh);
 	void getMaxMinPoint(std::vector<QVector3D> data);
 	void poly2tri(std::string src, std::string dst);
 
