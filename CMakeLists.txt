@@ -113,9 +113,9 @@ else()
 endif(EIGEN_ROOT)
 include_directories(${EIGEN_INC_DIR})
 
-# Flann
+# FLANN
 if(NOT FLANN_ROOT)
-    set(FLANN_ROOT "" CACHE PATH "Flann root")
+    set(FLANN_ROOT "" CACHE PATH "FLANN root")
 endif()
 if(FLANN_ROOT)
 	set(FLANN_LIB_DIR ${FLANN_ROOT}/lib/)
@@ -124,7 +124,7 @@ if(FLANN_ROOT)
     file(GLOB FLANN_BIN_FILES ${FLANN_ROOT}/bin/*.dll)
     set(FLANN_INC_DIR ${FLANN_ROOT}/include/)
 else()
-    message(FATAL_ERROR "can not generate without Flann")
+    message(FATAL_ERROR "can not generate without FLANN")
 endif(FLANN_ROOT)
 include_directories(${FLANN_INC_DIR})
 
