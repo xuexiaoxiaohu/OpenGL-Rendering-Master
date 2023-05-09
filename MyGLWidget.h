@@ -55,9 +55,8 @@ private:
     QOpenGLShaderProgram* pShader;
     QOpenGLShaderProgram* mShader;
 
-    QMatrix4x4 model;
+    QMatrix4x4 model, proj;
     Camera* camera;
-    QMatrix4x4 proj;
 
     std::vector<GLfloat> vertices;
     int dataType;
@@ -67,9 +66,7 @@ private:
     bool isEraseFinished = false;
     float brushParam;
     float rotationAngle;
-    QPoint m_lastPos;
-    QPoint pressPosition;
-    QPoint lastMovePos;
+    QPoint m_lastPos, pressPosition, lastMovePos;
     GLdouble lastWx = 0, lastWy = 0, lastWz = 0;
     float brushSize = 4.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);

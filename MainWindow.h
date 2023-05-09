@@ -16,7 +16,8 @@ public:
 public slots:
 	void openFile();
 	void startRendering();
-	void callbackRepaint();
+	void stopRendering();
+	void RepaintUI();
 	void updateCursor();
 
 signals:
@@ -25,11 +26,11 @@ signals:
 private:
 	Ui::MainWindowClass ui;
 	void addOpengGLWidget();
-
+	void  enclosureDataProcessing();
 	NDIDriver* driver;
 	MyGLWidget* mPointGLWidget;
 	MyGLWidget* mMeshGLWidget;
-
+	bool isRenderRunning;
 	SurfaceReconsturction* surface;
 	DataProcessing* pointProc;
 	DataProcessing* meshProc;
