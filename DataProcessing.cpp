@@ -125,7 +125,7 @@ void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, f
 	std::vector<QVector3D> vertices;
 	vertices.reserve(cloud.size());
 
-	for (const auto& point : cloud){
+	for (const auto& point:cloud){
 		vertices.emplace_back(point.x, point.y, point.z);
 	}
 
