@@ -153,7 +153,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             if (distance >= 5.0) {
                 if (isEraseFinished = true){
                     isEraseFinished = false;
-                    glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, brushSize);
+                    glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, brushSize/10);
                     setImageData(glDataProc->glMeshData);
                     repaint();
                     isEraseFinished = true;
@@ -199,7 +199,8 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
         if (abs(brushParam) <= 0.0001) brushParam = 0.0f;
         if (brushParam > BRUSH_PARAM_MAX)  brushParam = BRUSH_PARAM_MAX;
         if (brushParam < BRUSH_PARAM_MIN) brushParam = BRUSH_PARAM_MIN;
-        brushSize = PARAM_A * brushParam  + PARAM_B;
+        brushSize = PARAM_A * brushParam + PARAM_B;
+        qDebug() << brushSize;
     }else{
         camera->mouseScroll(offset.y());
         repaint();
