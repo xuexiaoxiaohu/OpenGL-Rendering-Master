@@ -48,10 +48,6 @@ MyGLWidget::~MyGLWidget(){
 void MyGLWidget::setMesh(pcl::PolygonMesh mesh) {
     this->mesh = mesh;
 }
-void MyGLWidget::setMeshVtx(std::vector<QVector3D> allVertices) {
-    this->allVertices = allVertices;
-}
-
 void MyGLWidget::setImageData(std::vector<GLfloat> data){
     vertices = data;
 }
@@ -157,7 +153,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             if (distance >= 5.0) {
                 if (isEraseFinished = true){
                     isEraseFinished = false;
-                    glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, allVertices, brushSize);
+                    glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, brushSize);
                     setImageData(glDataProc->glMeshData);
                     repaint();
                     isEraseFinished = true;

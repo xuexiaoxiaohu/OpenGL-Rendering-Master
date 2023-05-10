@@ -45,7 +45,7 @@ public:
 	std::vector<int> radiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius = 4);
 	void eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
 	void fillMesh(pcl::PolygonMesh& mesh);
-	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices, float radius);
+	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, float radius);
 	//Remeshing: Isotropic Explicit Remeshing
 	void isoExpRemeshing(const char* srcPath,const char* dstPath);
 	QVector<QVector3D>	pointData;

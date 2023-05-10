@@ -119,7 +119,16 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 	pcl::io::vtk2mesh(fillHoles->GetOutput(), mesh);
 }
 
-void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, std::vector<QVector3D> vertices, float radius){
+void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, float radius){
+	pcl::PointCloud<pcl::PointXYZ> cloud;
+	pcl::fromPCLPointCloud2(mesh.cloud, cloud);
+	std::vector<QVector3D> vertices;
+	vertices.reserve(cloud.size());
+
+	for (const auto& point : cloud){
+		vertices.emplace_back(point.x, point.y, point.z);
+	}
+
 	int index = getNearestVextexIndex(worldPos, vertices);
 	if (index != -1) {
 		pcl::PointXYZ nrstVertex;
@@ -171,12 +180,12 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	double bounds[6];
 	polyData->GetBounds(bounds);
 	double spacing[3] = {0.5,0.5,0.5};
-	int dim[3];
+	int dimension[3];
 	for (int i = 0; i < 3; i++) {
-		dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
+		dimension[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
 	}
-	whiteImage->SetDimensions(dim);
-	whiteImage->SetExtent(0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1);
+	whiteImage->SetDimensions(dimension);
+	whiteImage->SetExtent(0, dimension[0] - 1, 0, dimension[1] - 1, 0, dimension[2] - 1);
 
 	double origin[3];
 	origin[0] = bounds[0] + spacing[0] / 2;
@@ -186,8 +195,7 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	whiteImage->SetSpacing(spacing);
 	whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
 
-	unsigned char inval = 255;
-	unsigned char outval = 0;
+	unsigned char inval = 255, outval = 0;
 	vtkIdType count = whiteImage->GetNumberOfPoints();
 	for (vtkIdType i = 0; i < count; ++i) {
 		whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);

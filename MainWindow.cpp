@@ -139,7 +139,6 @@ void MainWindow::enclosureDataProcessing(){
                     pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
 
                     std::vector<GLfloat> glMesh;
-                    std::vector<QVector3D> glVtx;
                     for (int i = 0; i < mesh.polygons.size(); i++) {
                         for (int j = 0; j < mesh.polygons[i].vertices.size(); j++) {
                             pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
@@ -149,11 +148,9 @@ void MainWindow::enclosureDataProcessing(){
                             glMesh.emplace_back(point.normal_x);
                             glMesh.emplace_back(point.normal_y);
                             glMesh.emplace_back(point.normal_z);
-                            glVtx.emplace_back(point.x, point.y, point.z);
                         }
                     }
                     mMeshGLWidget->setMesh(mesh);
-                    mMeshGLWidget->setMeshVtx(glVtx);
                     mMeshGLWidget->setAdaptivePara(center, radius);
                     mMeshGLWidget->setImageData(glMesh);
                 }
