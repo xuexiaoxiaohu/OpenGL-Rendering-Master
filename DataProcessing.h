@@ -29,7 +29,7 @@ public:
 	void poly2tri(std::string src, std::string dst);
 
 	int getNearestVextexIndex(QVector3D worldPos, std::vector<QVector3D> glVtx);
-	std::vector<int> radiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius = 4);
+	std::vector<int> getIndicesFromRadiusSearch(pcl::PolygonMesh mesh, pcl::PointXYZ searchPoint, float radius = 4);
 	void eraseMesh(pcl::PolygonMesh &mesh, std::vector<int> verticesToDelete);
 	void fillMesh(pcl::PolygonMesh& mesh);
 	void getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, float radius);
