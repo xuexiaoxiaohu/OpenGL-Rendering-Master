@@ -155,8 +155,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
                 glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, 0.1 * brushSize);
                 setImageData(glDataProc->glMeshData);
             }
-        }
-        else{
+        }else{
             model.translate(camera->dir);
             model.rotate(rotationAngle, rotationAxis);
             model.translate(-camera->dir);
@@ -168,9 +167,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    QPoint pressPos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
-        lastMousePos = pressPos;
+        lastMousePos = event->pos();
     }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
@@ -194,7 +192,6 @@ void MyGLWidget::wheelEvent(QWheelEvent* event) {
         if (brushParam > BRUSH_PARAM_MAX)  brushParam = BRUSH_PARAM_MAX;
         if (brushParam < BRUSH_PARAM_MIN) brushParam = BRUSH_PARAM_MIN;
         brushSize = PARAM_A * brushParam + PARAM_B;
-        qDebug() << brushSize;
     }else{
         camera->mouseScroll(offset.y());
         repaint();

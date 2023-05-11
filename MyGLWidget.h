@@ -50,8 +50,7 @@ protected:
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
 
 private:
-    QOpenGLShaderProgram* pShader;
-    QOpenGLShaderProgram* mShader;
+    QOpenGLShaderProgram* pShader, *mShader;
 
     QMatrix4x4 model, proj;
     Camera* camera;
@@ -64,7 +63,7 @@ private:
     float brushParam, brushSize = 4.0f, rotationAngle;
     QPoint pressPosition, lastMousePos;
     GLdouble lastWx = 0, lastWy = 0, lastWz = 0;
-    QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
+    QVector3D brushPosition{0.0f, 0.0f, -0.5f};
 };
 
 #endif 
