@@ -138,23 +138,22 @@ void MyGLWidget::resizeGL(int width, int height){
 }
 
 void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
-    QPoint mMousePos = event->pos();
-    QVector3D diff = QVector3D(mMousePos - m_lastPos);
+    QPoint currentMousePos = event->pos();
+    QVector3D diff = QVector3D(currentMousePos - lastMousePos);
     rotationAngle += (diff.length() / 2.0f);
     QVector3D rotationAxis = QVector3D(diff.y(), diff.x(), 0.0f).normalized();
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
         if (isShiftPressed) {
-            int deltaX = mMousePos.x() - lastMovePos.x();
-            int deltaY = mMousePos.y() - lastMovePos.y();
+            int deltaX = currentMousePos.x() - lastMousePos.x();
+            int deltaY = currentMousePos.y() - lastMousePos.y();
             int  distance = sqrt(deltaX * deltaX + deltaY * deltaY);
             if (distance >= 2.0) {
-                lastMovePos = mMousePos;
+                lastMousePos = currentMousePos;
                 GLdouble wx, wy, wz;
-                convScreen2World(mMousePos, wx, wy, wz);
+                convScreen2World(currentMousePos, wx, wy, wz);
                 glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, 0.1 * brushSize);
                 setImageData(glDataProc->glMeshData);
-                repaint();
             }
         }
         else{
@@ -164,18 +163,17 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
         }
     }
     if (event->buttons() & Qt::RightButton) {
-        model.translate(mMousePos.x() / 50, mMousePos.y() / 50);
+        model.translate(currentMousePos.x() / 50, currentMousePos.y() / 50);
     }
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     QPoint pressPos = event->pos();
     if (event->buttons() & Qt::LeftButton) {
-        m_lastPos = pressPos;
+        lastMousePos = pressPos;
     }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
-
 
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
@@ -218,10 +216,4 @@ void MyGLWidget::convScreen2World(QPoint screenPoint, GLdouble& wx, GLdouble& wy
     makeCurrent();
     glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
-}
-
-void MyGLWidget::translatePoint(QPoint& pressPos) {
-    int x = pressPos.x() - this->width() / 2;
-    int y = -(pressPos.y() - this->height() / 2);
-    pressPos = {x,y};
 }

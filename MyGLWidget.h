@@ -48,7 +48,6 @@ protected:
     void keyReleaseEvent(QKeyEvent* event)      override;
 
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
-    void translatePoint(QPoint& pressPos);
 
 private:
     QOpenGLShaderProgram* pShader;
@@ -62,13 +61,10 @@ private:
     GLuint pVAO, pVBO, mVAO, mVBO;
 
     bool isShiftPressed;
-    float brushParam;
-    float rotationAngle;
-    QPoint m_lastPos, pressPosition, lastMovePos;
+    float brushParam, brushSize = 4.0f, rotationAngle;
+    QPoint pressPosition, lastMousePos;
     GLdouble lastWx = 0, lastWy = 0, lastWz = 0;
-    float brushSize = 4.0f;
     QVector3D brushPosition = QVector3D(0.0f, 0.0f, -0.5f);
-
 };
 
 #endif 

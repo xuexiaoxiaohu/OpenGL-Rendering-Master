@@ -66,7 +66,7 @@ void DataProcessing::addNormal(pcl::PolygonMesh &mesh) {
 	mesh.cloud = outputCloud;
 }
 
-int DataProcessing::getNearestVextexIndex(QVector3D worldPos, std::vector<QVector3D> glVextex) {
+int DataProcessing::getNearestVertexIndex(QVector3D worldPos, std::vector<QVector3D> glVextex) {
 	int index = -1;
 	float minDist = std::numeric_limits<float>::max();
 	for (int i = 0; i < glVextex.size(); i++) {
@@ -122,16 +122,16 @@ void DataProcessing::fillMesh(pcl::PolygonMesh& mesh) {
 void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, float radius){
 	pcl::PointCloud<pcl::PointXYZ> cloud;
 	pcl::fromPCLPointCloud2(mesh.cloud, cloud);
-	std::vector<QVector3D> vertices;
+	std::vector<QVector3D> meshVertices;
 	for (const auto& point:cloud){
-		vertices.emplace_back(point.x, point.y, point.z);
+		meshVertices.emplace_back(point.x, point.y, point.z);
 	}
-	int index = getNearestVextexIndex(worldPos, vertices);
-	if (index != -1) {
+	int nearestIndex = getNearestVertexIndex(worldPos, meshVertices);
+	if (nearestIndex != -1) {
 		pcl::PointXYZ nrstVertex;
-		nrstVertex.x = vertices[index].x();
-		nrstVertex.y = vertices[index].y();
-		nrstVertex.z = vertices[index].z();
+		nrstVertex.x = meshVertices[nearestIndex].x();
+		nrstVertex.y = meshVertices[nearestIndex].y();
+		nrstVertex.z = meshVertices[nearestIndex].z();
 
 		pcl::Indices verticesNeedDelete = getIndicesFromRadiusSearch(mesh, nrstVertex, radius);
 		eraseMesh(mesh, verticesNeedDelete);
