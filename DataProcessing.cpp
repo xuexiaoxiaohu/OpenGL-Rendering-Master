@@ -4,6 +4,7 @@
 #include <qDebug>
 #include <QFile>
 #include <QDataStream>
+#include <vtkMetaImageWriter.h>
 
 void DataProcessing::loadPointData(QString path) {
 	QFile file(path);
@@ -123,8 +124,6 @@ void DataProcessing::getErasedMesh(QVector3D worldPos, pcl::PolygonMesh &mesh, f
 	pcl::PointCloud<pcl::PointXYZ> cloud;
 	pcl::fromPCLPointCloud2(mesh.cloud, cloud);
 	std::vector<QVector3D> vertices;
-	vertices.reserve(cloud.size());
-
 	for (const auto& point:cloud){
 		vertices.emplace_back(point.x, point.y, point.z);
 	}
@@ -201,6 +200,8 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 		whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);
 	}
 	
+
+
 	vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
 	pol2stenc->SetInputData(polyData);
 	pol2stenc->SetOutputOrigin(origin);
@@ -215,12 +216,16 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	imageStenc->SetBackgroundValue(outval);
 	imageStenc->Update();
 
+
 	vtkSmartPointer<vtkImageGaussianSmooth> gaussianSmooth = vtkSmartPointer<vtkImageGaussianSmooth>::New();
 	gaussianSmooth->SetInputConnection(imageStenc->GetOutputPort());
 	gaussianSmooth->SetDimensionality(3);
 	gaussianSmooth->SetRadiusFactor(5);
 	gaussianSmooth->SetStandardDeviation(1);
 	gaussianSmooth->Update();
+
+
+
 
 	vtkSmartPointer<vtkMarchingCubes>marchingcube = vtkSmartPointer<vtkMarchingCubes>::New();
 	marchingcube->SetInputData(gaussianSmooth->GetOutput());

@@ -145,21 +145,17 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     model.setToIdentity();
     if (event->buttons() & Qt::LeftButton) {
         if (isShiftPressed) {
-            GLdouble wx, wy, wz;
-            convScreen2World(mMousePos, wx, wy, wz);
-
-            int  distance = sqrt((mMousePos.x() - lastMovePos.x()) * (mMousePos.x() - lastMovePos.x())
-                + (mMousePos.y() - lastMovePos.y()) * (mMousePos.y() - lastMovePos.y()));
-            if (distance >= 5.0) {
-                if (isEraseFinished = true){
-                    isEraseFinished = false;
-                    glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, brushSize/10);
-                    setImageData(glDataProc->glMeshData);
-                    repaint();
-                    isEraseFinished = true;
-                }
+            int deltaX = mMousePos.x() - lastMovePos.x();
+            int deltaY = mMousePos.y() - lastMovePos.y();
+            int  distance = sqrt(deltaX * deltaX + deltaY * deltaY);
+            if (distance >= 2.0) {
+                lastMovePos = mMousePos;
+                GLdouble wx, wy, wz;
+                convScreen2World(mMousePos, wx, wy, wz);
+                glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, 0.1 * brushSize);
+                setImageData(glDataProc->glMeshData);
+                repaint();
             }
-            lastMovePos = mMousePos;
         }
         else{
             model.translate(camera->dir);

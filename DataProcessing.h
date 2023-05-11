@@ -3,11 +3,7 @@
 #include <QVector>
 #include <QVector3D>
 // PCL
-#include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
-#include <pcl/point_types.h>
-#include <pcl/io/ply/ply.h>
-#include <pcl/PolygonMesh.h>
 #include <pcl/filters/normal_refinement.h>
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/features/normal_3d_omp.h>
@@ -16,20 +12,11 @@
 #include <vtkTriangleFilter.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkPLYReader.h>
-#include <vtkSmartPointer.h>
-#include <vtkImageData.h>
-#include <vtkPointData.h>
-#include <vtkUnsignedCharArray.h>
-#include <vtkSmartPointer.h>
-#include <vtkXMLImageDataWriter.h>
-#include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkImageStencil.h>
-#include <vtkMetaImageWriter.h>
 #include <vtkMarchingCubes.h>
 #include <vtkImageGaussianSmooth.h>
-#include <vtkStripper.h>
 
 class DataProcessing {
 public:

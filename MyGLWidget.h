@@ -12,7 +12,8 @@
 #include <DataProcessing.h>
 #include "Camera.h"
 
-enum DataType {
+enum DataType 
+{
     PointType,
     MeshType,
 };
@@ -25,7 +26,6 @@ public:
 
     void setImageData(std::vector<GLfloat> data);
     void setAdaptivePara(QVector3D center, float radius);
-    void setMeshVtx(std::vector<QVector3D> meshVertexs);
     void setMesh(pcl::PolygonMesh mesh);
 
     pcl::PolygonMesh mesh;
@@ -62,7 +62,6 @@ private:
     GLuint pVAO, pVBO, mVAO, mVBO;
 
     bool isShiftPressed;
-    bool isEraseFinished = false;
     float brushParam;
     float rotationAngle;
     QPoint m_lastPos, pressPosition, lastMovePos;
