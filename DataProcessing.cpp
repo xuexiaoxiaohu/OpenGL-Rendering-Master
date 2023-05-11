@@ -208,15 +208,15 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
 	pol2stenc->Update();
 
-	vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
-	imgstenc->SetInputData(whiteImage);
-	imgstenc->SetStencilConnection(pol2stenc->GetOutputPort());
-	imgstenc->ReverseStencilOff();
-	imgstenc->SetBackgroundValue(outval);
-	imgstenc->Update();
+	vtkSmartPointer<vtkImageStencil> imageStenc = vtkSmartPointer<vtkImageStencil>::New();
+	imageStenc->SetInputData(whiteImage);
+	imageStenc->SetStencilConnection(pol2stenc->GetOutputPort());
+	imageStenc->ReverseStencilOff();
+	imageStenc->SetBackgroundValue(outval);
+	imageStenc->Update();
 
 	vtkSmartPointer<vtkImageGaussianSmooth> gaussianSmooth = vtkSmartPointer<vtkImageGaussianSmooth>::New();
-	gaussianSmooth->SetInputConnection(imgstenc->GetOutputPort());
+	gaussianSmooth->SetInputConnection(imageStenc->GetOutputPort());
 	gaussianSmooth->SetDimensionality(3);
 	gaussianSmooth->SetRadiusFactor(5);
 	gaussianSmooth->SetStandardDeviation(1);

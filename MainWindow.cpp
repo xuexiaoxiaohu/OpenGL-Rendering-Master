@@ -66,7 +66,7 @@ void MainWindow::startRendering(){
                 static float lastTx = 0, lastTy = 0, lastTz = 0;
                 if (auto data = driver->get_data(); data.has_value()) {
                     auto& items = data.value();
-                    for (auto& item : items) {
+                    for (auto& item:items) {
                         if (!item.transform.isMissing()) {
                             auto point = item.transform;
                             if (point.toolHandle == 11) {
