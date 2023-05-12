@@ -1,7 +1,7 @@
 #pragma once
 
-#define SCR_WIDTH			650
-#define SCR_HEIGHT			600
+#define SCR_WIDTH			800
+#define SCR_HEIGHT			700
 
 #define MESH_GRTH_SIZE		4000
 #define MIN_PTS_SIZE_REQD	400

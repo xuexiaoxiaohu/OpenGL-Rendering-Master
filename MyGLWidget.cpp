@@ -30,7 +30,7 @@ void MyGLWidget::updateCursor() {
         QPixmap pixmap(brushSize, brushSize);
         pixmap.fill(Qt::transparent);
         QPainter painter(&pixmap);
-        painter.setPen(Qt::red);
+        //painter.setPen(Qt::red);
         painter.setBrush(Qt::red);
         painter.drawEllipse(0, 0, brushSize, brushSize);
         QCursor cursor(pixmap);
@@ -52,9 +52,9 @@ void MyGLWidget::setImageData(std::vector<GLfloat> data){
     vertices = data;
 }
 void MyGLWidget::setAdaptivePara(QVector3D center, float radius){
-    camera->dir = center;
+    camera->center = center;
     proj.setToIdentity();
-    proj.perspective(45.0f, width() / height(), 0.1f * radius, 10.0f * radius);
+    proj.perspective(45.0f, width() / height(), 0.01f, 20 * radius);
 }
 
 void MyGLWidget::initializeGL(){
@@ -64,12 +64,10 @@ void MyGLWidget::initializeGL(){
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     QString qAppDir = QCoreApplication::applicationDirPath();
-
     QString pointVert = qAppDir + "/Shader/point.vert", pointFrag = qAppDir + "/Shader/point.frag";
     pShader->addShaderFromSourceFile(QOpenGLShader::Vertex, pointVert);
     pShader->addShaderFromSourceFile(QOpenGLShader::Fragment, pointFrag);
     pShader->link();
-
     QString meshVert = qAppDir + "/Shader/mesh.vert", meshFrag = qAppDir + "/Shader/mesh.frag";
     mShader->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
     mShader->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
@@ -156,13 +154,13 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
                 setImageData(glDataProc->glMeshData);
             }
         }else{
-            model.translate(camera->dir);
-            model.rotate(rotationAngle, rotationAxis);
-            model.translate(-camera->dir);
+           model.translate(camera->center);
+           model.rotate(rotationAngle, rotationAxis);
+           model.translate(-camera->center);
         }
     }
     if (event->buttons() & Qt::RightButton) {
-        model.translate(currentMousePos.x() / 50, currentMousePos.y() / 50);
+        model.translate(currentMousePos.x()/20, currentMousePos.y()/20);
     }
     repaint();
 }
