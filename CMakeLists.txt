@@ -213,3 +213,13 @@ else()
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG:FULL /OPT:REF /OPT:ICF")
 endif()
 
+set(SOURCES
+    DataProcessing.cpp
+)
+
+set(HEADERS
+    DataProcessing.h
+)
+
+add_library(DataProcessing ${SOURCES} ${HEADERS})
+target_link_libraries(DataProcessing Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::OpenGLExtensions)
