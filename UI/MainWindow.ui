@@ -29,24 +29,34 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QPushButton" name="startPushBtn">
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="spacing">
+             <number>4</number>
+            </property>
+            <item row="1" column="3">
+             <widget class="QPushButton" name="openPushBtn">
               <property name="text">
-               <string>Start</string>
+               <string>Open File</string>
               </property>
              </widget>
             </item>
-            <item>
+            <item row="1" column="1">
              <widget class="QPushButton" name="stopPushBtn">
               <property name="text">
                <string>Stop</string>
               </property>
              </widget>
             </item>
-            <item>
+            <item row="1" column="0">
+             <widget class="QPushButton" name="startPushBtn">
+              <property name="text">
+               <string>Start</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
              <widget class="QLineEdit" name="fileLineEdit">
               <property name="text">
                <string/>
@@ -56,10 +66,38 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QPushButton" name="openPushBtn">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label">
               <property name="text">
-               <string>Open File</string>
+               <string>灰度值</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSlider" name="grayScaleSlider">
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>9</number>
+              </property>
+              <property name="pageStep">
+               <number>9</number>
+              </property>
+              <property name="value">
+               <number>5</number>
+              </property>
+              <property name="tracking">
+               <bool>true</bool>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksAbove</enum>
+              </property>
+              <property name="tickInterval">
+               <number>0</number>
               </property>
              </widget>
             </item>

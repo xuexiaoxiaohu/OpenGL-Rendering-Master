@@ -12,8 +12,8 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true
     connect(ui.openPushBtn, SIGNAL(clicked()), this, SLOT(openFile()));
     connect(ui.startPushBtn, SIGNAL(clicked()), this, SLOT(startRendering()));
     connect(ui.stopPushBtn, SIGNAL(clicked()), this, SLOT(stopRendering()));
+    connect(ui.grayScaleSlider, SIGNAL(valueChanged(int)), this, SLOT(setGrayValue(int)));
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(RepaintUI()));
-
     driver = new NDIDriver("COM3");
     surface = new SurfaceReconsturction();
     pointProc = new DataProcessing();
@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     timer->start(100);
+}
+void MainWindow::setGrayValue(int) {
+    mMeshGLWidget->grayValue = ui.grayScaleSlider->value() / 10.0f;
+    mMeshGLWidget->repaint();
 }
 void MainWindow::updateCursor() {
     mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? mMeshGLWidget->isMouseBrush = true:false;
@@ -73,7 +77,7 @@ void MainWindow::startRendering(){
                                 if ((abs(lastTx - point.tx) > DELTA) && (abs(lastTy - point.ty) > DELTA)
                                     && (abs(lastTz - point.tz) > DELTA)) {
                                     if ((abs(point.tx) < VOLUME_MAX) && (abs(point.tz) < VOLUME_MAX)) {
-                                        pointProc->pointData.push_back(QVector3D{ (float)point.tx ,(float)point.ty ,(float)point.tz });
+                                        pointProc->pointData.push_back(QVector3D{(float)point.tx ,(float)point.ty ,(float)point.tz});
                                         lastTx = point.tx; lastTy = point.ty; lastTz = point.tz;
                                     }
                                 }
@@ -122,15 +126,15 @@ void MainWindow::enclosureDataProcessing(){
 
             // Mesh 
             if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
-                int diff = static_cast<int>(rawData.size()) - static_cast<int>(pointProc->pointData.size());
-                if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(diff) <= 0)) {
+                int rawDataSize = rawData.size(), pointDataSize = pointProc->pointData.size();
+                if (((rawData.size() % MESH_GRTH_SIZE) == 0) || (abs(rawDataSize - pointDataSize) <= 0)) {
                     surface->construction(rawData);
 
                     std::filesystem::path parentPath = std::filesystem::current_path();
                     std::string srcPath = parentPath.string() + "/result.ply";
                     std::string dstPath = parentPath.string() + "/triangleResult.ply";
                     pcl::PolygonMesh mesh;
-                    meshProc->isoExpRemeshing(srcPath.c_str(), dstPath.c_str());
+                    meshProc->poly2tri(srcPath.c_str(), dstPath.c_str());
 
                     pcl::io::loadPLYFile(dstPath.c_str(), mesh);
                     meshProc->addNormal(mesh);

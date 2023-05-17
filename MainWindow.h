@@ -19,6 +19,7 @@ public slots:
 	void stopRendering();
 	void RepaintUI();
 	void updateCursor();
+	void setGrayValue(int);
 
 signals:
 	void signal_glUpdate();
@@ -28,10 +29,8 @@ private:
 	void addOpengGLWidget();
 	void  enclosureDataProcessing();
 	NDIDriver* driver;
-	MyGLWidget* mPointGLWidget;
-	MyGLWidget* mMeshGLWidget;
+	MyGLWidget* mPointGLWidget, *mMeshGLWidget;
 	bool isRenderRunning;
 	SurfaceReconsturction* surface;
-	DataProcessing* pointProc;
-	DataProcessing* meshProc;
+	DataProcessing* pointProc, *meshProc;
 };	

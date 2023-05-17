@@ -1,12 +1,17 @@
 #version 450 core
 
 struct material{
-    vec3 ambient,diffuse,specular;    
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;    
     float shininess;
 }; 
 
 struct dirLight{
-    vec3 direction,ambient,diffuse,specular;
+    vec3 direction;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
 
 in vec3 vPosition;
