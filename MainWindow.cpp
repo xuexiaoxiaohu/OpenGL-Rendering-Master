@@ -14,14 +14,15 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true
     connect(ui.stopPushBtn, SIGNAL(clicked()), this, SLOT(stopRendering()));
     connect(ui.grayScaleSlider, SIGNAL(valueChanged(int)), this, SLOT(setGrayValue(int)));
     connect(this, SIGNAL(signal_glUpdate()), this, SLOT(RepaintUI()));
-    driver = new NDIDriver("COM3");
-    surface = new SurfaceReconsturction();
-    pointProc = new DataProcessing();
-    meshProc = new DataProcessing();
 
     QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     timer->start(100);
+
+    driver = new NDIDriver("COM3");
+    surface = new SurfaceReconsturction();
+    pointProc = new DataProcessing();
+    meshProc = new DataProcessing();
 }
 void MainWindow::setGrayValue(int) {
     mMeshGLWidget->grayValue = ui.grayScaleSlider->value() / 10.0f;
@@ -73,15 +74,13 @@ void MainWindow::startRendering(){
                     for (auto& item:items) {
                         if (!item.transform.isMissing()) {
                             auto point = item.transform;
-                            if (point.toolHandle == 11) {
+                            if (point.toolHandle == 11) 
                                 if ((abs(lastTx - point.tx) > DELTA) && (abs(lastTy - point.ty) > DELTA)
-                                    && (abs(lastTz - point.tz) > DELTA)) {
+                                    && (abs(lastTz - point.tz) > DELTA)) 
                                     if ((abs(point.tx) < VOLUME_MAX) && (abs(point.tz) < VOLUME_MAX)) {
                                         pointProc->pointData.push_back(QVector3D{(float)point.tx ,(float)point.ty ,(float)point.tz});
                                         lastTx = point.tx; lastTy = point.ty; lastTz = point.tz;
                                     }
-                                }
-                            }
                             std::cout << item.timespec_s << " ," << item.frameNumber << " , " << point.toolHandle << ",  "
                                 << point.status << " , " << point.q0 << " , " << point.qx << " , " << point.qy << " , "
                                 << point.qz << ",  " << point.tx << ",  " << point.ty << ",  " << point.tz << std::endl;
@@ -143,7 +142,7 @@ void MainWindow::enclosureDataProcessing(){
                     pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
 
                     std::vector<GLfloat> glMesh;
-                    for (int i = 0; i < mesh.polygons.size(); i++) {
+                    for (int i = 0; i < mesh.polygons.size(); i++) 
                         for (int j = 0; j < mesh.polygons[i].vertices.size(); j++) {
                             pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
                             glMesh.emplace_back(point.x);
@@ -153,7 +152,7 @@ void MainWindow::enclosureDataProcessing(){
                             glMesh.emplace_back(point.normal_y);
                             glMesh.emplace_back(point.normal_z);
                         }
-                    }
+                    
                     mMeshGLWidget->setMesh(mesh);
                     mMeshGLWidget->setAdaptivePara(center, radius);
                     mMeshGLWidget->setImageData(glMesh);
@@ -161,6 +160,5 @@ void MainWindow::enclosureDataProcessing(){
             }
             emit signal_glUpdate();
         }
-        }
-      
+    }  
 }

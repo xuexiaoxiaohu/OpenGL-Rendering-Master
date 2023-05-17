@@ -10,13 +10,19 @@
 #include "MyGLWidget.h"
 #include <Macro.h>
 
-MyGLWidget::MyGLWidget(QWidget* parent,int dataType):
-    rotationAngle(0.0f),dataType(dataType), isShiftPressed(false), grayValue(0.5f){
+MyGLWidget::MyGLWidget(QWidget* parent,int dataType)
+    : rotationAngle(0.0f)
+    , dataType(dataType)
+    , isShiftPressed(false)
+    , grayValue(0.5f)
+    , brushPosition(0.0f,0.0f,-0.5f)
+    , brushSize(4)
+    , isMouseBrush(false)
+{
     camera = new Camera();
     glDataProc = new DataProcessing();
     pShader = new QOpenGLShaderProgram();
     mShader = new QOpenGLShaderProgram();
-    mmShader = new QOpenGLShaderProgram();
 
     proj.setToIdentity();
     proj.perspective(45.0f, width() / height(), 0.1f, 200.f);
@@ -74,10 +80,6 @@ void MyGLWidget::initializeGL(){
     mShader->addShaderFromSourceFile(QOpenGLShader::Vertex, meshVert);
     mShader->addShaderFromSourceFile(QOpenGLShader::Fragment, meshFrag);
     mShader->link();
-
-    mmShader->addShaderFromSourceFile(QOpenGLShader::Vertex, pointVert);
-    mmShader->addShaderFromSourceFile(QOpenGLShader::Fragment, pointFrag);
-    mmShader->link();
 }
 // PaintGL
 void MyGLWidget::paintGL(){
@@ -141,18 +143,18 @@ void MyGLWidget::paintGL(){
 
 
         glPointSize(5.0f);
-        glGenVertexArrays(1, &mmVAO);
-        glBindVertexArray(mmVAO);
-        glGenBuffers(1, &mmVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, mmVBO);
+        glGenVertexArrays(1, &pVAO);
+        glBindVertexArray(pVAO);
+        glGenBuffers(1, &pVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, pVBO);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
-        mmShader->bind();
-        mmShader->setUniformValue("model", model);
-        mmShader->setUniformValue("view", camera->getViewMatrix());
-        mmShader->setUniformValue("proj", proj);
+        pShader->bind();
+        pShader->setUniformValue("model", model);
+        pShader->setUniformValue("view", camera->getViewMatrix());
+        pShader->setUniformValue("proj", proj);
 
         glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
         

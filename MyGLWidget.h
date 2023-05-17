@@ -30,7 +30,7 @@ public:
 
     pcl::PolygonMesh mesh;
     DataProcessing* glDataProc;
-    bool isMouseBrush = false;
+    bool isMouseBrush;
     float grayValue;
 
 public slots:
@@ -51,20 +51,20 @@ protected:
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
 
 private:
-    QOpenGLShaderProgram* pShader, * mShader, * mmShader;
+    QOpenGLShaderProgram* pShader, * mShader;
 
     QMatrix4x4 model, proj;
     Camera* camera;
 
     std::vector<GLfloat> vertices;
     int dataType;
-    GLuint pVAO, pVBO, mVAO, mVBO, mmVAO, mmVBO;
+    GLuint pVAO, pVBO, mVAO, mVBO;
 
     bool isShiftPressed;
-    float brushParam, brushSize = 4.0f, rotationAngle;
+    float brushParam, brushSize, rotationAngle;
     QPoint pressPosition, lastMousePos;
     GLdouble lastWx = 0, lastWy = 0, lastWz = 0;
-    QVector3D brushPosition{0.0f, 0.0f, -0.5f};
+    QVector3D brushPosition;
 };
 
 #endif 
