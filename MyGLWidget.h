@@ -28,7 +28,6 @@ public:
     void setAdaptivePara(QVector3D center, float radius);
     void setMesh(pcl::PolygonMesh mesh);
 
-    pcl::PolygonMesh mesh;
     DataProcessing* glDataProc;
     bool isMouseBrush;
     float grayValue;
@@ -51,6 +50,7 @@ protected:
     void convScreen2World(QPoint point, GLdouble& wx, GLdouble& wy, GLdouble& wz);
 
 private:
+    pcl::PolygonMesh mesh;
     QOpenGLShaderProgram* pShader, * mShader;
 
     QMatrix4x4 model, proj;
@@ -63,7 +63,6 @@ private:
     bool isShiftPressed;
     float brushParam, brushSize, rotationAngle;
     QPoint pressPosition, lastMousePos;
-    GLdouble lastWx = 0, lastWy = 0, lastWz = 0;
     QVector3D brushPosition;
 };
 

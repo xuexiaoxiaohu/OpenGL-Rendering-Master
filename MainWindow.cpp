@@ -152,9 +152,8 @@ void MainWindow::enclosureDataProcessing(){
                             glMesh.emplace_back(point.normal_y);
                             glMesh.emplace_back(point.normal_z);
                         }
-                    
-                    meshGLWidget->setMesh(mesh);
                     meshGLWidget->setAdaptivePara(center, radius);
+                    meshGLWidget->setMesh(mesh);
                     meshGLWidget->setImageData(glMesh);
                 }
             }

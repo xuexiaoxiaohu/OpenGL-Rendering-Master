@@ -197,6 +197,12 @@ target_link_libraries (${PROJECT_NAME} ${OPENMESH_LIB_FILES})
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data DESTINATION ${PROJECT_BINARY_DIR}/Release)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Shader DESTINATION ${PROJECT_BINARY_DIR}/Release)
 
+# Produce Library
+set(HEADERS DataProcessing.h)
+set(SOURCES DataProcessing.cpp)
+add_library(DataProcessing ${SOURCES} ${HEADERS})
+target_link_libraries(DataProcessing Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::OpenGLExtensions)
+
 # add debug information
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_definitions(-DAF_CLASSARRANGE_EXPORTS)
@@ -212,10 +218,3 @@ else()
     set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG:FULL /OPT:REF /OPT:ICF")
     set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG:FULL /OPT:REF /OPT:ICF")
 endif()
-
-set(HEADERS DataProcessing.h)
-
-set(SOURCES DataProcessing.cpp)
-
-add_library(DataProcessing ${SOURCES} ${HEADERS})
-target_link_libraries(DataProcessing Qt5::Widgets Qt5::Core Qt5::Gui Qt5::OpenGL Qt5::OpenGLExtensions)
