@@ -25,33 +25,33 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true
     meshProc = new DataProcessing();
 }
 void MainWindow::setGrayValue(int) {
-    mMeshGLWidget->grayValue = ui.grayScaleSlider->value() / 10.0f;
-    mMeshGLWidget->repaint();
+    meshGLWidget->grayValue = ui.grayScaleSlider->value() / 10.0f;
+    meshGLWidget->repaint();
 }
 void MainWindow::updateCursor() {
-    mMeshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? mMeshGLWidget->isMouseBrush = true:false;
+    meshGLWidget->geometry().contains(this->mapFromGlobal(QCursor::pos())) ? meshGLWidget->isMouseBrush = true:false;
 }
 MainWindow::~MainWindow(){
     delete driver;
     delete surface;
-    delete mPointGLWidget;
-    delete mMeshGLWidget;
+    delete pointGLWidget;
+    delete meshGLWidget;
     delete pointProc;
     delete meshProc;
 }
 
 void MainWindow::addOpengGLWidget(){
-    mPointGLWidget = new MyGLWidget(this, PointType);
-    mPointGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
-    ui.openGLHorizontalLayout->addWidget(mPointGLWidget);
+    pointGLWidget = new MyGLWidget(this, PointType);
+    pointGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
+    ui.openGLHorizontalLayout->addWidget(pointGLWidget);
 
-    mMeshGLWidget = new MyGLWidget(this, MeshType);
-    mMeshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
-    ui.openGLHorizontalLayout->addWidget(mMeshGLWidget);
+    meshGLWidget = new MyGLWidget(this, MeshType);
+    meshGLWidget->setFixedSize(SCR_WIDTH, SCR_HEIGHT);
+    ui.openGLHorizontalLayout->addWidget(meshGLWidget);
 }
 void MainWindow::RepaintUI() {
-    mPointGLWidget->repaint();
-    mMeshGLWidget->repaint();
+    pointGLWidget->repaint();
+    meshGLWidget->repaint();
 }
 void MainWindow::openFile(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open Scan Data", "./Release/Data", "Scan Data(*.txt)");
@@ -120,8 +120,8 @@ void MainWindow::enclosureDataProcessing(){
                 glPoint.emplace_back(pointProc->pointData[i].y());
                 glPoint.emplace_back(pointProc->pointData[i].z());
             }
-            mPointGLWidget->setAdaptivePara(center, radius);
-            mPointGLWidget->setImageData(glPoint);
+            pointGLWidget->setAdaptivePara(center, radius);
+            pointGLWidget->setImageData(glPoint);
 
             // Mesh 
             if ((rawData.size() >= MIN_PTS_SIZE_REQD)) {
@@ -153,9 +153,9 @@ void MainWindow::enclosureDataProcessing(){
                             glMesh.emplace_back(point.normal_z);
                         }
                     
-                    mMeshGLWidget->setMesh(mesh);
-                    mMeshGLWidget->setAdaptivePara(center, radius);
-                    mMeshGLWidget->setImageData(glMesh);
+                    meshGLWidget->setMesh(mesh);
+                    meshGLWidget->setAdaptivePara(center, radius);
+                    meshGLWidget->setImageData(glMesh);
                 }
             }
             emit signal_glUpdate();

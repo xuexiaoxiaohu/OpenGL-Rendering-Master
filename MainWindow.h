@@ -29,7 +29,7 @@ private:
 	void addOpengGLWidget();
 	void  enclosureDataProcessing();
 	NDIDriver* driver;
-	MyGLWidget* mPointGLWidget, *mMeshGLWidget;
+	MyGLWidget* pointGLWidget, *meshGLWidget;
 	bool isRenderRunning;
 	SurfaceReconsturction* surface;
 	DataProcessing* pointProc, *meshProc;
