@@ -142,21 +142,21 @@ void MyGLWidget::paintGL(){
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
 
 
-        //glPointSize(5.0f);
-        //glGenVertexArrays(1, &pVAO);
-        //glBindVertexArray(pVAO);
-        //glGenBuffers(1, &pVBO);
-        //glBindBuffer(GL_ARRAY_BUFFER, pVBO);
-        //glEnableVertexAttribArray(0);
-        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+        glPointSize(5.0f);
+        glGenVertexArrays(1, &pVAO);
+        glBindVertexArray(pVAO);
+        glGenBuffers(1, &pVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, pVBO);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
-        //pShader->bind();
-        //pShader->setUniformValue("model", model);
-        //pShader->setUniformValue("view", camera->getViewMatrix());
-        //pShader->setUniformValue("proj", proj);
+        pShader->bind();
+        pShader->setUniformValue("model", model);
+        pShader->setUniformValue("view", camera->getViewMatrix());
+        pShader->setUniformValue("proj", proj);
 
-        //glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
+        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
         
     }
 }
@@ -194,9 +194,8 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
     repaint();
 }
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
-    if (event->buttons() & Qt::LeftButton) {
+    if (event->buttons() & Qt::LeftButton) 
         lastMousePos = event->pos();
-    }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
