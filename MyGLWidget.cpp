@@ -118,29 +118,28 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("viewPos", QVector3D(0.0f, 0.0f, 3.0f));
 
         QVector3D grayValue3D(grayValue, grayValue,grayValue);
-        QVector3D dl1Direction(1.0f, 1.0f, 3.0f), dl2Direction(1.0f, 1.0f, -3.0f);
+        QVector3D dirLight1(1.0f, 1.0f, 3.0f), dirLight2(1.0f, 1.0f, -3.0f);
 
-        mShader->setUniformValue("mat.ambient", grayValue3D);
-        mShader->setUniformValue("mat.diffuse", grayValue3D);
-        mShader->setUniformValue("mat.specular", grayValue3D);
-        mShader->setUniformValue("mat.shininess", 16.0f);
+        mShader->setUniformValue("mtrl.ambient", grayValue3D);
+        mShader->setUniformValue("mtrl.diffuse", grayValue3D);
+        mShader->setUniformValue("mtrl.specular", grayValue3D);
+        mShader->setUniformValue("mtrl.shininess", 16.0f);
 
-        mShader->setUniformValue("dl1.ambient", grayValue3D);
-        mShader->setUniformValue("dl1.diffuse", grayValue3D);
-        mShader->setUniformValue("dl1.specular", grayValue3D);
-        mShader->setUniformValue("dl1.direction", dl1Direction);
+        mShader->setUniformValue("dirLight1.ambient", grayValue3D);
+        mShader->setUniformValue("dirLight1.diffuse", grayValue3D);
+        mShader->setUniformValue("dirLight1.specular", grayValue3D);
+        mShader->setUniformValue("dirLight1.direction", dirLight1);
 
-        mShader->setUniformValue("dl2.ambient", grayValue3D);
-        mShader->setUniformValue("dl2.diffuse", grayValue3D);
-        mShader->setUniformValue("dl2.specular", grayValue3D);
-        mShader->setUniformValue("dl2.direction", dl2Direction);
+        mShader->setUniformValue("dirLight2.ambient", grayValue3D);
+        mShader->setUniformValue("dirLight2.diffuse", grayValue3D);
+        mShader->setUniformValue("dirLight2.specular", grayValue3D);
+        mShader->setUniformValue("dirLight2.direction", dirLight2);
 
         mShader->setUniformValue("model", model);
         mShader->setUniformValue("view", camera->getViewMatrix());
         mShader->setUniformValue("proj", proj);  
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
-
 
         glPointSize(5.0f);
         glGenVertexArrays(1, &pVAO);
@@ -156,8 +155,7 @@ void MyGLWidget::paintGL(){
         pShader->setUniformValue("view", camera->getViewMatrix());
         pShader->setUniformValue("proj", proj);
 
-        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);
-        
+        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);   
     }
 }
 void MyGLWidget::resizeGL(int width, int height){
