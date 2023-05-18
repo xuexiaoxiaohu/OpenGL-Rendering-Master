@@ -133,7 +133,7 @@ void MainWindow::enclosureDataProcessing(){
                     std::string srcPath = parentPath.string() + "/result.ply";
                     std::string dstPath = parentPath.string() + "/triangleResult.ply";
                     pcl::PolygonMesh mesh;
-                    meshProc->poly2tri(srcPath.c_str(), dstPath.c_str());
+                    meshProc->isoExpRemeshing(srcPath.c_str(), dstPath.c_str());
 
                     pcl::io::loadPLYFile(dstPath.c_str(), mesh);
                     meshProc->addNormal(mesh);
