@@ -53,20 +53,6 @@ else()
 endif(GLUT_ROOT)
 include_directories(${GLUT_INC_DIR})
 
-# OpenMesh
-if(NOT OPENMESH_ROOT)
-    set(OPENMESH_ROOT "" CACHE PATH "OpenMesh root")
-endif()
-if(OPENMESH_ROOT)
-	set(OPENMESH_LIB_DIR ${OPENMESH_ROOT}/lib/)
-    set(OPENMESH_BIN_DIR ${OPENMESH_ROOT}/bin/)
-    file(GLOB OPENMESH_LIB_FILES ${OPENMESH_ROOT}/lib/*.lib)
-    file(GLOB OPENMESH_BIN_FILES ${OPENMESH_ROOT}/bin/*.dll)
-    set(OPENMESH_INC_DIR ${OPENMESH_ROOT}/include/)
-else()
-    message(FATAL_ERROR "can not generate without OpenMesh")
-endif(OPENMESH_ROOT)
-include_directories(${OPENMESH_INC_DIR})
 
 # PCL
 if(NOT PCL_ROOT)
@@ -143,21 +129,6 @@ else()
 endif(VTK_ROOT)
 include_directories(${VTK_INC_DIR})
 
-# VMTK
-if(NOT VMTK_ROOT)
-    set(VMTK_ROOT "" CACHE PATH "VMTK root")
-endif()
-if(VMTK_ROOT)
-	set(VMTK_LIB_DIR ${VMTK_ROOT}/lib/)
-    set(VMTK_BIN_DIR ${VMTK_ROOT}/bin/)
-    file(GLOB VMTK_LIB_FILES ${VMTK_ROOT}/lib/*.lib)
-    file(GLOB VMTK_BIN_FILES ${VMTK_ROOT}/bin/*.dll)
-    set(VMTK_INC_DIR ${VMTK_ROOT}/include/)
-else()
-    message(FATAL_ERROR "can not generate without VMTK")
-endif(VMTK_ROOT)
-include_directories(${VMTK_INC_DIR})
-
 # QT
 set(CMAKE_AUTOMOC ON) 
 find_package(Qt5Widgets)  
@@ -188,10 +159,8 @@ target_link_libraries (${PROJECT_NAME} ${BOOST_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${EIGEN_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${FLANN_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${VTK_LIB_FILES})
-target_link_libraries (${PROJECT_NAME} ${VMTK_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${RECONSTRUCTION_LIB_FILES})
 target_link_libraries (${PROJECT_NAME} ${GLUT_LIB_FILES})
-target_link_libraries (${PROJECT_NAME} ${OPENMESH_LIB_FILES})
 
 #copy file from source dirtory to binaray dirtory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data DESTINATION ${PROJECT_BINARY_DIR}/Release)

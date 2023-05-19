@@ -5,6 +5,7 @@
 #include "Macro.h"
 #include <QPixmap>
 #include <QPainter>
+#include <thread>
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),isRenderRunning(true){
 	ui.setupUi(this);
     addOpengGLWidget();
@@ -93,7 +94,7 @@ void MainWindow::startRendering(){
             enclosureDataProcessing();
         }
     };
-
+    
     std::thread collectDataThread(collectDataFunc);
     collectDataThread.detach();
 }
