@@ -237,3 +237,23 @@ void DataProcessing::isoExpRemeshing(const char* srcPath, const char* dstPath) {
 	writer->SetFileTypeToASCII();
 	writer->Update();
 }
+
+
+
+// lr 
+void DataProcessing::getRenderData(pcl::PolygonMesh& mesh) {
+	glMeshData.clear();
+	pcl::PointCloud<pcl::PointNormal>::Ptr pointsPtr(new pcl::PointCloud<pcl::PointNormal>);
+	pcl::fromPCLPointCloud2(mesh.cloud, *pointsPtr);
+	for (std::size_t i = 0; i < mesh.polygons.size(); i++) {
+		for (std::size_t j = 0; j < mesh.polygons[i].vertices.size(); j++) {
+			pcl::PointNormal point = pointsPtr->points[mesh.polygons[i].vertices[j]];
+			glMeshData.emplace_back(point.x);
+			glMeshData.emplace_back(point.y);
+			glMeshData.emplace_back(point.z);
+			glMeshData.emplace_back(point.normal_x);
+			glMeshData.emplace_back(point.normal_y);
+			glMeshData.emplace_back(point.normal_z);
+		}
+	}
+}

@@ -38,4 +38,7 @@ public:
 	QVector<QVector3D>	pointData;
 	std::vector<float> glMeshData;
 	QVector3D maxPoint,minPoint;
+
+	//lr 
+	void getRenderData(pcl::PolygonMesh& mesh);
 };

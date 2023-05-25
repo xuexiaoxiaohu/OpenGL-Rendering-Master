@@ -9,6 +9,9 @@
 // Custom
 #include "MyGLWidget.h"
 #include <Macro.h>
+// lr 
+#include <vtkImplicitSelectionLoop.h>
+#include <vtkSelectPolyData.h>
 
 MyGLWidget::MyGLWidget(QWidget* parent,int dataType)
     : rotationAngle(0.0f)
@@ -140,7 +143,7 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("proj", proj);  
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
-
+        //1.0
         glPointSize(5.0f);
         glGenVertexArrays(1, &pVAO);
         glBindVertexArray(pVAO);
@@ -156,6 +159,7 @@ void MyGLWidget::paintGL(){
         pShader->setUniformValue("proj", proj);
 
         glDrawArrays(GL_POINTS, 0, vertices.size() / 3);   
+        //1.1
     }
 }
 void MyGLWidget::resizeGL(int width, int height){
@@ -194,6 +198,14 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
 void MyGLWidget::mousePressEvent(QMouseEvent* event){
     if (event->buttons() & Qt::LeftButton) 
         lastMousePos = event->pos();
+
+    // lr
+    if (m_record_poly_clip && event->button() == Qt::LeftButton)
+    {
+        //记录当前鼠标的位置；
+        QPoint pos = event->pos();
+        m_points.append(pos);
+    }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
@@ -201,6 +213,40 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
     if (event->key() & Qt::Key_Shift) 
         isShiftPressed = true;
+    // lr
+    // A 键启动多点删除算法
+    if (event->key() == Qt::Key_A)
+    {
+        m_record_poly_clip = !m_record_poly_clip;
+        if (!m_record_poly_clip)
+        {
+            //多边形框进行删除操作
+            // 点击多个点生成多边形，对多变形区域内的面片进行删除
+            qDebug() << "before box choose  , mesh size " << this->mesh.polygons.size();
+            vtkNew<vtkPoints> selectionPoints;
+            GLdouble wx, wy, wz;
+            for (int i = 0; i < m_points.size(); i++)
+            {
+                convScreen2World(m_points[i], wx, wy, wz);
+                selectionPoints->InsertPoint(i, wx, wy, wz);
+            }
+            vtkSmartPointer<vtkPolyData> polydata3 = vtkSmartPointer<vtkPolyData>::New();
+            pcl::io::mesh2vtk(this->mesh, polydata3);
+            vtkSmartPointer<vtkSelectPolyData> selectPolyData = vtkSmartPointer<vtkSelectPolyData>::New();
+            selectPolyData->SetInputData(polydata3);
+            selectPolyData->SetLoop(selectionPoints);
+            selectPolyData->GenerateUnselectedOutputOn();
+            selectPolyData->Update();
+            pcl::io::vtk2mesh(selectPolyData->GetUnselectedOutput(), mesh);
+            qDebug() << "after box choose  , mesh size " << this->mesh.polygons.size();
+            glDataProc->getRenderData(mesh);
+            setImageData(glDataProc->glMeshData);
+            repaint();
+            m_points.clear();
+        }
+
+    }
+
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
     if (event->key() & Qt::Key_Shift) 
