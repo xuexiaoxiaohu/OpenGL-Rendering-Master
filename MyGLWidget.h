@@ -67,7 +67,7 @@ private:
 
     // lr
     bool m_record_poly_clip = false;
-    QVector<QPoint> m_points;//±£´æËùÓÐÊó±êµã»÷¹ýµÄÎ»ÖÃ£»
+    QVector<QPoint> m_points;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½
 
 };
 
