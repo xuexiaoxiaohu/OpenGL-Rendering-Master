@@ -12,6 +12,15 @@
 // lr 
 #include <vtkImplicitSelectionLoop.h>
 #include <vtkSelectPolyData.h>
+#include <vtkPlanes.h>
+#include <vtkFrustumSource.h>
+#include <vtkIdFilter.h>
+#include <vtkExtractPolyDataGeometry.h>
+#include <vtkCellLocator.h>
+#include <vtkPolyDataConnectivityFilter.h>
+#include <vtkCellData.h>
+#include <vtkIdTypeArray.h>
+
 
 MyGLWidget::MyGLWidget(QWidget* parent,int dataType)
     : rotationAngle(0.0f)
@@ -205,6 +214,12 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         QPoint pos = event->pos();
         m_points.append(pos);
     }
+    // lr
+    if (m_record_box_clip && event->button() == Qt::LeftButton)
+    {
+        QPoint pos = event->pos();
+        m_points.append(pos);
+    }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
@@ -222,7 +237,7 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
         {
             //����ο����ɾ������
             // �����������ɶ���Σ��Զ���������ڵ���Ƭ����ɾ��
-            qDebug() << "before box choose  , mesh size " << this->mesh.polygons.size();
+            //qDebug() << "before box choose  , mesh size " << this->mesh.polygons.size();
             vtkNew<vtkPoints> selectionPoints;
             GLdouble wx, wy, wz;
             for (int i = 0; i < m_points.size(); i++)
@@ -238,13 +253,195 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             selectPolyData->GenerateUnselectedOutputOn();
             selectPolyData->Update();
             pcl::io::vtk2mesh(selectPolyData->GetUnselectedOutput(), mesh);
-            qDebug() << "after box choose  , mesh size " << this->mesh.polygons.size();
+            //qDebug() << "after box choose  , mesh size " << this->mesh.polygons.size();
             glDataProc->getRenderData(mesh);
             setImageData(glDataProc->glMeshData);
             repaint();
             m_points.clear();
         }
 
+    }
+
+    if (event->key() == Qt::Key_B)
+    {
+        m_record_poly_clip = !m_record_poly_clip;
+        if (!m_record_poly_clip)
+        {
+            // compute box vertex
+            QPoint p1(m_points[0].x(), m_points[0].y());
+            QPoint p2(m_points[0].x(), m_points[1].y());
+            QPoint p3(m_points[1].x(), m_points[1].y());
+            QPoint p4(m_points[1].x(), m_points[0].y());
+            GLdouble wx1, wy1, wz1, wx2, wy2, wz2, wx3, wy3, wz3, wx4, wy4, wz4;
+            convScreen2World(p1, wx1, wy1, wz1);
+            convScreen2World(p2, wx2, wy2, wz2);
+            convScreen2World(p3, wx3, wy3, wz3);
+            convScreen2World(p4, wx4, wy4, wz4);
+
+            double p11[3] = { wx1,wy1,wz1 };
+            double p21[3] = { wx2,wy2,wz2 };
+            double p31[3] = { wx3,wy3,wz3 };
+            double p41[4] = { wx4,wy4,wz4 };
+            double* points[4] = { p11,p21,p31,p41 };
+            
+            vtkSmartPointer<vtkPoints> polydataPoints = vtkSmartPointer<vtkPoints>::New();
+            for (int i = 0; i < 4; i++)
+            {
+                polydataPoints->InsertNextPoint(points[i]);
+            }
+            vtkSmartPointer<vtkIdList> lineIds = vtkSmartPointer<vtkIdList>::New();
+            lineIds->SetNumberOfIds(5);
+            lineIds->SetId(0, 0);
+            lineIds->SetId(1, 1);
+            lineIds->SetId(2, 2);
+            lineIds->SetId(3, 3);
+            lineIds->SetId(4, 0);
+            vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+            lines->InsertNextCell(lineIds);
+            vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+            polydata->SetPoints(polydataPoints);
+            polydata->SetLines(lines);
+            double bounds[6];
+            polydata->GetBounds(bounds);
+            std::cout << "X range: " << bounds[0] << " - " << bounds[1] << std::endl;
+            std::cout << "Y range: " << bounds[2] << " - " << bounds[3] << std::endl;
+            std::cout << "Z range: " << bounds[4] << " - " << bounds[5] << std::endl;
+            std::cout << "***" << std::endl;
+            double xmin = bounds[0];
+            double xmax = bounds[1];
+            double ymin = bounds[2];
+            double ymax = bounds[3];
+            double zmin = bounds[4];
+            double zmax = bounds[5];
+
+            // 创建裁剪平面的法向量和截距
+            double planes[24] = {
+                1, 0, 0, -xmin, // left
+                -1, 0, 0, xmax, // right
+                0, 1, 0, -ymin, // bottom
+                0, -1, 0, ymax, // top
+                0, 0, 1, -zmin, // near
+                0, 0, -1, zmax  // far
+            };
+
+
+            // 创建vtkPlanes对象，并将裁剪平面的参数设置给它
+            vtkSmartPointer<vtkPlanes> clippingPlanes = vtkSmartPointer<vtkPlanes>::New();
+            clippingPlanes->SetFrustumPlanes(planes);
+
+            // 使用vtkFrustumSource类创建视锥体，并将裁剪平面设置给它
+            vtkSmartPointer<vtkFrustumSource> frustumSource = vtkSmartPointer<vtkFrustumSource>::New();
+            frustumSource->SetPlanes(clippingPlanes);
+            frustumSource->Update();
+
+
+            vtkPlanes* frustum = frustumSource->GetPlanes();
+            // 获取所有平面的法向量，然后输出到控制台
+            vtkSmartPointer<vtkDataArray> normals = frustum->GetNormals();
+            std::cout << "frustum normals: ";
+            for (vtkIdType i = 0; i < normals->GetNumberOfTuples(); i++)
+            {
+                double* normal = normals->GetTuple3(i);
+                std::cout << "(" << normal[0] << ", " << normal[1] << ", " << normal[2] << ") ";
+            }
+            std::cout << std::endl;
+
+            // 获取所有平面的交点，然后输出到控制台
+
+            vtkSmartPointer<vtkPoints> points1 = frustum->GetPoints();
+            std::cout << "frustum intersection points: ";
+            for (vtkIdType i = 0; i < points1->GetNumberOfPoints(); i++)
+            {
+                double* point2 = points1->GetPoint(i);
+                std::cout << "(" << point2[0] << ", " << point2[1] << ", " << point2[2] << ") ";
+            }
+            std::cout << std::endl;
+
+            //提前标记几何数据的CellId
+            vtkIdFilter* idFilter = vtkIdFilter::New();
+            vtkSmartPointer<vtkPolyData> polydata2 = vtkSmartPointer<vtkPolyData>::New();
+            pcl::io::mesh2vtk(this->mesh, polydata2);
+            std::cout << "初始模型点个数： " << polydata2->GetNumberOfPoints() << std::endl;
+            std::cout << "初始模型面片个数： " << polydata2->GetNumberOfCells() << std::endl;
+
+            idFilter->SetInputData(polydata2);
+            // idFilter->SetCellIdsArrayName("OriginalCellId");
+            idFilter->Update();
+            //提取视锥体内的模型
+            vtkExtractPolyDataGeometry* extract = vtkExtractPolyDataGeometry::New();
+            extract->SetInputConnection(idFilter->GetOutputPort());
+            extract->SetImplicitFunction(frustum);
+            extract->Update();
+            if (!extract->GetOutput()->GetPolys())
+            {
+                std::cout << "faild!" << std::endl;
+                return;
+            }
+
+            //std::cout << "提取框内的模型后，剩余的点个数： " << extract->GetOutput()->GetNumberOfPoints() << std::endl;
+            //std::cout << "提取框内的模型后，剩余的面片个数： " << extract->GetOutput()->GetNumberOfCells() << std::endl;
+
+
+            //创建面片定位器
+            vtkCellLocator* locator = vtkCellLocator::New();
+            locator->SetDataSet(extract->GetOutput());
+            locator->BuildLocator();
+            //----------利用光线投射的方法寻找更靠近摄像机的面片------------
+
+            double rayStart[3] = { this->camera->eye[0],this->camera->eye[1],this->camera->eye[2] };//光线起点坐标：设置为摄像机位置
+            double rayDirection[3];			//光线方向向量：设置为框选数据包围盒的中心
+            extract->GetOutput()->GetCenter(rayDirection);
+            std::cout << "center of box : " << rayDirection[0] << " " << rayDirection[1] << " " << rayDirection[2] << std::endl;
+            std::cout << " ray start " << rayStart[0] << " " << rayStart[1] << " " << rayStart[2] << std::endl;
+            double xyz[3];
+            double t;
+            double pcoords[3];
+            int subId;
+            vtkIdType cellId = -1;			//记录光线击中的面片Id号
+
+
+            locator->IntersectWithLine(rayStart, rayDirection, 0.0001, t, xyz, pcoords, subId, cellId);
+            //-----------利用找到的面片获取相连的面
+            vtkPolyDataConnectivityFilter* connectivity = vtkPolyDataConnectivityFilter::New();
+            connectivity->SetInputConnection(extract->GetOutputPort());
+            connectivity->SetExtractionModeToCellSeededRegions();
+            connectivity->InitializeSeedList();
+            connectivity->AddSeed(cellId);
+            connectivity->Update();
+
+            //--------删除框选面片----------
+            //提取框选面片的原始面片ID
+            //vtkIdTypeArray* ids = dynamic_cast<vtkIdTypeArray*>(connectivity->GetOutput()->GetCellData()->GetArray("OriginalCellId"));
+            vtkIdTypeArray* ids = dynamic_cast<vtkIdTypeArray*>(connectivity->GetOutput()->GetCellData()->GetArray(0));
+            //要删除面片前必须先执行建立拓扑链接
+            polydata2->BuildLinks();
+            if (!ids)
+            {
+                return;
+            }
+            for (int i = 0; i < ids->GetNumberOfValues(); i++)
+            {
+                vtkIdType id = ids->GetValue(i);
+                polydata2->DeleteCell(id);
+                std::cout << "i: " << i << " :id: " << id << endl;
+            }
+            std::cout << " 删除的面片个数： " << ids->GetNumberOfValues() << std::endl;
+            //提交删除面片操作
+            polydata2->RemoveDeletedCells();
+            polydata2->Modified();
+
+            //std::cout << " 裁剪后剩余的顶点个数： " << polydata2->GetNumberOfPoints() << std::endl;
+            //std::cout << " 裁剪后剩余的面片个数： " << polydata2->GetNumberOfCells() << std::endl;
+
+            pcl::io::vtk2mesh(polydata2, mesh);
+
+            //qDebug() << "after box choose  , mesh size " << mesh.polygons.size();
+            glDataProc->getRenderData(mesh);
+            setImageData(glDataProc->glMeshData);
+            repaint();
+            m_points.clear();
+
+        }
     }
 
 }

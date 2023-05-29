@@ -68,6 +68,7 @@ private:
     // lr
     bool m_record_poly_clip = false;
     QVector<QPoint> m_points;//保存所有鼠标点击过的位置；
+    bool m_record_box_clip = false;
 
 };
 
