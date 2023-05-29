@@ -201,7 +201,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
     // lr
     if (m_record_poly_clip && event->button() == Qt::LeftButton)
     {
-        //¼ÇÂ¼µ±Ç°Êó±êµÄÎ»ÖÃ£»
+        //ï¿½ï¿½Â¼ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½
         QPoint pos = event->pos();
         m_points.append(pos);
     }
@@ -213,14 +213,15 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
     if (event->key() & Qt::Key_Shift) 
         isShiftPressed = true;
     // lr
-    // A ¼üÆô¶¯¶àµãÉ¾³ýËã·¨
+    // A ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ã·¨
+
     if (event->key() == Qt::Key_A)
     {
         m_record_poly_clip = !m_record_poly_clip;
         if (!m_record_poly_clip)
         {
-            //¶à±ßÐÎ¿ò½øÐÐÉ¾³ý²Ù×÷
-            // µã»÷¶à¸öµãÉú³É¶à±ßÐÎ£¬¶Ô¶à±äÐÎÇøÓòÄÚµÄÃæÆ¬½øÐÐÉ¾³ý
+            //ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½Î£ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½
             qDebug() << "before box choose  , mesh size " << this->mesh.polygons.size();
             vtkNew<vtkPoints> selectionPoints;
             GLdouble wx, wy, wz;
