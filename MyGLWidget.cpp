@@ -199,7 +199,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         m_points.append(pos);
     }
     // lr
-    if (m_record_box_clip && event->button() == Qt::LeftButton)
+    if (m_record_poly_clip && event->button() == Qt::LeftButton)
     {
         QPoint pos = event->pos();
         m_points.append(pos);
