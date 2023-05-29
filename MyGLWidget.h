@@ -69,6 +69,8 @@ private:
     bool m_record_poly_clip = false;
     QVector<QPoint> m_points;//保存所有鼠标点击过的位置；
     bool m_record_box_clip = false;
+    bool m_record_slice_clip = false;
+    void get_Normal(QVector3D p1, QVector3D p2, QVector3D p3, double& a, double& b, double& c);
 
 };
 

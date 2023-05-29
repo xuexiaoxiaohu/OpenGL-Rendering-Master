@@ -41,4 +41,12 @@ public:
 
 	//lr 
 	void getRenderData(pcl::PolygonMesh& mesh);
+	void getClipPlaneMesh(pcl::PolygonMesh& mesh, double a, double b, double c, QVector3D p);
+	void getClipPlane_X0Mesh(pcl::PolygonMesh& mesh,  QVector3D p);
+	void getClipPlane_X1Mesh(pcl::PolygonMesh& mesh,  QVector3D p);
+	void getClipPlane_Y0Mesh(pcl::PolygonMesh& mesh,  QVector3D p);
+	void getClipPlane_Y1Mesh(pcl::PolygonMesh& mesh,  QVector3D p);
+	void getClipPlane_Z0Mesh(pcl::PolygonMesh& mesh,  QVector3D p);
+	void getClipPlane_Z1Mesh(pcl::PolygonMesh& mesh,  QVector3D p);
+	void clipPlaneMesh(pcl::PolygonMesh& mesh, double a, double b, double c, QVector3D p);
 };

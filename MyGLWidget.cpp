@@ -204,6 +204,12 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         QPoint pos = event->pos();
         m_points.append(pos);
     }
+    //lr 
+    if (m_record_slice_clip && event->button() == Qt::LeftButton)
+    {
+        QPoint pos = event->pos();
+        m_points.append(pos);
+    }
 }
 void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
@@ -428,6 +434,34 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
         }
     }
 
+    if (event->key() == Qt::Key_C)
+    {
+        m_record_poly_clip = !m_record_poly_clip;
+        if (!m_record_poly_clip)
+        {
+            // compute box vertex
+            QPoint p1(m_points[0].x(), m_points[0].y());
+            /*QPoint p2(m_points[1].x(), m_points[1].y());
+            QPoint p3(m_points[2].x(), m_points[2].y());*/
+            
+            GLdouble wx1, wy1, wz1, wx2, wy2, wz2, wx3, wy3, wz3;
+            convScreen2World(p1, wx1, wy1, wz1);
+            /*convScreen2World(p2, wx2, wy2, wz2);
+            convScreen2World(p3, wx3, wy3, wz3);*/
+            double a = 1.0, b = 0.0, c = 0.0;
+  /*          get_Normal(QVector3D((float)wx1, (float)wy1, (float)wz1),
+                QVector3D((float)wx2, (float)wy2, (float)wz2),
+                QVector3D((float)wx3, (float)wy3, (float)wz3),
+                a, b, c);*/
+        
+            glDataProc->getClipPlaneMesh(mesh, a, b, c, QVector3D((float)wx1, (float)wy1, (float)wz1));
+            setImageData(glDataProc->glMeshData);
+            repaint();
+            m_points.clear();
+
+        }
+    }
+
 }
 void MyGLWidget::keyReleaseEvent(QKeyEvent* event) {
     if (event->key() & Qt::Key_Shift) 
@@ -462,4 +496,12 @@ void MyGLWidget::convScreen2World(QPoint screenPoint, GLdouble& wx, GLdouble& wy
     makeCurrent();
     glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
+}
+
+
+void MyGLWidget::get_Normal(QVector3D p1, QVector3D p2, QVector3D p3, double& a, double& b, double& c)
+{
+    a = ((p2.y() - p1.y()) * (p3.z() - p1.z()) - (p2.z() - p1.z()) * (p3.y() - p1.y()));
+    b = ((p2.z() - p1.z()) * (p3.x() - p1.x()) - (p2.x() - p1.x()) * (p3.z() - p1.z()));
+    c = ((p2.x() - p1.x()) * (p3.y() - p1.y()) - (p2.y() - p1.y()) * (p3.x() - p1.x()));
 }

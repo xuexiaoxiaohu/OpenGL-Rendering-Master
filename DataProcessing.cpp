@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QDataStream>
 #include <vtkMetaImageWriter.h>
+#include <vtkClipPolyData.h>
+#include <vtkPlane.h>
 
 void DataProcessing::loadPointData(QString path) {
 	QFile file(path);
@@ -256,4 +258,77 @@ void DataProcessing::getRenderData(pcl::PolygonMesh& mesh) {
 			glMeshData.emplace_back(point.normal_z);
 		}
 	}
+}
+
+void DataProcessing::getClipPlaneMesh(pcl::PolygonMesh& mesh, double a, double b, double c, QVector3D p)
+{
+	clipPlaneMesh(mesh, a, b, c, p);
+	getRenderData(mesh);
+
+}
+
+
+void DataProcessing::getClipPlane_X0Mesh(pcl::PolygonMesh& mesh,  QVector3D p)
+{
+	clipPlaneMesh(mesh, 1.0, 0.0, 0.0, p);// 
+	getRenderData(mesh);
+
+}
+void DataProcessing::getClipPlane_X1Mesh(pcl::PolygonMesh& mesh, QVector3D p)
+{
+	clipPlaneMesh(mesh, -1.0, 0.0, 0.0, p);// 
+	getRenderData(mesh);
+
+}
+void DataProcessing::getClipPlane_Y0Mesh(pcl::PolygonMesh& mesh, QVector3D p)
+{
+	clipPlaneMesh(mesh, 0.0, 1.0, 0.0, p);// 
+	getRenderData(mesh);
+
+}
+void DataProcessing::getClipPlane_Y1Mesh(pcl::PolygonMesh& mesh, QVector3D p)
+{
+	clipPlaneMesh(mesh, 0.0, -1.0, 0.0, p);// 
+	getRenderData(mesh);
+
+}
+void DataProcessing::getClipPlane_Z0Mesh(pcl::PolygonMesh& mesh, QVector3D p)
+{
+	clipPlaneMesh(mesh, 0.0, 0.0, 1.0, p);// 
+	getRenderData(mesh);
+
+}
+void DataProcessing::getClipPlane_Z1Mesh(pcl::PolygonMesh& mesh, QVector3D p)
+{
+	clipPlaneMesh(mesh, 0.0, 0.0, -1.0, p);// 
+	getRenderData(mesh);
+
+}
+void DataProcessing::clipPlaneMesh(pcl::PolygonMesh& mesh, double a, double b, double c, QVector3D p)
+{
+
+	//qDebug() << "before clip , mesh size " << mesh.polygons.size();
+	//qDebug() << "before clip , a,b, c " << a<< " "<<b<<" "<<c;
+	vtkSmartPointer<vtkPolyData> polydata1 = vtkSmartPointer<vtkPolyData>::New();
+	pcl::io::mesh2vtk(mesh, polydata1);
+	//qDebug() << "before clip , polydata1 size " << polydata1->GetNumberOfPoints();
+	vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
+	clipper->SetInputData(polydata1);
+
+	vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+	// 沿y0z平面裁剪
+	/*plane->SetOrigin(0, 0, 0);
+	plane->SetNormal(1, 0, 0);*/
+
+	plane->SetOrigin(p.x(), p.y(), p.z());
+	plane->SetNormal(a, b, c);
+	
+
+	clipper->SetClipFunction(plane);
+
+	clipper->InsideOutOn(); // 裁掉区域内的
+	clipper->Update();
+	vtkSmartPointer<vtkPolyData> output = clipper->GetOutput();
+	//qDebug() << "after clip , vtkouput size " << output->GetNumberOfPoints();
+	pcl::io::vtk2mesh(output, mesh);
 }
