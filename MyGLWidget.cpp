@@ -143,23 +143,22 @@ void MyGLWidget::paintGL(){
         mShader->setUniformValue("proj", proj);  
 
         glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
-        //1.0
-        glPointSize(5.0f);
-        glGenVertexArrays(1, &pVAO);
-        glBindVertexArray(pVAO);
-        glGenBuffers(1, &pVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, pVBO);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
+        
+        //glPointSize(5.0f);
+        //glGenVertexArrays(1, &pVAO);
+        //glBindVertexArray(pVAO);
+        //glGenBuffers(1, &pVBO);
+        //glBindBuffer(GL_ARRAY_BUFFER, pVBO);
+        //glEnableVertexAttribArray(0);
+        //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+        //glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size(), vertices.data(), GL_DYNAMIC_DRAW);
 
-        pShader->bind();
-        pShader->setUniformValue("model", model);
-        pShader->setUniformValue("view", camera->getViewMatrix());
-        pShader->setUniformValue("proj", proj);
+        //pShader->bind();
+        //pShader->setUniformValue("model", model);
+        //pShader->setUniformValue("view", camera->getViewMatrix());
+        //pShader->setUniformValue("proj", proj);
 
-        glDrawArrays(GL_POINTS, 0, vertices.size() / 3);   
-        //1.1
+        //glDrawArrays(GL_POINTS, 0, vertices.size() / 3);        
     }
 }
 void MyGLWidget::resizeGL(int width, int height){
