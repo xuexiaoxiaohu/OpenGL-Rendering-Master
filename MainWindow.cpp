@@ -133,6 +133,8 @@ void MainWindow::enclosureDataProcessing(){
                     std::filesystem::path parentPath = std::filesystem::current_path();
                     std::string srcPath ="C:\\Project\\OpenGL-Rendering-Master-Build\\result.ply";
                     std::string dstPath = "C:\\Project\\OpenGL-Rendering-Master-Build\\triangleResult.ply";
+                 /*   std::string srcPath = parentPath.string() + "/result.ply";
+                    std::string dstPath = parentPath.string() + "/triangleResult.ply";*/
                     pcl::PolygonMesh mesh;
                     meshProc->isoExpRemeshing(srcPath.c_str(), dstPath.c_str());
 

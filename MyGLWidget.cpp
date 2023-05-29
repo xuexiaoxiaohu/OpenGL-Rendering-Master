@@ -20,7 +20,7 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkCellData.h>
 #include <vtkIdTypeArray.h>
-
+#include <vtkProperty.h>
 
 MyGLWidget::MyGLWidget(QWidget* parent,int dataType)
     : rotationAngle(0.0f)
@@ -199,7 +199,7 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         m_points.append(pos);
     }
     // lr
-    if (m_record_poly_clip && event->button() == Qt::LeftButton)
+    if (m_record_box_clip && event->button() == Qt::LeftButton)
     {
         QPoint pos = event->pos();
         m_points.append(pos);
@@ -254,8 +254,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_B)
     {
-        m_record_poly_clip = !m_record_poly_clip;
-        if (!m_record_poly_clip)
+        m_record_box_clip = !m_record_box_clip;
+        if (!m_record_box_clip)
         {
             // compute box vertex
             QPoint p1(m_points[0].x(), m_points[0].y());
@@ -293,10 +293,10 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             polydata->SetLines(lines);
             double bounds[6];
             polydata->GetBounds(bounds);
-            std::cout << "X range: " << bounds[0] << " - " << bounds[1] << std::endl;
+            /*std::cout << "X range: " << bounds[0] << " - " << bounds[1] << std::endl;
             std::cout << "Y range: " << bounds[2] << " - " << bounds[3] << std::endl;
             std::cout << "Z range: " << bounds[4] << " - " << bounds[5] << std::endl;
-            std::cout << "***" << std::endl;
+            std::cout << "***" << std::endl;*/
             double xmin = bounds[0];
             double xmax = bounds[1];
             double ymin = bounds[2];
@@ -327,32 +327,32 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
             vtkPlanes* frustum = frustumSource->GetPlanes();
             // 获取所有平面的法向量，然后输出到控制台
-            vtkSmartPointer<vtkDataArray> normals = frustum->GetNormals();
-            std::cout << "frustum normals: ";
-            for (vtkIdType i = 0; i < normals->GetNumberOfTuples(); i++)
-            {
-                double* normal = normals->GetTuple3(i);
-                std::cout << "(" << normal[0] << ", " << normal[1] << ", " << normal[2] << ") ";
-            }
-            std::cout << std::endl;
+            //vtkSmartPointer<vtkDataArray> normals = frustum->GetNormals();
+            //std::cout << "frustum normals: ";
+            //for (vtkIdType i = 0; i < normals->GetNumberOfTuples(); i++)
+            //{
+            //    double* normal = normals->GetTuple3(i);
+            //    std::cout << "(" << normal[0] << ", " << normal[1] << ", " << normal[2] << ") ";
+            //}
+            //std::cout << std::endl;
 
-            // 获取所有平面的交点，然后输出到控制台
+            //// 获取所有平面的交点，然后输出到控制台
 
-            vtkSmartPointer<vtkPoints> points1 = frustum->GetPoints();
-            std::cout << "frustum intersection points: ";
-            for (vtkIdType i = 0; i < points1->GetNumberOfPoints(); i++)
-            {
-                double* point2 = points1->GetPoint(i);
-                std::cout << "(" << point2[0] << ", " << point2[1] << ", " << point2[2] << ") ";
-            }
-            std::cout << std::endl;
+            //vtkSmartPointer<vtkPoints> points1 = frustum->GetPoints();
+            //std::cout << "frustum intersection points: ";
+            //for (vtkIdType i = 0; i < points1->GetNumberOfPoints(); i++)
+            //{
+            //    double* point2 = points1->GetPoint(i);
+            //    std::cout << "(" << point2[0] << ", " << point2[1] << ", " << point2[2] << ") ";
+            //}
+            //std::cout << std::endl;
 
             //提前标记几何数据的CellId
             vtkIdFilter* idFilter = vtkIdFilter::New();
             vtkSmartPointer<vtkPolyData> polydata2 = vtkSmartPointer<vtkPolyData>::New();
             pcl::io::mesh2vtk(this->mesh, polydata2);
-            std::cout << "初始模型点个数： " << polydata2->GetNumberOfPoints() << std::endl;
-            std::cout << "初始模型面片个数： " << polydata2->GetNumberOfCells() << std::endl;
+           /* std::cout << "初始模型点个数： " << polydata2->GetNumberOfPoints() << std::endl;
+            std::cout << "初始模型面片个数： " << polydata2->GetNumberOfCells() << std::endl;*/
 
             idFilter->SetInputData(polydata2);
             // idFilter->SetCellIdsArrayName("OriginalCellId");
@@ -381,8 +381,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             double rayStart[3] = { this->camera->eye[0],this->camera->eye[1],this->camera->eye[2] };//光线起点坐标：设置为摄像机位置
             double rayDirection[3];			//光线方向向量：设置为框选数据包围盒的中心
             extract->GetOutput()->GetCenter(rayDirection);
-            std::cout << "center of box : " << rayDirection[0] << " " << rayDirection[1] << " " << rayDirection[2] << std::endl;
-            std::cout << " ray start " << rayStart[0] << " " << rayStart[1] << " " << rayStart[2] << std::endl;
+            //std::cout << "center of box : " << rayDirection[0] << " " << rayDirection[1] << " " << rayDirection[2] << std::endl;
+            //std::cout << " ray start " << rayStart[0] << " " << rayStart[1] << " " << rayStart[2] << std::endl;
             double xyz[3];
             double t;
             double pcoords[3];
@@ -413,9 +413,9 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             {
                 vtkIdType id = ids->GetValue(i);
                 polydata2->DeleteCell(id);
-                std::cout << "i: " << i << " :id: " << id << endl;
+                //std::cout << "i: " << i << " :id: " << id << endl;
             }
-            std::cout << " 删除的面片个数： " << ids->GetNumberOfValues() << std::endl;
+            //std::cout << " 删除的面片个数： " << ids->GetNumberOfValues() << std::endl;
             //提交删除面片操作
             polydata2->RemoveDeletedCells();
             polydata2->Modified();
@@ -436,8 +436,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_C)
     {
-        m_record_poly_clip = !m_record_poly_clip;
-        if (!m_record_poly_clip)
+        m_record_slice_clip = !m_record_slice_clip;
+        if (!m_record_slice_clip)
         {
             // compute box vertex
             QPoint p1(m_points[0].x(), m_points[0].y());
