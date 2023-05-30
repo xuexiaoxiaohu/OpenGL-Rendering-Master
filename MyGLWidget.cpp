@@ -192,20 +192,20 @@ void MyGLWidget::mousePressEvent(QMouseEvent* event){
         lastMousePos = event->pos();
 
     // lr
-    if (m_record_poly_clip && event->button() == Qt::LeftButton)
+    if (isPolyClipped && event->button() == Qt::LeftButton)
     {
         //��¼��ǰ����λ�ã�
         QPoint pos = event->pos();
         m_points.append(pos);
     }
     // lr
-    if (m_record_box_clip && event->button() == Qt::LeftButton)
+    if (isBoxClipped && event->button() == Qt::LeftButton)
     {
         QPoint pos = event->pos();
         m_points.append(pos);
     }
     //lr 
-    if (m_record_slice_clip && event->button() == Qt::LeftButton)
+    if (idSliceClipped && event->button() == Qt::LeftButton)
     {
         QPoint pos = event->pos();
         m_points.append(pos);
@@ -219,8 +219,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
         isShiftPressed = true;
     }
     if (event->key() == Qt::Key_A){
-        m_record_poly_clip = !m_record_poly_clip;
-        if (!m_record_poly_clip){
+        isPolyClipped = !isPolyClipped;
+        if (!isPolyClipped){
             vtkNew<vtkPoints> selectionPoints;
             GLdouble wx, wy, wz;
             for (int i = 0; i < m_points.size(); i++)
@@ -247,8 +247,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_B)
     {
-        m_record_box_clip = !m_record_box_clip;
-        if (!m_record_box_clip)
+        isBoxClipped = !isBoxClipped;
+        if (!isBoxClipped)
         {
             // compute box vertex
             QPoint p1(m_points[0].x(), m_points[0].y());
@@ -394,8 +394,8 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
     if (event->key() == Qt::Key_C)
     {
-        m_record_slice_clip = !m_record_slice_clip;
-        if (!m_record_slice_clip){
+        idSliceClipped = !idSliceClipped;
+        if (!idSliceClipped){
 
             QPoint p1(m_points[0].x(), m_points[0].y());
 

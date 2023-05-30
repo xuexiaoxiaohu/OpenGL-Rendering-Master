@@ -66,9 +66,9 @@ private:
     QVector3D brushPosition;
 
     // lr
-    bool m_record_poly_clip = false;
-    bool m_record_box_clip = false;
-    bool m_record_slice_clip = false;
+    bool isPolyClipped = false;
+    bool isBoxClipped = false;
+    bool idSliceClipped = false;
     QVector<QPoint> m_points;//
 
 
