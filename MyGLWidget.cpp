@@ -319,26 +319,6 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
 
 
             vtkPlanes* frustum = frustumSource->GetPlanes();
-            // 获取所有平面的法向量，然后输出到控制台
-            //vtkSmartPointer<vtkDataArray> normals = frustum->GetNormals();
-            //std::cout << "frustum normals: ";
-            //for (vtkIdType i = 0; i < normals->GetNumberOfTuples(); i++)
-            //{
-            //    double* normal = normals->GetTuple3(i);
-            //    std::cout << "(" << normal[0] << ", " << normal[1] << ", " << normal[2] << ") ";
-            //}
-            //std::cout << std::endl;
-
-            //// 获取所有平面的交点，然后输出到控制台
-
-            //vtkSmartPointer<vtkPoints> points1 = frustum->GetPoints();
-            //std::cout << "frustum intersection points: ";
-            //for (vtkIdType i = 0; i < points1->GetNumberOfPoints(); i++)
-            //{
-            //    double* point2 = points1->GetPoint(i);
-            //    std::cout << "(" << point2[0] << ", " << point2[1] << ", " << point2[2] << ") ";
-            //}
-            //std::cout << std::endl;
 
             //提前标记几何数据的CellId
             vtkIdFilter* idFilter = vtkIdFilter::New();
@@ -361,8 +341,6 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
                 return;
             }
 
-            //std::cout << "提取框内的模型后，剩余的点个数： " << extract->GetOutput()->GetNumberOfPoints() << std::endl;
-            //std::cout << "提取框内的模型后，剩余的面片个数： " << extract->GetOutput()->GetNumberOfCells() << std::endl;
 
 
             //创建面片定位器
@@ -392,33 +370,20 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
             connectivity->AddSeed(cellId);
             connectivity->Update();
 
-            //--------删除框选面片----------
-            //提取框选面片的原始面片ID
-            //vtkIdTypeArray* ids = dynamic_cast<vtkIdTypeArray*>(connectivity->GetOutput()->GetCellData()->GetArray("OriginalCellId"));
             vtkIdTypeArray* ids = dynamic_cast<vtkIdTypeArray*>(connectivity->GetOutput()->GetCellData()->GetArray(0));
-            //要删除面片前必须先执行建立拓扑链接
             polydata2->BuildLinks();
-            if (!ids)
-            {
-                return;
-            }
-            for (int i = 0; i < ids->GetNumberOfValues(); i++)
-            {
+            if (!ids) return;
+            
+            for (int i = 0; i < ids->GetNumberOfValues(); i++){
                 vtkIdType id = ids->GetValue(i);
                 polydata2->DeleteCell(id);
-                //std::cout << "i: " << i << " :id: " << id << endl;
             }
-            //std::cout << " 删除的面片个数： " << ids->GetNumberOfValues() << std::endl;
-            //提交删除面片操作
+
             polydata2->RemoveDeletedCells();
             polydata2->Modified();
 
-            //std::cout << " 裁剪后剩余的顶点个数： " << polydata2->GetNumberOfPoints() << std::endl;
-            //std::cout << " 裁剪后剩余的面片个数： " << polydata2->GetNumberOfCells() << std::endl;
-
             pcl::io::vtk2mesh(polydata2, mesh);
 
-            //qDebug() << "after box choose  , mesh size " << mesh.polygons.size();
             glDataProc->getRenderData(mesh);
             setImageData(glDataProc->glMeshData);
             repaint();
@@ -430,22 +395,16 @@ void MyGLWidget::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_C)
     {
         m_record_slice_clip = !m_record_slice_clip;
-        if (!m_record_slice_clip)
-        {
-            // compute box vertex
+        if (!m_record_slice_clip){
+
             QPoint p1(m_points[0].x(), m_points[0].y());
-            /*QPoint p2(m_points[1].x(), m_points[1].y());
-            QPoint p3(m_points[2].x(), m_points[2].y());*/
+
             
             GLdouble wx1, wy1, wz1, wx2, wy2, wz2, wx3, wy3, wz3;
             convScreen2World(p1, wx1, wy1, wz1);
-            /*convScreen2World(p2, wx2, wy2, wz2);
-            convScreen2World(p3, wx3, wy3, wz3);*/
+
             double a = 1.0, b = 0.0, c = 0.0;
-  /*          get_Normal(QVector3D((float)wx1, (float)wy1, (float)wz1),
-                QVector3D((float)wx2, (float)wy2, (float)wz2),
-                QVector3D((float)wx3, (float)wy3, (float)wz3),
-                a, b, c);*/
+
         
             glDataProc->getClipPlaneMesh(mesh, a, b, c, QVector3D((float)wx1, (float)wy1, (float)wz1));
             setImageData(glDataProc->glMeshData);
@@ -489,12 +448,4 @@ void MyGLWidget::convScreen2World(QPoint screenPoint, GLdouble& wx, GLdouble& wy
     makeCurrent();
     glReadPixels(screenPoint.x(), viewport[3] - screenPoint.y(), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
     gluUnProject(screenPoint.x(), viewport[3] - screenPoint.y(), depth, mvArray, pArray, viewport, &wx, &wy, &wz);
-}
-
-
-void MyGLWidget::get_Normal(QVector3D p1, QVector3D p2, QVector3D p3, double& a, double& b, double& c)
-{
-    a = ((p2.y() - p1.y()) * (p3.z() - p1.z()) - (p2.z() - p1.z()) * (p3.y() - p1.y()));
-    b = ((p2.z() - p1.z()) * (p3.x() - p1.x()) - (p2.x() - p1.x()) * (p3.z() - p1.z()));
-    c = ((p2.x() - p1.x()) * (p3.y() - p1.y()) - (p2.y() - p1.y()) * (p3.x() - p1.x()));
 }
