@@ -316,7 +316,7 @@ void DataProcessing::clipPlaneMesh(pcl::PolygonMesh& mesh, double a, double b, d
 	clipper->SetInputData(polydata1);
 
 	vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-	// ÑØy0zÆ½Ãæ²Ã¼ô
+	// ï¿½ï¿½y0zÆ½ï¿½ï¿½Ã¼ï¿½
 	/*plane->SetOrigin(0, 0, 0);
 	plane->SetNormal(1, 0, 0);*/
 
@@ -326,7 +326,7 @@ void DataProcessing::clipPlaneMesh(pcl::PolygonMesh& mesh, double a, double b, d
 
 	clipper->SetClipFunction(plane);
 
-	clipper->InsideOutOn(); // ²ÃµôÇøÓòÄÚµÄ
+	clipper->InsideOutOn(); // ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½
 	clipper->Update();
 	vtkSmartPointer<vtkPolyData> output = clipper->GetOutput();
 	//qDebug() << "after clip , vtkouput size " << output->GetNumberOfPoints();

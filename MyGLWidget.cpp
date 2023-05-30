@@ -171,7 +171,7 @@ void MyGLWidget::mouseMoveEvent(QMouseEvent* event){
             int  distance = sqrt(deltaX * deltaX + deltaY * deltaY);
             if (distance >= 2.0) {
                 lastMousePos = currentMousePos;
-                GLdouble wx, wy, wz;
+                GLdouble wx = 0, wy = 0, wz = 0;
                 convScreen2World(currentMousePos, wx, wy, wz);
                 glDataProc->getErasedMesh(QVector3D(wx, wy, wz), mesh, 0.1 * brushSize);
                 setImageData(glDataProc->glMeshData);
@@ -215,19 +215,12 @@ void MyGLWidget::mouseReleaseEvent(QMouseEvent* event) {
 
 }
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
-    if (event->key() & Qt::Key_Shift) 
+    if (event->key() & Qt::Key_Shift) {
         isShiftPressed = true;
-    // lr
-    // A ��������ɾ���㷨
-
-    if (event->key() == Qt::Key_A)
-    {
+    }
+    if (event->key() == Qt::Key_A){
         m_record_poly_clip = !m_record_poly_clip;
-        if (!m_record_poly_clip)
-        {
-            //����ο����ɾ������
-            // �����������ɶ���Σ��Զ���������ڵ���Ƭ����ɾ��
-            //qDebug() << "before box choose  , mesh size " << this->mesh.polygons.size();
+        if (!m_record_poly_clip){
             vtkNew<vtkPoints> selectionPoints;
             GLdouble wx, wy, wz;
             for (int i = 0; i < m_points.size(); i++)
